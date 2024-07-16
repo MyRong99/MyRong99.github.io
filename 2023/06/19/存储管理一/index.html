@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——存储管理--1 | Mr.Long</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——存储管理--1`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/21/TCP协议/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a4f0f8a8bbda6dc810ff3fad4a671f96a4f0f8a8bbda6dc810ff3fad4a671f96","path":"2023/06/28/存储管理--2/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/19/存储管理一/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/21/文件权限/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/11/磁盘阵列RAID/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/21/移除lv--扩展/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/21/网络管理基础/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/20/走进网络世界/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Mr.Long</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">唱跳rap篮球</span>
+          <span class="main-left--tag">宅但不肥</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/MyRong99/MyRong99.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>2</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>2</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>2 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>13 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>392天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">存储管理--1</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/Linux/">-Linux</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            <a class="tag-link" href="/tags/Linux/" rel="tag">-Linux</a>
+          </div>
+          
+          <p class="article-info--date">日期：2023-06-19 12:19:22</p>
+        </div>
+        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h2 id="一-存储管理"><a href="#一-存储管理" class="headerlink" title="一 .存储管理"></a>一 .存储管理</h2><p>主要知识点: 基本分区、逻辑卷LVM、EXT3&#x2F;4&#x2F;XFS文件系统、RAID</p>
+<h3 id="初识硬盘"><a href="#初识硬盘" class="headerlink" title="初识硬盘"></a>初识硬盘</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">机械 HDD	</span><br><span class="line"></span><br><span class="line">固态 SSD  </span><br></pre></td></tr></table></figure>
+
+<p><strong>SSD的优势</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SSD采用电子存储介质进行数据存储和读取的一种技术，拥有极高的存储性能，被认为是存储技术发展的未来新星。</span><br></pre></td></tr></table></figure>
+
+<p><strong>与传统硬盘相比，SSD固态电子盘具有以下优点：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">第一，SSD完全的半导体化，不存在数据查找时间、延迟时间，数据存取速度快。</span><br><span class="line">第二，SSD全部采用闪存芯片，经久耐用，防震抗摔，即使发生与硬物碰撞，数据丢失的可能性也能够降到最小。　　</span><br><span class="line">第三，得益于无机械部件及闪存芯片，SSD没有任何噪音，功耗低。　</span><br><span class="line">第四，质量轻，比常规1.8英寸硬盘重量轻20-30克，使得便携设备搭载多块SSD成为可能。</span><br></pre></td></tr></table></figure>
+
+<p><strong>硬盘尺寸</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3.5寸  2.5寸 1.8寸</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/140f93029a70e650817fa720b3161186c6388f04.jpg#id=PE99e&originHeight=328&originWidth=468&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><img src="https://img.beyourself.org.cn/3a532c46a65833608d3c59ed403cb416b8b04cc7.jpg#id=gNKga&originHeight=421&originWidth=531&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><img src="https://img.beyourself.org.cn/6d7c7e6b388ffe1fac1558211b94df9e8074efe6.jpg#id=E9J18&originHeight=499&originWidth=799&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><strong>从插拔方式</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#热插拔</span><br><span class="line">非热插拔</span><br></pre></td></tr></table></figure>
+
+<p><strong>从硬盘接口</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">IDE(已经淘汰---也叫ATA)</span><br><span class="line">SATA (Serial ATA)，是当前主流的一种硬盘接口  </span><br><span class="line">SCSI（小型计算机的接口--很少了） </span><br><span class="line">SAS代替了scsi (Serial Attached SCSI)，当前SAS接口居多</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/c1d88728dedfe0caa501215468688dc394ca714d.jpg#id=y66gY&originHeight=286&originWidth=600&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><strong>IDE和SATA的区别：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、接口不同，传输的速率不同。IDE根据规范，最高到133MB/s， 而SATA3.0，可达6Gb/S，速度差距巨大。</span><br><span class="line">2、SATA支持热插拔。</span><br></pre></td></tr></table></figure>
+
+<p><strong>SAS与SCSI的区别</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、接口不同；</span><br><span class="line">2、SAS兼容SATA，SCSI不兼容SATA；</span><br></pre></td></tr></table></figure>
+
+<p><strong>硬盘设备命名</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">物理硬盘：    /dev/sd[a-z]</span><br><span class="line"></span><br><span class="line">KVM虚拟化:</span><br><span class="line">/dev/vd[a-z]（半虚拟化驱动）</span><br><span class="line">/dev/sd[a-z]（全虚拟化驱动）</span><br></pre></td></tr></table></figure>
+
+<h3 id="从磁盘分区方式区分"><a href="#从磁盘分区方式区分" class="headerlink" title="从磁盘分区方式区分"></a>从磁盘分区方式区分</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MBR格式</span><br><span class="line">分区命令：fdisk  </span><br><span class="line">一共可以分14个分区（4个主分区，扩展分区，逻辑分区） 例如: 3主 + 1扩展（n逻辑）</span><br><span class="line">MBR 小于2TB的硬盘。</span><br><span class="line">一块硬盘最多分4个主分区。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GPT格式</span><br><span class="line">分区命令：gdisk(parted---rhel6)</span><br><span class="line">一共可以分128个主分区</span><br><span class="line">GPT大于小于2TB都可以。</span><br><span class="line">#注意：从MBR转到GPT，或从GPT转换到MBR会导致数据全部丢失！</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/f9ec971c4a92c48a1d10ff6386092de58faea98f.jpg#id=PnU3E&originHeight=594&originWidth=877&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h3 id="基本分区"><a href="#基本分区" class="headerlink" title="基本分区"></a>基本分区</h3><p><strong>首先需要先给虚拟机添加磁盘</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@qfedu.com ~]# ll /dev/sd*</span><br><span class="line">brw-rw----. 1 root disk 8,  0 Nov  7 23:15 /dev/sda</span><br><span class="line">brw-rw----. 1 root disk 8,  1 Nov  7 23:15 /dev/sda1</span><br><span class="line">brw-rw----. 1 root disk 8,  2 Nov  7 23:15 /dev/sda2</span><br><span class="line">brw-rw----. 1 root disk 8, 16 Nov  7 23:15 /dev/sdb</span><br><span class="line">brw-rw----. 1 root disk 8, 32 Nov  7 23:15 /dev/sdc</span><br><span class="line">[root@qfedu.com ~]# lsblk  #查看磁盘设备</span><br><span class="line">NAME            MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT</span><br><span class="line">sda               8:0    0   20G  0 disk </span><br><span class="line">├─sda1            8:1    0    1G  0 part /boot</span><br><span class="line">└─sda2            8:2    0   19G  0 part </span><br><span class="line">  ├─centos-root 253:0    0   17G  0 lvm  /</span><br><span class="line">  └─centos-swap 253:1    0    2G  0 lvm  [SWAP]</span><br><span class="line">sdb               8:16   0   10G  0 disk </span><br><span class="line">sdc               8:32   0   10G  0 disk</span><br></pre></td></tr></table></figure>
+
+<h4 id="fdisk"><a href="#fdisk" class="headerlink" title="fdisk"></a>fdisk</h4><p>MBR 14个分区（4个主分区，扩展分区，逻辑分区）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">[root@qfedu.com ~]# fdisk -l /dev/sdb #查看磁盘分区信息</span><br><span class="line">[root@qfedu.com ~]# fdisk /dev/sdb  #针对MBR格式，创建分区</span><br><span class="line">m  查看帮助</span><br><span class="line">n  新建分区</span><br><span class="line">Partition type: p  新建主分区</span><br><span class="line">   p   primary (0 primary, 0 extended, 4 free)</span><br><span class="line">   e   extended</span><br><span class="line">默认回车</span><br><span class="line">设置主分区大小创建主分区，然后</span><br><span class="line">Command (m for help): p  ---打印分区信息</span><br><span class="line">创建扩展分区</span><br><span class="line">Command (m for help): n</span><br><span class="line">Partition type:</span><br><span class="line">   p   primary (1 primary, 0 extended, 3 free)</span><br><span class="line">   e   extended</span><br><span class="line">Select (default p): e</span><br><span class="line">#注意：扩展分区将剩下的空间全部给了。一路回车即可</span><br><span class="line">创建逻辑分区</span><br><span class="line">Command (m for help): n</span><br><span class="line">Partition type:</span><br><span class="line">   p   primary (1 primary, 1 extended, 2 free)</span><br><span class="line">   l   logical (numbered from 5)</span><br><span class="line">Select (default p): l   创建逻辑分区</span><br><span class="line">Adding logical partition 5 </span><br><span class="line">First sector (208896-20971519, default 208896): </span><br><span class="line">Using default value 208896</span><br><span class="line">Last sector, +sectors or +size&#123;K,M,G&#125; (208896-20971519, default 20971519): +5G #指定大小</span><br><span class="line">Partition 5 of type Linux and of size 5 GiB is set</span><br><span class="line">Command (m for help): w   --保存退出</span><br><span class="line">[root@qfedu.com ~]# partprobe /dev/sdb   #更新磁盘分区表，手动让内核更新分区表。不需要重启</span><br><span class="line">[root@qfedu.com ~]# lsblk #查看磁盘设备</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/ff1c051ccd3a169627244cbe0c9d8912de6f2945.jpg#id=CkcXv&originHeight=300&originWidth=580&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h4 id="gdisk"><a href="#gdisk" class="headerlink" title="gdisk"></a><strong>gdisk</strong></h4><p>GPT 128个主分区</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">转格式的时候保证此分区，没有被系统占用。</span><br><span class="line">[root@qfedu.com ~]# parted -s /dev/sdc mklabel gpt   #将/dev/sdc(MBR格式)转换成(GPT格式)</span><br><span class="line">[root@qfedu.com ~]# parted -s /dev/sdc mklabel msdos  #将/dev/sda(GPT格式)转换成(MBR格式)</span><br></pre></td></tr></table></figure>
+
+<p>1.创建分区</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@qfedu.com ~]# yum -y install gdisk  #安装分区工具</span><br><span class="line">[root@qfedu.com ~]# gdisk -l /dev/sdc</span><br><span class="line">[root@qfedu.com ~]# gdisk /dev/sdc</span><br><span class="line">Command (? for help): n  --创建分区</span><br><span class="line">Partition number (1-128, default 1): </span><br><span class="line">First sector (34-16777182, default = 2048) or &#123;+-&#125;size&#123;KMGTP&#125;:</span><br><span class="line">Last sector (2048-16777182, default = 16777182) or &#123;+-&#125;size&#123;KMGTP&#125;: +100M</span><br><span class="line">Current type is &#x27;Linux filesystem&#x27;</span><br><span class="line">Hex code or GUID (L to show codes, Enter = 8300):      ---直接回车</span><br><span class="line">Command (? for help): p   --打印分区信息</span><br><span class="line">Command (? for help): w    ---保存</span><br><span class="line">Final checks complete. About to write GPT data. THIS WILL OVERWRITE EXISTING</span><br><span class="line">PARTITIONS!!</span><br><span class="line">Do you want to proceed? (Y/N): y   是否覆盖是</span><br><span class="line">OK; writing new GUID partition table (GPT) to /dev/sdc.</span><br><span class="line">The operation has completed successfully.</span><br><span class="line">[root@qfedu.com ~]# partprobe /dev/sdc  #刷新分区表</span><br><span class="line">[root@qfedu.com ~]# gdisk -l /dev/sdc</span><br><span class="line">[root@qfedu.com ~]# lsblk</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/70e5bf2e88543fa34237224b1412a941bfba93a9.jpg#id=Nd05Z&originHeight=72&originWidth=490&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><strong>2.创建文件系统（格式化）centos7默认使用xfs</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@qfedu.com ~]# mkfs.ext4 /dev/sdb1   #格式化成ext4格式的文件系统</span><br><span class="line">[root@qfedu.com ~]# mkfs.xfs /dev/sdc2   #格式化成xfs格式的文件系统</span><br></pre></td></tr></table></figure>
+
+<p><strong>3.挂载mount使用</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@qfedu.com ~]# mkdir /mnt/disk1   #创建挂载目录</span><br><span class="line">[root@qfedu.com ~]# mkdir /mnt/disks   #创建挂载目录</span><br><span class="line">[root@qfedu.com ~]# mount  /dev/sdb1 /mnt/disk1/</span><br><span class="line">[root@qfedu.com ~]# mount /dev/sdc2 /mnt/disks/</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看磁盘挂载与磁盘使用空间</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@qfedu.com ~]# df -Th</span><br><span class="line">Filesystem              Type      Size  Used Avail Use% Mounted on</span><br><span class="line">/dev/mapper/centos-root xfs        17G  1.2G   16G   7% /</span><br><span class="line">devtmpfs                devtmpfs  982M     0  982M   0% /dev</span><br><span class="line">tmpfs                   tmpfs     993M     0  993M   0% /dev/shm</span><br><span class="line">tmpfs                   tmpfs     993M  8.7M  984M   1% /run</span><br><span class="line">tmpfs                   tmpfs     993M     0  993M   0% /sys/fs/cgroup</span><br><span class="line">/dev/sda1               xfs      1014M  125M  890M  13% /boot</span><br><span class="line">tmpfs                   tmpfs     199M     0  199M   0% /run/user/0</span><br><span class="line">/dev/sdb1               ext4      283M  2.1M  262M   1% /mnt/disk1</span><br><span class="line">/dev/sdc2               xfs       197M   11M  187M   6% /mnt/disks</span><br><span class="line">参数解释：</span><br><span class="line">-T  打印文件系统类型</span><br><span class="line">-h 人性化显示，磁盘空间大小</span><br></pre></td></tr></table></figure>
+
+<p><strong>取消挂载</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@qfedu.com ~]# umount /mnt/disks/</span><br><span class="line">[root@qfedu.com ~]# umount -l /mnt/disk1/ #强行卸载，即使目录有资源被进程占用，也可以卸载</span><br></pre></td></tr></table></figure>
+
+<h3 id="开机自动挂载"><a href="#开机自动挂载" class="headerlink" title="开机自动挂载"></a>开机自动挂载</h3><h4 id="etc-fstab"><a href="#etc-fstab" class="headerlink" title="&#x2F;etc&#x2F;fstab"></a><strong>&#x2F;etc&#x2F;fstab</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@qfedu.com ~]# blkid /dev/sdb1  #查看uuid和文件系统类型</span><br><span class="line">/dev/sdb1: UUID=&quot;d1916638-bd0a-4474-8051-f788116a3a92&quot; TYPE=&quot;ext4&quot;</span><br><span class="line">[root@qfedu.com ~]# vim /etc/fstab</span><br><span class="line">参数解释：</span><br><span class="line">第1列:挂载设备</span><br><span class="line">(1)/dev/sda5  </span><br><span class="line">(2)UUID=设备的uuid   rhel6/7的默认写法   同一台机器内唯一的一个设备标识</span><br><span class="line">第2列:挂载点ss</span><br><span class="line">第3列:文件系统类型</span><br><span class="line">第4列:文件系统属性	</span><br><span class="line">第5列:是否对文件系统进行磁带备份：0 不备份</span><br><span class="line">第6列:是否检查文件系统：0 不检查</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/fce3a3ea3dd698055f7c1dee2ff9e9be8f9ccc39.jpg#id=s1hob&originHeight=136&originWidth=1098&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@qfedu.com ~]# mount -a #自动挂载 // 不重启系统检查磁盘是否挂载成功</span><br></pre></td></tr></table></figure>
+
+<p><strong>实战二</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@qfedu.com ~]# vim /etc/fstab</span><br><span class="line">/dev/sdc2       /mnt/disks      xfs     defaults        0 0</span><br><span class="line">[root@qfedu.com ~]# mount -a	</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="etc-rc-d-rc-local"><a href="#etc-rc-d-rc-local" class="headerlink" title="&#x2F;etc&#x2F;rc.d&#x2F;rc.local"></a><strong>&#x2F;etc&#x2F;rc.d&#x2F;rc.local</strong></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这个配置文件会在用户登陆之前读取，这个文件中写入了什么命令，在每次系统启动时都会执行一次。也就是说，如果有任何需要在系统启动时运行的工作，则只需写入 /etc/rc.d/rc.local 配置文件即可</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@qfedu.com ~]# vim /etc/rc.d/rc.local #将挂载命令直接写到文件中</span><br><span class="line">mount /dev/sdb1 /mnt/disk1/</span><br><span class="line">mount /dev/sdc1 /mnt/disk2/</span><br><span class="line">[root@qfedu.com ~]# chmod +x /etc/rc.d/rc.local  #添加执行权限</span><br><span class="line">[root@qfedu.com ~]# reboot</span><br></pre></td></tr></table></figure>
+
+<h2 id="二、文件系统"><a href="#二、文件系统" class="headerlink" title="二、文件系统"></a>二、文件系统</h2><h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">分类：</span><br><span class="line">本地文件系统，不能在网络上用。</span><br><span class="line">ntfs  xfs  ext2，ext3，ext4 .  fat32</span><br><span class="line">网络文件系统，也可以在本地用。</span><br><span class="line">nfs   glusterfs   hdfs   ceph</span><br></pre></td></tr></table></figure>
+
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">作用：</span><br><span class="line">管理文件的一套系统。</span><br><span class="line">文件的编辑，拷贝，粘贴，移动。</span><br><span class="line"></span><br><span class="line">#理解inode:</span><br><span class="line">inode ：inoed块、i节点--索引节点。专门存储inode信息。也就是是文件的属性-(也叫元信息).它是文件或目录在磁盘里的唯一标识，linux读取文件首先要读取到这个索引节点,每一个文件都有对应的inode，里面包含了与该文件有关的一些信息。</span><br></pre></td></tr></table></figure>
+
+<p><strong>inode的内容</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">文件的字节数</span><br><span class="line">文件拥有者的User ID</span><br><span class="line">文件的Group ID</span><br><span class="line">文件的读、写、执行权限</span><br><span class="line">文件的时间戳，共有三个：ctime，mtime，atime。</span><br><span class="line">链接数，即有多少文件名指向这个inode</span><br></pre></td></tr></table></figure>
+
+<p>查看inode信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@qfedu.com ~]# stat /etc/hosts</span><br><span class="line">  File: ‘/etc/hosts’</span><br><span class="line">  Size: 158             Blocks: 8          IO Block: 4096   regular file</span><br><span class="line">Device: fd00h/64768d    Inode: 16778306    Links: 1</span><br><span class="line">Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)</span><br><span class="line">Access: 2020-07-28 19:11:48.781000069 +0800</span><br><span class="line">Modify: 2013-06-07 22:31:32.000000000 +0800</span><br><span class="line">Change: 2020-07-18 15:37:52.353025437 +0800</span><br><span class="line"> Birth: -</span><br><span class="line"> </span><br><span class="line">[root@qfedu.com ~]# ls -i /etc/hosts  #-i：查看inode号</span><br><span class="line">16778306 /etc/hosts</span><br></pre></td></tr></table></figure>
+
+<h3 id="EXT"><a href="#EXT" class="headerlink" title="EXT"></a>EXT</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">EXT 家族支持度最广：</span><br><span class="line">但创建文件系统（格式化）慢！</span><br><span class="line">修复慢！</span><br><span class="line">文件系统存储容量有限！</span><br></pre></td></tr></table></figure>
+
+<h3 id="XFS"><a href="#XFS" class="headerlink" title="XFS"></a>XFS</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">XFS 同样是一种日志式文件系統：</span><br><span class="line">高容量，支持大存储</span><br><span class="line">高性能，创建/修复文件系统快</span><br><span class="line">格式化快</span><br></pre></td></tr></table></figure>
+
+<h1 id="课堂笔记"><a href="#课堂笔记" class="headerlink" title="课堂笔记"></a>课堂笔记</h1><p>1、添加一块硬盘，并用lsblk 查看，确认硬盘已添加成功</p>
+<p>2、fdisk 分区<br>fdisk &#x2F;dev&#x2F;sdb<br>o 创建mbr分区表<br>n 创建新的分区<br>    1 选择是主分区还是扩展分区<br>    2 选择分区号<br>    3 选择开始位置<br>    4 选择结束位置<br>p 查看分区表<br>w 保存退出(谨慎)</p>
+<p>3、如果退出后查看lsblk 无法查看到分区，执行以下命令<br>partprobe &#x2F;dev&#x2F;sdb 刷新分区表</p>
+<p>4、格式化(初始化文件系统)<br>mkfs.xfs &#x2F;dev&#x2F;sdb1</p>
+<p>注意： 当重复使用磁盘是需要用-f强制覆盖以前的系统</p>
+<p><img src="https://guangxipengyuyan.oss-cn-guangzhou.aliyuncs.com/image-20240228141708285.png" alt="image-20240228141708285"></p>
+<p>5、挂载分区<br>mkdir &#x2F;data # 挂载点<br>mount &#x2F;dev&#x2F;sdb1 &#x2F;data </p>
+<p>6、检查挂载是否成功<br>df -Th</p>
+<p>df 和 lsblk的区别</p>
+<p>都用来查看磁盘信息的<br>1、df 只能看到挂载了的磁盘和分区，可以看到使用情况<br>2、lsblk 可以看到所有硬盘和分区，但是无法看到使用情况</p>
+<p>查看文件或者目录的大小</p>
+<p>du  -sh</p>
+<p>硬盘<br>需要分区<br>fdisk 硬盘<br>o 初始化mbr分区方式  g 初始化gpt分区方式<br>n 添加分区<br>o p 主分区 e 扩展分区(e不能直接使用 l逻辑分区) g 1-128<br>开始位置 默认<br>结束位置 +容量<br>w 保存</p>
+<p>如果lsblk不显示分区，那么需要partprobe 磁盘路径 刷新分区表</p>
+<p>格式化 mkfs.xfs  或者  mkfs.ext4<br>挂载 开机挂载</p>
+<p>不需要分区<br>格式化 mkfs.xfs  或者  mkfs.ext4<br>挂载 开机挂载</p>
+<p>dd  if&#x3D;&#x2F;dev&#x2F;zero   of&#x3D;&#x2F;swap  bs&#x3D;4M   count&#x3D;500</p>
+<p><img src="https://guangxipengyuyan.oss-cn-guangzhou.aliyuncs.com/image-20240229144556186.png" alt="image-20240229144556186"></p>
+<h1 id="复盘笔记"><a href="#复盘笔记" class="headerlink" title="复盘笔记"></a>复盘笔记</h1><p>查看磁盘信息的指令<br>lsblk<br>1、查看所有磁盘信息<br>df -Th<br>2、只能看到已经挂载的磁盘，但是可以看到具体的使用情况</p>
+<p>1、在虚拟机中添加硬盘<br>2、给硬盘分区(MBR(&lt;2T)、GPT)<br>MBR 4个主分区|3个主分区和1个扩展分区中创建n个逻辑分区<br>GPT 128个主分区<br>3、fdisk 磁盘路径<br>o msdos g gpt 创建分区方式<br>n 创建分区<br>o &#x3D;&gt; p 主分区 e 扩展分区(创建扩展分区后，无法直接使用，需要再次创建逻辑分区)<br>g &#x3D;&gt; 128个主分区自己选<br>初始位置<br>结束位置 +2G<br>p 打印分区表<br>w 保存退出<br>4、如果保存后无法查看到分区信息<br>partprobe 磁盘路径 # 手动刷新分区表<br>5、格式化<br>mkfs.ext4<br>mkfs.xfs<br>6、挂载<br>临时挂载<br>mount 磁盘路径 挂载路径<br>永久挂载<br>&#x2F;etc&#x2F;rc.local  # 记得加执行权限<br>&#x2F;etc&#x2F;fstab # 专门挂载磁盘的文件</p>
+<p>如果有必要分区，则执行上面每一步<br>如果无需分区，则执行 156 步骤即可</p>
+<p>网络文件系统 nfs ceph<br>本地文件系统 ntfs fat32 xfs ext家族(234)</p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2023/06/19/存储管理一/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">一 .存储管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E8%AF%86%E7%A1%AC%E7%9B%98"><span class="toc-number">1.1.</span> <span class="toc-text">初识硬盘</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E%E7%A3%81%E7%9B%98%E5%88%86%E5%8C%BA%E6%96%B9%E5%BC%8F%E5%8C%BA%E5%88%86"><span class="toc-number">1.2.</span> <span class="toc-text">从磁盘分区方式区分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%88%86%E5%8C%BA"><span class="toc-number">1.3.</span> <span class="toc-text">基本分区</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#fdisk"><span class="toc-number">1.3.1.</span> <span class="toc-text">fdisk</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gdisk"><span class="toc-number">1.3.2.</span> <span class="toc-text">gdisk</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E6%9C%BA%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BD"><span class="toc-number">1.4.</span> <span class="toc-text">开机自动挂载</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#etc-fstab"><span class="toc-number">1.4.1.</span> <span class="toc-text">&#x2F;etc&#x2F;fstab</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#etc-rc-d-rc-local"><span class="toc-number">1.4.2.</span> <span class="toc-text">&#x2F;etc&#x2F;rc.d&#x2F;rc.local</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-number">2.</span> <span class="toc-text">二、文件系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E7%B1%BB"><span class="toc-number">2.1.</span> <span class="toc-text">分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-number">2.2.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EXT"><span class="toc-number">2.3.</span> <span class="toc-text">EXT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XFS"><span class="toc-number">2.4.</span> <span class="toc-text">XFS</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0"><span class="toc-number"></span> <span class="toc-text">课堂笔记</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%8D%E7%9B%98%E7%AC%94%E8%AE%B0"><span class="toc-number"></span> <span class="toc-text">复盘笔记</span></a>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2023/06/20/走进网络世界/">走进网络世界</a>
+            </p>
+           
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2023/06/19/存储管理一/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系小曹宅，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">2262690094</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"不找了","artist":"隔壁老樊","url":"music/隔壁老樊 - 不找了.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"于是天气刚好","artist":"泪桥","url":"music/于是天气刚好 - 泪桥.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"安和桥","artist":"林芬宇","url":"music/林芬宇 - 安和桥.mp3","cover":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0SWQx6YrNA8lElaG4OOKLkNkNzLO1PflKg&usqp=CAU"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
