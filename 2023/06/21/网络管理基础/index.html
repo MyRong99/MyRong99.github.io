@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——Linux网卡 | Mr.Long</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——Linux网卡`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/21/TCP协议/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/11/磁盘阵列RAID/"},{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a4f0f8a8bbda6dc810ff3fad4a671f96a4f0f8a8bbda6dc810ff3fad4a671f96","path":"2023/06/28/存储管理--2/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/20/走进网络世界/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/21/网络管理基础/"},{"title":"PXE+Kickstart无人值守安PXE+Kickstart无人值守安装操作系","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Mr.Long</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">唱跳rap篮球</span>
+          <span class="main-left--tag">宅但不肥</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/MyRong99/MyRong99.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>2</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>2</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>2 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>8 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>392天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">Linux网卡</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">-网络基础</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            <a class="tag-link" href="/tags/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" rel="tag">-网络基础</a>
+          </div>
+          
+          <p class="article-info--date">日期：2023-06-21 12:19:22</p>
+        </div>
+        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h1 id="Linux网络管理"><a href="#Linux网络管理" class="headerlink" title="Linux网络管理"></a>Linux网络管理</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">天行健，君子以自强不息。地势坤，君子以厚德载物。</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-网络管理概念"><a href="#1-网络管理概念" class="headerlink" title="1.网络管理概念"></a>1.网络管理概念</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">网络接口和名称 ：网卡</span><br><span class="line">ip地址</span><br><span class="line">网关</span><br><span class="line">主机名称</span><br><span class="line">路由</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-管理工具"><a href="#2-管理工具" class="headerlink" title="2.管理工具"></a>2.管理工具</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">net-tools:     #安装包</span><br><span class="line">ifconfig  netstat  准备要废掉了。</span><br><span class="line"></span><br><span class="line">iproute:    #安装包</span><br><span class="line">ip  #提供ip命令</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-认识网卡"><a href="#3-认识网卡" class="headerlink" title="3.认识网卡"></a>3.认识网卡</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">lo网卡 :本地回环网卡，本机上的服务自己访问自己时用的</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">网卡里面信息</span></span><br><span class="line">ip 地址</span><br><span class="line">子网掩码</span><br><span class="line">广播地址</span><br><span class="line">mac地址</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看网卡</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@linux-server ~]# ip a   #方式一</span><br><span class="line">[root@linux-server ~]# ifconfig  #方式二</span><br></pre></td></tr></table></figure>
+
+<p><strong>临时设置ip</strong></p>
+<p><strong>方式如下</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@linux-server ~]# ip a a 192.168.246.161/24 dev ens33</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/1442b23b96439a72d9552835cf528725e04d5194.jpg#id=EPzNP&originHeight=335&originWidth=976&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><strong>删除设置的临时ip</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@linux-server ~]# ip a d 192.168.246.161/24 dev ens33</span><br><span class="line"></span><br><span class="line">add------添加</span><br><span class="line">del------删除</span><br></pre></td></tr></table></figure>
+
+<p><strong>启动关闭网卡</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">启动：</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">ifconfig 网卡名  up  <span class="comment">#方式一</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">ifup  网卡名  <span class="comment">#方式二</span></span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">关闭网卡            </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ifconfig 网卡名 down  <span class="comment">#方式一</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ifdown 网卡名   <span class="comment">#方式二</span></span></span><br></pre></td></tr></table></figure>
+
+<h5 id="4-网关"><a href="#4-网关" class="headerlink" title="4.网关"></a>4.网关</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">网关：网络的关卡：是为了访问其他网络。</span><br></pre></td></tr></table></figure>
+
+<h5 id="静态路由和动态路由"><a href="#静态路由和动态路由" class="headerlink" title="静态路由和动态路由"></a>静态路由和动态路由</h5><p>路由器在转发数据时，需要先在路由表中查找相应的路由，有三种途径</p>
+<blockquote>
+<p>（1）直连路由：路由器自动添加和自己直连的路由</p>
+<p>（2）静态路由：管理员手动添加的路由</p>
+<p>（3）动态路由：由路由协议动态建立的路由</p>
+</blockquote>
+<p>静态路由</p>
+<blockquote>
+<p>缺点<br>不能动态的反映网络拓扑，当网络发生变化的时候，管理员必须手动的改变路由</p>
+<p>优点<br>不会占用路由器太多的cpu和RAM资源，也不会占用太多带宽。</p>
+</blockquote>
+<p>默认路由</p>
+<blockquote>
+<p>(1) 实际上默认路由是一种特殊的静态路由，指的是当 路由表中与包的目的地址之间没有匹配的表项时，路由器能够做出选择。如果没有默认路由，那么目的地址在路由表中没有匹配表项的包将被丢弃。</p>
+<p>(2)默认路由（Default route），如果IP数据包中的目的地址找不到存在的其它路由时，路由器会默认的选择的路由。</p>
+<p>默认路由为0.0.0.0</p>
+</blockquote>
+<p>动态路由</p>
+<blockquote>
+<p>动态路由是与静态路由相对的一个概念，指路由器能够根据路由器之间的交换的特定路由信息自动地建立自己的路由表，并且能够根据链路和节点的变化适时地进行自动调整。当网络中节点或节点间的链路发生故障，或存在其它可用路由时，动态路由可以自行选择最佳的可用路由并继续转发报文。</p>
+</blockquote>
+<h6 id="Linux路由操作"><a href="#Linux路由操作" class="headerlink" title="Linux路由操作"></a>Linux路由操作</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">查看路由表：</span><br><span class="line">[root@linux-server ~]# ip r #r:route。查看路由和网关</span><br><span class="line">default via 192.168.246.2 dev ens33 proto static metric 100 </span><br><span class="line">192.168.246.0/24 dev ens33 proto kernel scope link src 192.168.246.160 metric 100</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">via:通过的意思，相当于下一跳</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>添加静态路由删除静态路由</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@linux-server ~]# ip r add 192.168.223.0/24 via 192.168.246.2  #添加路由</span><br><span class="line">[root@linux-server ~]# ip r del 192.168.223.0/24 #删除路由</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">via  表示通过的意思，下一跳</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="5-设置永久静态ip"><a href="#5-设置永久静态ip" class="headerlink" title="5.设置永久静态ip"></a>5.设置永久静态ip</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@linux-server ~]# cd /etc/sysconfig/network-scripts/  #网卡配置文件存放路径</span><br><span class="line">[root@linux-server network-scripts]# cp ifcfg-ens33 ifcfg-ens33.bak #将源文件备份</span><br><span class="line">[root@linux-server network-scripts]# vi ifcfg-ens33 #编辑网卡配置文件</span><br><span class="line">TYPE=&quot;Ethernet&quot;         #网络类型：以太网类型</span><br><span class="line">PROXY_METHOD=&quot;none&quot;   </span><br><span class="line">BROWSER_ONLY=&quot;no&quot;</span><br><span class="line">BOOTPROTO=&quot;static&quot;    #默认值none或static 这两种属于静态获取ip地址，dhcp自动获取ip</span><br><span class="line">IPADDR=192.168.246.134 #设置静态ip地址</span><br><span class="line">GATEWAY=192.168.246.2 #设置网关，nat模式网关是2，桥接为1.</span><br><span class="line">NETMASK=255.255.255.0  #设置掩码或者</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">PREFIX=24</span></span><br><span class="line">DEFROUTE=&quot;yes&quot;  #是否设置默认路由，yes表示该配置</span><br><span class="line">NAME=&quot;ens33&quot;    #网卡名称，可以不存在</span><br><span class="line">DEVICE=&quot;ens33&quot;   #设备名称</span><br><span class="line">ONBOOT=&quot;yes&quot;    #开机启动</span><br><span class="line">DNS1=114.114.114.114 #dns全国通用地址，dns最多可以设置三个</span><br><span class="line">DNS2=8.8.8.8 #谷歌的dns</span><br><span class="line">DNS3=202.106.0.20 #北京的DNS。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">重启网络---修改完配置文件一定要重启网络</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">systemctl restart network   <span class="comment">#rhel7</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">/etc/init.d/network restart  红帽5、6里面的。</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/e321c475e9c763069d8012c44450fb04aea54f29.jpg#id=yuVqN&originHeight=361&originWidth=978&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><strong>编辑DNS配置文件设置DNS</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@linux-server ~]# vi /etc/resolv.conf   #添加如下内容</span><br><span class="line">nameserver 114.114.114.114    #指定dns地址</span><br></pre></td></tr></table></figure>
+
+<p><strong>设置动态ip</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@linux-server ~]# vi /etc/sysconfig/network-scripts/ifcfg-ens33 </span><br><span class="line">TYPE=&quot;Ethernet&quot;</span><br><span class="line">PROXY_METHOD=&quot;none&quot;</span><br><span class="line">BROWSER_ONLY=&quot;no&quot;</span><br><span class="line">BOOTPROTO=&quot;dhcp&quot;   #只需要将这里修改为dhcp。</span><br><span class="line">DEFROUTE=&quot;yes&quot;</span><br><span class="line">NAME=&quot;ens33&quot;</span><br><span class="line">DEVICE=&quot;ens33&quot;</span><br><span class="line">ONBOOT=&quot;yes&quot;</span><br><span class="line"></span><br><span class="line">重启网络</span><br><span class="line">[root@linux-server ~]# systemctl restart network</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/5ca9ad9125511d432c668ff5c8d0c77714bdd699.jpg#id=jKGnv&originHeight=329&originWidth=977&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h5 id="6-查看mac地址"><a href="#6-查看mac地址" class="headerlink" title="6.查看mac地址"></a>6.查看mac地址</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@soso666 ~]# ifconfig</span><br><span class="line">arp协议：地址解析协议。</span><br><span class="line"></span><br><span class="line">查看某个IP的MAC地址</span><br><span class="line">[root@soso666 ~]# arping -I ens33 192.168.246.135  #要查看的ip地址</span><br><span class="line">-I：指定使用那快网卡ping</span><br></pre></td></tr></table></figure>
+
+<h5 id="7-开启路由转发"><a href="#7-开启路由转发" class="headerlink" title="7.开启路由转发"></a>7.开启路由转发</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">临时设置</span><br><span class="line">[root@linux-server ~]# echo 1 &gt; /proc/sys/net/ipv4/ip_forward #默认是零，没有开路由。1表示开启</span><br><span class="line">永久设置 </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">vim  /etc/sysctl.conf---添加如下内容</span></span><br><span class="line">net.ipv4.ip_forward = 1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">sysctl  -p    <span class="comment">#立即生效</span></span></span><br></pre></td></tr></table></figure>
+
+<h5 id="8-修改主机名"><a href="#8-修改主机名" class="headerlink" title="8.修改主机名"></a>8.修改主机名</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">方式一</span><br><span class="line">[root@linux-server ~]# hostname #查看主机名</span><br><span class="line">[root@linux-server ~]# hostnamectl set-hostname linux-server  #主机名</span><br><span class="line">方式二</span><br><span class="line">[root@linux-server ~]# vi /etc/hostname   ---编辑配置文件</span><br><span class="line">soso666</span><br><span class="line">[root@linux-server ~]# reboot </span><br><span class="line">[root@soso666 ~]#</span><br></pre></td></tr></table></figure>
+
+<h5 id="9-配置本地解析"><a href="#9-配置本地解析" class="headerlink" title="9.配置本地解析"></a>9.配置本地解析</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">写法：ip   主机名</span><br><span class="line">[root@soso666 ~]# vi /etc/hosts    ---添加如下内容</span><br><span class="line">127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</span><br><span class="line">::1         localhost localhost.localdomain localhost6 localhost6.localdomain6</span><br><span class="line">192.168.246.130 soso666 soso   #添加解析</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/327f88fc38d1261b8cbeed91016470b3ca57711e.jpg#id=wJl3W&originHeight=349&originWidth=809&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><strong>10.修改网卡</strong></p>
+<p>将CentOS7修改网卡为eth0</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">1.修改网卡配置文件</span><br><span class="line">[root@linux-server ~]# cd /etc/sysconfig/network-scripts/</span><br><span class="line">[root@linux-server network-scripts]# mv ifcfg-ens33 ifcfg-eth0  #改名</span><br><span class="line">[root@linux-server network-scripts]# vim ifcfg-eth0  #只需要修改配置文件中的名称</span><br><span class="line">NAME=&quot;eth0&quot;</span><br><span class="line">DEVICE=&quot;eth0&quot;</span><br><span class="line">2.GRUB添加kernel参数</span><br><span class="line">[root@linux-server ~]# vim /etc/sysconfig/grub   #在文件中最后一行添加</span><br><span class="line">GRUB_CMDLINE_LINUX=&quot;...... net.ifnames=0&quot; #告诉系统关闭原来命名功能</span><br><span class="line">3.执行命令生效---#加载配置文件</span><br><span class="line">[root@linux-server ~]# grub2-mkconfig -o /boot/grub2/grub.cfg</span><br><span class="line">4.重启机器</span><br><span class="line"><span class="meta prompt_"> # </span><span class="language-bash">reboot</span></span><br><span class="line">[root@linux-server ~]# cd /etc/sysconfig/network-scripts/</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/0ea9592595c35bc49c1f98d8cbddbf6bdf4e1adf.jpg#id=dqbpX&originHeight=76&originWidth=461&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><img src="https://img.beyourself.org.cn/71b0ca8962d8ed7c43ecc9a4b97bedb9757f1312.jpg#id=qnPFB&originHeight=288&originWidth=963&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h1 id="tcpdump抓包"><a href="#tcpdump抓包" class="headerlink" title="tcpdump抓包"></a>tcpdump抓包</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">大鹏一日同风起，扶摇直上九万里。</span><br></pre></td></tr></table></figure>
+
+<p><code>tcpdump</code>是一款强大的网络抓包工具，运行在Linux平台上。熟悉<code>tcpdump</code>的使用能够帮助我们分析、调试网络数据。</p>
+<p>在实际工作中，需要以root权限去执行该命令。</p>
+<p><strong>一、常用命令选项</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">-i #指定监听网络接口</span><br><span class="line">-nn #进行ip和端口名称的转换，</span><br><span class="line">-n  #一个n不要ip解析到域名，将协议转换为端口</span><br><span class="line">-w #将捕获到的信息保存到文件中，且不分析和打印在屏幕</span><br><span class="line">-r #从指定的文件中读取数据，一般是-w保存的文件</span><br><span class="line">-v #输出稍微详细的信息</span><br><span class="line"><span class="meta prompt_">-vv#</span><span class="language-bash">输出详细的报文信息</span></span><br></pre></td></tr></table></figure>
+
+<p>二、安装tcpdump工具</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@tcpdump-server ~]# yum install -y tcpdump</span><br></pre></td></tr></table></figure>
+
+<p><strong>实验环境</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.准备两台机器</span><br><span class="line">192.168.80.128 ----tcpdump-server</span><br><span class="line">192.168.80.129 ----test-server</span><br><span class="line">2.两台机器#均关闭防火墙和selinux</span><br></pre></td></tr></table></figure>
+
+<p><strong>六个标记</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">SYN(synchronous建立联机) </span><br><span class="line">ACK(acknowledgement 确认) 用.表示</span><br><span class="line">PSH(push传送)</span><br><span class="line">FIN(finish结束) </span><br><span class="line">RST(reset重置) </span><br><span class="line">URG(urgent紧急)</span><br><span class="line">==========</span><br><span class="line">Sequence number(顺序号码)</span><br></pre></td></tr></table></figure>
+
+<p><strong>监听网卡端口为80的应用发出和接收的所有http协议包</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@tcpdump-server ~]# tcpdump -i ens33  port 80 -vv -nn</span><br><span class="line">[root@test-server ~]# curl http://192.168.80.128   #测试</span><br></pre></td></tr></table></figure>
+
+<p><strong>监视ens33网卡上源地址192.168.80.129的所有网络包</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@tcpdump-server ~]# tcpdump -i ens33 src 192.168.80.129</span><br><span class="line">[root@test-server ~]# ssh 192.168.80.128 #测试</span><br></pre></td></tr></table></figure>
+
+<p><strong>监视ens33网卡上目的地址是192.168.80.129的所有网络包</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@tcpdump-server ~]# tcpdump -i ens33 dst 192.168.80.129</span><br></pre></td></tr></table></figure>
+
+<p><strong>两台机器同时操作</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@tcpdump-server ~]# ip a  #查看自己网卡</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">抓来自192.168.80.129这台机器的imcp协议的包</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@test-server ~]# ping -c 1 192.168.80.128 #ping tcpdump的机器一次</span><br><span class="line">PING 192.168.80.128 (192.168.80.128) 56(84) bytes of data.</span><br><span class="line">64 bytes from 192.168.80.128: icmp_seq=1 ttl=64 time=0.751 ms</span><br><span class="line"></span><br><span class="line">--- 192.168.80.128 ping statistics ---</span><br><span class="line">1 packets transmitted, 1 received, 0% packet loss, time 0ms</span><br><span class="line">rtt min/avg/max/mdev = 0.751/0.751/0.751/0.000 ms</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@tcpdump-server ~]# tcpdump -i ens33 icmp -vv -nn</span><br><span class="line">tcpdump: listening on ens33, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">00:55:58.756161 IP (tos 0x0, ttl 64, id 33221, offset 0, flags [DF], proto ICMP (1), length 84)</span><br><span class="line">    192.168.80.129 &gt; 192.168.80.128: ICMP echo request, id 1139, seq 1, length 64</span><br><span class="line">00:55:58.756254 IP (tos 0x0, ttl 64, id 11681, offset 0, flags [none], proto ICMP (1), length 84)</span><br><span class="line">    192.168.80.128 &gt; 192.168.80.129: ICMP echo reply, id 1139, seq 1, length 64</span><br><span class="line"></span><br><span class="line">echo request :请求包</span><br><span class="line">echo reply：回复包</span><br></pre></td></tr></table></figure>
+
+<p><strong>实验二抓一个tcp的包–全部在文本模式下操作</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@tcpdump-server ~]# yum install -y epel*</span><br><span class="line">[root@tcpdump-server ~]# yum install -y nginx</span><br><span class="line">[root@tcpdump-server ~]# systemctl start nginx</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@test-server ~]# curl -I http://192.168.80.128/  #测试访问</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@tcpdump-server ~]# tcpdump -i ens33 tcp -vv -nn -w tcp.txt  #抓包tcp--在文本模式下</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">测试</span></span><br><span class="line">[root@test-server ~]# curl -I http://192.168.80.128/  --访问</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@tcpdump-server ~]# ls</span><br><span class="line">anaconda-ks.cfg  tcp.txt   ---抓包生成的文件，不能用vim查看</span><br><span class="line">[root@tcpdump-server ~]# tcpdump -r tcp.txt  #读生成的文件</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@tcpdump-server ~]# tcpdump -i ens33 tcp -vv -nn</span><br><span class="line">[root@test-server ~]# curl -I http://192.168.80.128/  --访问，文本模式下</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/422b25e33d3d4166a847fafd3baaf282e9862f50.jpg#id=Z0mwx&originHeight=791&originWidth=1101&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p>按shift键加pu键可以上翻。pd键可以下翻</p>
+<p>&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;导入wireshark</p>
+<p>1.需要重新抓包一次并保存。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@tcpdump-server ~]# rm -rf tcp.txt #将原来的删除</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/4ca9bac499776668d1e71c277fd41adcca2de7ff.jpg#id=HeQ04&originHeight=54&originWidth=681&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@linux-server ~]# curl -I http://192.168.80.120</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2.用客户端工具连接tcpdump-server的机器将产生的文件导入wireshark中</span><br><span class="line">[root@tcpdump-server ~]# ls</span><br><span class="line">tcp.txt</span><br><span class="line">[root@tcpdump-server ~]# sz tcp.txt #下载到桌面</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/db908183abb24f82ae5e39575bec20f76e97a42a.jpg#id=H5IST&originHeight=552&originWidth=940&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><img src="https://img.beyourself.org.cn/36d8b32492ab4397598591e126f90f9688671ac5.jpg#id=OsYM9&originHeight=1023&originWidth=1667&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2023/06/21/网络管理基础/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">Linux网络管理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86%E6%A6%82%E5%BF%B5"><span class="toc-number">1.0.0.0.1.</span> <span class="toc-text">1.网络管理概念</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7"><span class="toc-number">1.0.0.0.2.</span> <span class="toc-text">2.管理工具</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-%E8%AE%A4%E8%AF%86%E7%BD%91%E5%8D%A1"><span class="toc-number">1.0.0.0.3.</span> <span class="toc-text">3.认识网卡</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-%E7%BD%91%E5%85%B3"><span class="toc-number">1.0.0.0.4.</span> <span class="toc-text">4.网关</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E8%B7%AF%E7%94%B1%E5%92%8C%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1"><span class="toc-number">1.0.0.0.5.</span> <span class="toc-text">静态路由和动态路由</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#Linux%E8%B7%AF%E7%94%B1%E6%93%8D%E4%BD%9C"><span class="toc-number">1.0.0.0.5.1.</span> <span class="toc-text">Linux路由操作</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-%E8%AE%BE%E7%BD%AE%E6%B0%B8%E4%B9%85%E9%9D%99%E6%80%81ip"><span class="toc-number">1.0.0.0.6.</span> <span class="toc-text">5.设置永久静态ip</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-%E6%9F%A5%E7%9C%8Bmac%E5%9C%B0%E5%9D%80"><span class="toc-number">1.0.0.0.7.</span> <span class="toc-text">6.查看mac地址</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7-%E5%BC%80%E5%90%AF%E8%B7%AF%E7%94%B1%E8%BD%AC%E5%8F%91"><span class="toc-number">1.0.0.0.8.</span> <span class="toc-text">7.开启路由转发</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#8-%E4%BF%AE%E6%94%B9%E4%B8%BB%E6%9C%BA%E5%90%8D"><span class="toc-number">1.0.0.0.9.</span> <span class="toc-text">8.修改主机名</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#9-%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0%E8%A7%A3%E6%9E%90"><span class="toc-number">1.0.0.0.10.</span> <span class="toc-text">9.配置本地解析</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#tcpdump%E6%8A%93%E5%8C%85"><span class="toc-number">2.</span> <span class="toc-text">tcpdump抓包</span></a></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2023/06/21/自建yum源笔记/">自建YUM源</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2023/06/20/走进网络世界/">走进网络世界</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2023/06/21/网络管理基础/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系小曹宅，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">2262690094</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"不找了","artist":"隔壁老樊","url":"music/隔壁老樊 - 不找了.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"于是天气刚好","artist":"泪桥","url":"music/于是天气刚好 - 泪桥.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"安和桥","artist":"林芬宇","url":"music/林芬宇 - 安和桥.mp3","cover":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0SWQx6YrNA8lElaG4OOKLkNkNzLO1PflKg&usqp=CAU"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
