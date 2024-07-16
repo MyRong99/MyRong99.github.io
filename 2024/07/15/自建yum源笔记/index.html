@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>我的技术与生活——about | Hexo</title>
+  <title>我的技术与生活——小站首页 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/css/public.css" />
@@ -16,7 +16,7 @@
 
   <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
   <script>
-    document.title = `我的技术与生活——about`
+    document.title = `我的技术与生活——小站首页`
   </script>
 <meta name="generator" content="Hexo 7.3.0"></head>
 
@@ -347,39 +347,135 @@
       <div id="main-container" class="main-container">
 
 
-  <link rel="stylesheet" href="/css/partial/about.css" />
+  <link rel="stylesheet" href="/css/partial/article.css" />
 
-<div class="about">
-  <div class="about-top">
-    <div class="about-title">
-      <h2>关于我</h2>
-    </div>
-    <div class="about-info">
-      <img class="about-avatar" src="/imgs/avatar.jpg" alt="">
-      <div class="about-detail">
-        
-          <p>姓名：曹俊龙</p>
-        
-          <p>年龄：24</p>
-        
-          <p>性别：♂</p>
-        
-          <p>家乡：广西北海某小镇</p>
-        
-          <p>现居住地：广东广州</p>
-        
-          <p>职业：运维</p>
-        
-          <p>喜欢：打游戏，游泳，篮球</p>
-        
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title"></h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            
+          </div>
+          
+          <p class="article-info--date">日期：2024-07-15 19:18:26</p>
+        </div>
+        <img src="/imgs/default-cover.webp" alt="" class="article-cover">
       </div>
     </div>
-  </div>
-  <div class="about-content">
+    <article class="article-content markdown-body">
+      <h1 id="自建yum源"><a href="#自建yum源" class="headerlink" title="自建yum源"></a>自建yum源</h1><h2 id="本地源"><a href="#本地源" class="headerlink" title="本地源"></a>本地源</h2><h3 id="一、使用本地的镜像文件来制作yum源-做完记得删除"><a href="#一、使用本地的镜像文件来制作yum源-做完记得删除" class="headerlink" title="一、使用本地的镜像文件来制作yum源(做完记得删除)"></a>一、使用本地的镜像文件来制作yum源(做完记得删除)</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">1、挂载dvd镜像或将镜像拷贝到机器中</span><br><span class="line"><span class="built_in">mkdir</span> /yum-repo</span><br><span class="line">mount /dev/cdrom /yum-repo <span class="comment"># 如果我们在设置中挂载了镜像使用这个方法</span></span><br><span class="line">mount 镜像的路径  /yum-repo <span class="comment"># 如果我们拷贝镜像到了系统中，可以用这种方法</span></span><br><span class="line"></span><br><span class="line">2、准备本地yum源文件</span><br><span class="line">vim /etc/yum.repos.d/xa2401.repo <span class="comment"># 源文件必须以.repo结尾</span></span><br><span class="line"><span class="comment"># 源标识</span></span><br><span class="line">[xa2401]</span><br><span class="line"><span class="comment"># 源名字</span></span><br><span class="line">name=xa2401-base</span><br><span class="line"><span class="comment"># 源地址，本地用file://</span></span><br><span class="line">baseurl=file:///yum-repo</span><br><span class="line"><span class="comment"># 是否检查</span></span><br><span class="line">gpgcheck=0</span><br><span class="line"><span class="comment"># 是否开启</span></span><br><span class="line">enabled=1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="二、自己准备的包做成yum源"><a href="#二、自己准备的包做成yum源" class="headerlink" title="二、自己准备的包做成yum源"></a>二、自己准备的包做成yum源</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">1、你可以在网上下载包，或在其他机器上缓存包并拷贝到一个目录中。可以看到我的这个目录下全都是rpm包</span><br><span class="line">[root@localhost ~]# <span class="built_in">ls</span> /package/ | <span class="built_in">head</span> -2</span><br><span class="line">adcli-0.8.1-16.el7_9.1.x86_64.rpm</span><br><span class="line">at-3.1.13-25.el7_9.x86_64.rpm</span><br><span class="line"></span><br><span class="line">2、安装制作yum源的工具</span><br><span class="line">yum install -y createrepo</span><br><span class="line"></span><br><span class="line">3、制作源</span><br><span class="line">createrepo /package</span><br><span class="line"></span><br><span class="line">4、创建源文件</span><br><span class="line"><span class="comment"># 源标识</span></span><br><span class="line">[xa2401]</span><br><span class="line"><span class="comment"># 源名字</span></span><br><span class="line">name=xa2401-base</span><br><span class="line"><span class="comment"># 源地址，本地用file://</span></span><br><span class="line">baseurl=file:///package</span><br><span class="line"><span class="comment"># 是否检查</span></span><br><span class="line">gpgcheck=0</span><br><span class="line"><span class="comment"># 是否开启</span></span><br><span class="line">enabled=1</span><br></pre></td></tr></table></figure>
+
+<h2 id="远程源"><a href="#远程源" class="headerlink" title="远程源"></a>远程源</h2><h3 id="一、使用ftp制作远程源"><a href="#一、使用ftp制作远程源" class="headerlink" title="一、使用ftp制作远程源"></a>一、使用ftp制作远程源</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">1、关闭防火墙和selinux</span><br><span class="line">systemctl stop firewalld</span><br><span class="line">setenforce 0</span><br><span class="line"></span><br><span class="line">2、安装vsftpd</span><br><span class="line">yum install -y vsftpd</span><br><span class="line"></span><br><span class="line">3、创建目录并拷贝包，然后授权</span><br><span class="line">mkdir /var/ftp/xa2401-ftp</span><br><span class="line">ls /yum-repo/Packages/* | head -100 | xargs -i cp &#123;&#125; /var/ftp/xa2401-ftp/  # 拷贝一些包过来</span><br><span class="line">createrepo /var/ftp/xa2401-ftp/ # 创建为yum源</span><br><span class="line">chown ftp.ftp -R /var/ftp/xa2401-ftp</span><br><span class="line"></span><br><span class="line">4、启动并访问测试</span><br><span class="line">systemctl start vsftpd</span><br><span class="line">打开此电脑，地址栏访问 ftp://ip地址，如果可以看到，表示配置正确</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">5、客户端配置源文件</span><br><span class="line">vim /etc/yum.repos.d/xa2401-ftp.repo # 源文件必须以.repo结尾</span><br><span class="line"># 源标识</span><br><span class="line">[xa2401-ftp]</span><br><span class="line"># 源名字</span><br><span class="line">name=xa2401-ftp</span><br><span class="line"># 源地址，远程用ftp://</span><br><span class="line">baseurl=ftp://192.168.75.248</span><br><span class="line"># 是否检查</span><br><span class="line">gpgcheck=0</span><br><span class="line"># 是否开启</span><br><span class="line">enabled=1</span><br></pre></td></tr></table></figure>
+
+<h2 id="如何获取阿里云的源"><a href="#如何获取阿里云的源" class="headerlink" title="如何获取阿里云的源"></a>如何获取阿里云的源</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# yum install -y yum-utils</span><br><span class="line">[root@localhost ~]# yum repolist</span><br><span class="line">已加载插件：fastestmirror</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line"> * base: mirrors.aliyun.com</span><br><span class="line"> * extras: mirrors.aliyun.com</span><br><span class="line"> * updates: mirrors.aliyun.com</span><br><span class="line">源标识                   源名称                                                  状态</span><br><span class="line">base/7/x86_64            CentOS-7 - Base - mirrors.aliyun.com                    10,072</span><br><span class="line">epel/x86_64              Extra Packages for Enterprise Linux 7 - x86_64          13,785</span><br><span class="line">extras/7/x86_64          CentOS-7 - Extras - mirrors.aliyun.com                     519</span><br><span class="line">updates/7/x86_64         CentOS-7 - Updates - mirrors.aliyun.com                  5,766</span><br><span class="line">xa2401-ftp               xa2401-ftp                                                 100</span><br><span class="line">repolist: 30,242</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# reposync -r base -r epel -r extras -r updates</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </article>
     
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/07/15/自建yum源笔记/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%87%AA%E5%BB%BAyum%E6%BA%90"><span class="toc-number">1.</span> <span class="toc-text">自建yum源</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E6%BA%90"><span class="toc-number">1.1.</span> <span class="toc-text">本地源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0%E7%9A%84%E9%95%9C%E5%83%8F%E6%96%87%E4%BB%B6%E6%9D%A5%E5%88%B6%E4%BD%9Cyum%E6%BA%90-%E5%81%9A%E5%AE%8C%E8%AE%B0%E5%BE%97%E5%88%A0%E9%99%A4"><span class="toc-number">1.1.1.</span> <span class="toc-text">一、使用本地的镜像文件来制作yum源(做完记得删除)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E8%87%AA%E5%B7%B1%E5%87%86%E5%A4%87%E7%9A%84%E5%8C%85%E5%81%9A%E6%88%90yum%E6%BA%90"><span class="toc-number">1.1.2.</span> <span class="toc-text">二、自己准备的包做成yum源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E6%BA%90"><span class="toc-number">1.2.</span> <span class="toc-text">远程源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BD%BF%E7%94%A8ftp%E5%88%B6%E4%BD%9C%E8%BF%9C%E7%A8%8B%E6%BA%90"><span class="toc-number">1.2.1.</span> <span class="toc-text">一、使用ftp制作远程源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96%E9%98%BF%E9%87%8C%E4%BA%91%E7%9A%84%E6%BA%90"><span class="toc-number">1.3.</span> <span class="toc-text">如何获取阿里云的源</span></a></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/07/15/hello-world/">Hello World</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2024/06/22/走进网络世界/"></a>
+            </p>
+          
+        </div>
+      
+    </div>
   </div>
 </div>
 
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/07/15/自建yum源笔记/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
 
 </div>
       <div class="main-right-wrapper"><div class="main-right">

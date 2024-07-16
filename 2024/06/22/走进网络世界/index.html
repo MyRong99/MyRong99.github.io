@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——小站首页 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——小站首页`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"Hello World","path":"2024/07/15/hello-world/"},{"title":"","path":"2024/07/15/自建yum源笔记/"},{"title":"","path":"2024/06/22/走进网络世界/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Mr.Long</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">唱跳rap篮球</span>
+          <span class="main-left--tag">宅但不肥</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/MyRong99/MyRong99.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>0</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>0</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>2 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>3 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>392天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title"></h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            
+          </div>
+          
+          <p class="article-info--date">日期：2024-06-22 09:14:01</p>
+        </div>
+        <img src="/imgs/default-cover.webp" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h1 id="走进网络"><a href="#走进网络" class="headerlink" title="走进网络"></a>走进网络</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">长风破浪会有时，直挂云帆济沧海。</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-认识计算机"><a href="#1-认识计算机" class="headerlink" title="1.认识计算机"></a>1.认识计算机</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1.计算机网络是由计算机和通讯构成的，网络研究的是“通信”。 ------1946 世界上第一台计算机</span><br><span class="line">2.终端：只有输入和输出功能，没有计算和处理功能。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">3.数据：一串数字（二进制数），通常指文字、语音等。</span><br><span class="line">4.通信：将源所产生的数据传递到目的的过程。</span><br><span class="line">5.网络：由两台或者两台以上计算机组成，能够进行信息共享的环境。</span><br><span class="line">6.网络的构成：（计算机、手机、pad、服务器……）、传输介质（网线、光纤、数据线……）、网络设备（交换机、路由器、防火墙）</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-传输介质"><a href="#2-传输介质" class="headerlink" title="2.传输介质"></a>2.传输介质</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">传输介质包括电缆、双绞线和光纤等。</span><br><span class="line"></span><br><span class="line">1.双绞线：有效传输长度100M</span><br><span class="line">线序:</span><br><span class="line">标准568A：绿白绿，橙白蓝，蓝白橙，棕白棕。</span><br><span class="line">标准568B：橙白橙，绿白蓝，蓝白绿，棕白棕。</span><br><span class="line"></span><br><span class="line">2.光纤</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">3.单位换算</span><br><span class="line">带宽：带宽是以比特为单位的 而我们常看到的下载速度显示的几KB是以字节为单位</span><br><span class="line">1 Byte(B) = 8 bit</span><br><span class="line">1 Kilo Byte(KB) = 1024 B</span><br><span class="line">1 Mega Byte(MB) = 1024 KB</span><br><span class="line">1 Giga Byte (GB)= 1024 MB</span><br><span class="line">1 Tera Byte(TB)= 1024 GB</span><br><span class="line">1 Peta Byte(PB) = 1024 TB</span><br><span class="line">1 Exa Byte(EB) = 1024 PB</span><br><span class="line">1 Zetta Byte(ZB) = 1024 EB</span><br><span class="line">1 Yotta Byte(YB)= 1024 ZB</span><br><span class="line">1 Bronto Byte(BB) = 1024 YB</span><br><span class="line">1 Nona Byte(NB)=1024 BB</span><br><span class="line">1 Dogga Byte(DB)=1024 NB</span><br><span class="line">1 Corydon Byte(CB)=1024 DB</span><br><span class="line">1 Xero Byte (XB)=1024 CB</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-客户端与服务器端的概念"><a href="#3-客户端与服务器端的概念" class="headerlink" title="3.客户端与服务器端的概念"></a>3.客户端与服务器端的概念</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">客户端: 即表示可以介入互联网的个人终端设备, 比如个人PC机、个人Mac电脑, 操作系统为Windows.</span><br><span class="line">服务端: 即代表在互联网中提供给用户服务的设备, 比如淘宝网、京东网、阿里云等网站或平台.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">名词介绍</span><br><span class="line">设备:</span><br><span class="line">二层--数据链路层: 交换机(也有三层交换机)</span><br><span class="line">三层--网络层: 路由器</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">交换机：</span><br><span class="line">简单的说，交换机就是用来组建一个局域网使用的。交换机的作用是放到路由器后端，来扩展路由器接口不够用而使</span><br><span class="line">用的。比如说，有20台电脑需要用网络，而路由器最多的只有8个口，只能接7台电脑，怎么办呢，这就需要交换机</span><br><span class="line">来扩展网络接口实现了。</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">交换机基本都是24口起步，企业的都是48口起步</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/3b2e36ed96c4fbd970100701a7643ab1d6840407.jpg#id=sOVyi&originHeight=290&originWidth=645&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">路由器：</span><br><span class="line">路由器的工作原理是怎么样的呢？路由器有个路由表，会自己学习、生成、维护路由表。</span><br><span class="line">1，主机A准备发数据给主机B。</span><br><span class="line">2，A将B的IP地址连同数据一起，以数据包形式发送给路由器R1。</span><br><span class="line">3，路由器R1收到数据包后，先从数据中读取到B的IP地址，然后根据路径表计算发往B的最优路径。</span><br><span class="line">4，比如路径为：R1-&gt;R2-&gt;R5-&gt;B；并将数据包发往路由器R2。</span><br><span class="line">5，路由器2重复路由器1的工作，并将数据包转发给路由器5。</span><br><span class="line">6，路由器5同样取出目的地址，发现目的地址就在自己的网段上，于是将该数据包直接交给主机B。</span><br><span class="line">7，主机B收到主机A的信息，一次完整的通信宣告结束。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/4602afc1bd49d9e4c60bb6fc132c0e60041c869e.jpg#id=xwANT&originHeight=334&originWidth=749&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><img src="https://img.beyourself.org.cn/b44e3721ae356f9d8bc3e91c02f09edb956ad895.jpg#id=wvX2q&originHeight=377&originWidth=498&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">网关：网络的出口（路由器的ip地址）</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DNS：域名服务器</span><br><span class="line">端口号：1-65535 http---80 https--443 telnet--23 ftp--21、20 ssh--22 mysql--3306 php--9000 tomcat---8080</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-OSI七层模型"><a href="#4-OSI七层模型" class="headerlink" title="4.OSI七层模型"></a>4.OSI七层模型</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1981年 IOS (国际化标准组织）提出了---&gt;OSI 七层模型</span><br><span class="line">OSI七层: 物理层、数据链路层、网络层、传输层、会话层、表示层、应用层</span><br></pre></td></tr></table></figure>
+
+<p><strong>特点: 下层只和上层有来往关系, 不可跨层传输</strong></p>
+<p><img src="https://img.beyourself.org.cn/941f99f227eac5b59356ef44184e26181c2715f3.jpg#id=CRPn6&originHeight=790&originWidth=1119&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">应用层：针对应用约定的标准 HTTP（超文本传输协议） Telnet（远程协议）</span><br><span class="line">表示层：约束数据格式，负责格式转化，加密。解密。</span><br><span class="line">会话层：建立、维护、管理（解除）会话。数据的传输通道。</span><br><span class="line">传输层：约定数据采用何种方式进行传递</span><br><span class="line">TCP协议：传输控制协议，实现数据的可靠传输</span><br><span class="line">UDP协议：用户数据报协议，实现数据的快递传输，不可靠</span><br><span class="line">网络层：提供逻辑地址（IP地址，用于在网络中标识每一台设备，作用于网络间的通信，提供路由和选路）</span><br><span class="line">数据链路层：提供MAC（物理）地址，每个MAC地址写在网卡上</span><br><span class="line">物理层：约定接口类型，传输速度</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-数据包的传输过程"><a href="#5-数据包的传输过程" class="headerlink" title="5.数据包的传输过程"></a>5.<strong>数据包的传输过程</strong></h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OSI七层: 物理层、数据链路层、网络层、传输层、会话层、表示层、应用层</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/dc5c25d8d0444e80005bb045484d1194f55906ee.jpg#id=qfZnr&originHeight=605&originWidth=772&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ARP协议： 如何获取mac地址：先发送一个ARP请求，发送给每一个主机，这成为广播，给予ARP层回应以单播的形式返回</span><br><span class="line">案例：</span><br><span class="line">小明：我是小明，谁是小红，我的mac地址是sdfsdfs213</span><br><span class="line">arp发送广播：每个人开始拆包，其他人：是找小红的，不是找我的，不管它</span><br><span class="line">小红：拆开一看，是找我的，回复：小明，我是小红，我的mac地址是dfgert213</span><br><span class="line">进行数据传输</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-TCP-IP-传输控制协议"><a href="#6-TCP-IP-传输控制协议" class="headerlink" title="6.TCP&#x2F;IP:传输控制协议"></a>6.TCP&#x2F;IP:传输控制协议</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">TCP\IP模型</span><br><span class="line">应用层：将OSI上三层融合，用于产生需要传递的数据</span><br><span class="line">传输层</span><br><span class="line">网络层</span><br><span class="line">链路层(网络接口层)：将OSI下两层融合</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/0da58f7ab122b1256b35353536cfc769ace2f3ff.jpg#id=WwJZZ&originHeight=599&originWidth=664&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">当通过http发起一个请求时，应用层、传输层、网络层和链路层的相关协议依次对该请求进行包装并携带对应的首部，最终在链路层生成以太网数据包，以太网数据包通过物理介质传输给对方主机，对方接收到数据包以后，然后再一层一层采用对应的协议进行拆包，最后把应用层数据交给应用程序处理。</span><br><span class="line"></span><br><span class="line">网络通信就好比送快递，商品外面的一层层包裹就是各种协议，协议包含了商品信息、收货地址、收件人、联系方式等，然后还需要配送车、配送站、快递员，商品才能最终到达用户手中。</span><br><span class="line"></span><br><span class="line">一般情况下，快递是不能直达的，需要先转发到对应的配送站，然后由配送站再进行派件。</span><br><span class="line"></span><br><span class="line">配送车就是物理介质，配送站就是网关， 快递员就是路由器，收货地址就是IP地址，联系方式就是MAC地址。 </span><br><span class="line"></span><br><span class="line">快递员负责把包裹转发到各个配送站，配送站根据收获地址里的省市区，确认是否需要继续转发到其他配送站，当包裹到达了目标配送站以后，配送站再根据联系方式找到收件人进行送件。</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-HTTP协议简介"><a href="#7-HTTP协议简介" class="headerlink" title="7.HTTP协议简介"></a>7.HTTP协议简介</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">超文本传输协议 (HTTP-Hypertext transfer protocol) 是一种详细规定了浏览器和万维网服务器之间互相通 信的规则，通过因特网传送万维网文档的数据传送协议，于1990年提出. </span><br><span class="line">• 是一个基于TCP/IP通信协议来传递数据，（HTML文件，图片等） </span><br><span class="line">HTTP是一个属于应用层的协议</span><br></pre></td></tr></table></figure>
+
+<p>**HTTP协议的主要特点： **</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.支持客户/服务器模式 （浏览器/服务器模式） 及c/s模式</span><br><span class="line">2.简单快速：</span><br><span class="line">客户向服务器请求服务时，只需传送请求和路径。通信速度很快。</span><br><span class="line">3.灵活：HTTP允许传输任意类型的数据对象。（文件，视频，会议）</span><br><span class="line">4.无连接：无连接的含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。</span><br></pre></td></tr></table></figure>
+
+<p><strong>常见状态代码：</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">200 OK #客户端请求成功</span><br><span class="line">403 Forbidden #服务器收到请求，但是拒绝提供服务,没有权限</span><br><span class="line">404 Not Found #请求资源不存在，输入了错误的URL，没有找到，路径不对</span><br><span class="line">比如：HTTP/1.1 200 OK</span><br></pre></td></tr></table></figure>
+
+<h3 id="UDP协议介绍"><a href="#UDP协议介绍" class="headerlink" title="UDP协议介绍"></a>UDP协议介绍</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">UDP协议简介</span><br><span class="line">UDP是一个无连接的简单的面向数据报的传输层协议。</span><br><span class="line"></span><br><span class="line">UDP的特性:</span><br><span class="line">1.面向无连接：不用先与对方建立连接，不握手。因此传输速度很快。</span><br><span class="line">2.不可靠的：没有确认机制，它只是把应用程序传给IP层的数据报发送出去，但是并不能保证它们能到达目的地。</span><br><span class="line">3.UDP传输数据时有大小限制，每个被传输的数据报必须限定在64KB之内</span><br><span class="line">因为它不属于连接型协议，因而具有资源消耗小，处理速度快的优点，所以通常音频、视频和普通数据在传送时使用UDP较多，因为它们即使偶尔丢失一两个数据包，也不会对接收结果产生太大影响。</span><br><span class="line"> </span><br><span class="line">udp一般用于</span><br><span class="line">1. 即时通信:qq聊天 对数据准确性和丢包要求比较低，但速度必须快</span><br><span class="line">2. 在线视频:速度一定要快，保证视频连续，但是偶尔花了一个图像帧，人们还是能接受的</span><br><span class="line">3. 网络语音电话:语音数据包一般比较小，需要高速发送，偶尔断音或串音也没问题</span><br></pre></td></tr></table></figure>
+
+<p><strong>物理地址：mac地址，全球唯一，mac由6段16进制数组成，每段有2个16进制数</strong></p>
+<p><strong>ARP</strong></p>
+<p><strong>arp协议作用</strong> (地址解析协议)</p>
+<blockquote>
+<p>ARP地址解析协议用于将网络地址（IP地址32位）转化为物理地址（MAC地址48位）。ARP协议是属于”数据链路层 or 网络层”的协议，在以太网中的数据帧从一个主机到达网内的另一台主机是根据48位的以太网地址（硬件地址）来确定接口的，而不是根据32位的IP地址。内核（如驱动）必须知道目的端的硬件地址才能发送数据</p>
+</blockquote>
+<p><strong>ICMP</strong></p>
+<blockquote>
+<p>ICMP是（Internet Control Message Protocol）Internet控制报文协议。它是TCP&#x2F;IP协议族的一个子协议，用于在IP主机、路由器之间传递控制消息。控制消息是指网络通不通、主机是否可达、路由是否可用等网络本身的消息。</p>
+</blockquote>
+<h4 id="常见协议"><a href="#常见协议" class="headerlink" title="常见协议"></a>常见协议</h4><blockquote>
+<ol>
+<li><strong>超文本传输协议（HTTP）和HTTPS</strong>：用于在万维网上进行文件传输，构成了网页浏览的基础。HTTPS 是通过SSL或TLS进行加密的HTTP版本，提供安全保证。</li>
+<li><strong>文件传输协议（FTP）</strong>：用于在网络上的两台计算机之间传输文件，支持文件的上传和下载。</li>
+<li><strong>简单邮件传输协议（SMTP）</strong>：用于发送电子邮件。SMTP 仅处理发送邮件的过程，而不涉及邮件的接收。</li>
+<li><strong>邮局协议（POP）和互联网邮件访问协议（IMAP）</strong>：用于接收电子邮件。POP通常将邮件下载到本地然后删除服务器上的邮件，而IMAP则允许在服务器上管理邮件，支持多设备访问。</li>
+<li><strong>域名系统（DNS）</strong>：将域名转换为IP地址，使得用户可以通过域名访问网站，而不需要记住复杂的IP地址。</li>
+<li><strong>传输控制协议（TCP）</strong>：虽然通常被归类在传输层，TCP在确保数据准确传输方面对许多应用层协议提供支持。</li>
+<li><strong>动态主机配置协议（DHCP）</strong>：自动分配IP地址给网络中的设备，简化了网络管理。</li>
+<li><strong>简单网络管理协议（SNMP）</strong>：用于网络设备的管理和监视。</li>
+<li><strong>实时传输协议（RTP）</strong>：用于实时音频和视频数据的传输。</li>
+<li><strong>超文本传输协议安全（HTTPS）</strong>：HTTP的安全版本，通过SSL或TLS提供通信加密。</li>
+<li><strong>Telnet和SSH（安全外壳协议）</strong>：用于远程登录。SSH提供加密的安全远程访问。</li>
+<li><strong>点对点协议（P2P）</strong>：如BitTorrent，用于点对点文件共享。</li>
+</ol>
+</blockquote>
+<p>个人拓展</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">了解机房的环境，温度，上架过程，以及去机房相关流程</span><br></pre></td></tr></table></figure>
+
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/06/22/走进网络世界/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%B5%B0%E8%BF%9B%E7%BD%91%E7%BB%9C"><span class="toc-number">1.</span> <span class="toc-text">走进网络</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%AE%A4%E8%AF%86%E8%AE%A1%E7%AE%97%E6%9C%BA"><span class="toc-number">1.0.1.</span> <span class="toc-text">1.认识计算机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BC%A0%E8%BE%93%E4%BB%8B%E8%B4%A8"><span class="toc-number">1.0.2.</span> <span class="toc-text">2.传输介质</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">1.0.3.</span> <span class="toc-text">3.客户端与服务器端的概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-OSI%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.0.4.</span> <span class="toc-text">4.OSI七层模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%95%B0%E6%8D%AE%E5%8C%85%E7%9A%84%E4%BC%A0%E8%BE%93%E8%BF%87%E7%A8%8B"><span class="toc-number">1.0.5.</span> <span class="toc-text">5.数据包的传输过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-TCP-IP-%E4%BC%A0%E8%BE%93%E6%8E%A7%E5%88%B6%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.0.6.</span> <span class="toc-text">6.TCP&#x2F;IP:传输控制协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-HTTP%E5%8D%8F%E8%AE%AE%E7%AE%80%E4%BB%8B"><span class="toc-number">1.0.7.</span> <span class="toc-text">7.HTTP协议简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UDP%E5%8D%8F%E8%AE%AE%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.0.8.</span> <span class="toc-text">UDP协议介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.0.8.1.</span> <span class="toc-text">常见协议</span></a></li></ol></li></ol></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/07/15/自建yum源笔记/"></a>
+            </p>
+           
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/06/22/走进网络世界/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系小曹宅，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">2262690094</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"不找了","artist":"隔壁老樊","url":"music/隔壁老樊 - 不找了.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"于是天气刚好","artist":"泪桥","url":"music/于是天气刚好 - 泪桥.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"安和桥","artist":"林芬宇","url":"music/林芬宇 - 安和桥.mp3","cover":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0SWQx6YrNA8lElaG4OOKLkNkNzLO1PflKg&usqp=CAU"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
