@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——ansible模块 | Mr.Long</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——ansible模块`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/28/LVM逻辑卷管理 /"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/21/LV逻辑卷扩展/"},{"title":"python一","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/05/20/Python 1 /"},{"title":"python二","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/05/20/Python 2/"},{"title":"python三","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/05/25/Python 3/"},{"title":"python四","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/05/30/Python 4/"},{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/21/TCP协议/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"shell编程","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2023/07/21/shell_newrain/"},{"title":"ansible模块","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1","path":"2023/09/17/ansible 模块扩展/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/21/文件权限/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/19/磁盘存储管理1/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/11/磁盘阵列RAID/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/21/网络管理基础/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/20/走进网络世界/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Mr.Long</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">唱跳rap篮球</span>
+          <span class="main-left--tag">宅但不肥</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/MyRong99/MyRong99.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>5</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>5</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>4 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>19 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>392天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">ansible模块</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/Ansible/">-Ansible</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            <a class="tag-link" href="/tags/Ansible/" rel="tag">-Ansible</a>
+          </div>
+          
+          <p class="article-info--date">日期：2023-09-17 12:19:22</p>
+        </div>
+        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h1 id="一、ansible-常用模块"><a href="#一、ansible-常用模块" class="headerlink" title="一、ansible 常用模块"></a>一、ansible 常用模块</h1><h3 id="1、主机连通性测试"><a href="#1、主机连通性测试" class="headerlink" title="1、主机连通性测试"></a>1、主机连通性测试</h3><p>我们使用<code>ansible web -m ping</code>命令来进行主机连通性测试，效果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m ping</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: false, </span><br><span class="line">    &quot;ping&quot;: &quot;pong&quot;</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: false, </span><br><span class="line">    &quot;ping&quot;: &quot;pong&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就说明我们的主机是连通状态的。接下来的操作才可以正常进行。</p>
+<h3 id="2、command-模块"><a href="#2、command-模块" class="headerlink" title="2、command 模块"></a>2、command 模块</h3><p>这个模块可以直接在远程主机上执行命令，并将结果返回本主机。 　　举例如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m command -a &#x27;ss -ntl&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">State      Recv-Q Send-Q Local Address:Port               Peer Address:Port              </span><br><span class="line">LISTEN     0      128          *:111                      *:*                  </span><br><span class="line">LISTEN     0      5      192.168.122.1:53                       *:*                  </span><br><span class="line">LISTEN     0      128          *:22                       *:*                  </span><br><span class="line">LISTEN     0      128    127.0.0.1:631                      *:*                  </span><br><span class="line">LISTEN     0      128          *:23000                    *:*                  </span><br><span class="line">LISTEN     0      100    127.0.0.1:25                       *:*                  </span><br><span class="line">LISTEN     0      128         :::111                     :::*                  </span><br><span class="line">LISTEN     0      128         :::22                      :::*                  </span><br><span class="line">LISTEN     0      128        ::1:631                     :::*                  </span><br><span class="line">LISTEN     0      100        ::1:25                      :::*                  </span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">State      Recv-Q Send-Q Local Address:Port               Peer Address:Port              </span><br><span class="line">LISTEN     0      128          *:111                      *:*                  </span><br><span class="line">LISTEN     0      128          *:22                       *:*                  </span><br><span class="line">LISTEN     0      128    127.0.0.1:631                      *:*                  </span><br><span class="line">LISTEN     0      128          *:23000                    *:*                  </span><br><span class="line">LISTEN     0      100    127.0.0.1:25                       *:*                  </span><br><span class="line">LISTEN     0      128         :::111                     :::*                  </span><br><span class="line">LISTEN     0      128         :::22                      :::*                  </span><br><span class="line">LISTEN     0      128        ::1:631                     :::*                  </span><br><span class="line">LISTEN     0      100        ::1:25                      :::*</span><br></pre></td></tr></table></figure>
+
+<p>命令模块接受命令名称，后面是空格分隔的列表参数。给定的命令将在所有选定的节点上执行。它不会通过shell进行处理，比如$HOME和操作如”&lt;”，”&gt;”，”|”，”;”，”&amp;” 工作（需要使用（shell）模块实现这些功能）。注意，该命令不支持| 管道命令。 　　下面来看一看该模块下常用的几个命令：</p>
+<blockquote>
+<p>chdir　　　 # 在执行命令之前，先切换到该目录<br>executable # 切换shell来执行命令，需要使用命令的绝对路径<br>free_form 　 # 要执行的Linux指令，一般使用Ansible的-a参数代替。<br>creates 　 # 一个文件名，当这个文件存在，则该命令不执行,可以用来做判断<br>removes # 一个文件名，这个文件不存在，则该命令不执行</p>
+</blockquote>
+<p>下面我们来看看这些命令的执行效果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m command -a &#x27;chdir=/data/ ls&#x27;  #先切换到/data/ 目录，再执行“ls”命令</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">aaa.jpg</span><br><span class="line">fastdfs</span><br><span class="line">mogdata</span><br><span class="line">tmp</span><br><span class="line">web</span><br><span class="line">wKgleloeYoCAMLtZAAAWEekAtkc497.jpg</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">aaa.jpg</span><br><span class="line">fastdfs</span><br><span class="line">mogdata</span><br><span class="line">tmp</span><br><span class="line">web</span><br><span class="line">wKgleloeYoCAMLtZAAAWEekAtkc497.jpg</span><br><span class="line">[root@server ~]# ansible web -m command -a &#x27;creates=/data/aaa.jpg ls&#x27;  #如果/data/aaa.jpg存在，则不执行“ls”命令</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">skipped, since /data/aaa.jpg exists</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">skipped, since /data/aaa.jpg exists</span><br><span class="line">[root@server ~]# ansible web -m command -a &#x27;removes=/data/aaa.jpg cat /data/a&#x27; #如果/data/aaa.jpg存在，则执行“cat /data/a”命令</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">hello</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">hello</span><br></pre></td></tr></table></figure>
+
+<h3 id="3、shell-模块"><a href="#3、shell-模块" class="headerlink" title="3、shell 模块 &#x2F;&#x2F;&#x2F;"></a>3、shell 模块 &#x2F;&#x2F;&#x2F;</h3><p>shell模块可以在远程主机上调用shell解释器运行命令，支持shell的各种功能，例如管道等。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;cat /etc/passwd |grep &quot;keer&quot;&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">keer:x:10001:1000:keer:/home/keer:/bin/sh</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">keer:x:10001:10001::/home/keer:/bin/sh</span><br></pre></td></tr></table></figure>
+
+<p>只要是我们的shell命令，都可以通过这个模块在远程主机上运行，这里就不一一举例了。</p>
+<h3 id="4、copy-模块"><a href="#4、copy-模块" class="headerlink" title="4、copy 模块 &#x2F;&#x2F;&#x2F;"></a>4、copy 模块 &#x2F;&#x2F;&#x2F;</h3><p>这个模块用于将文件复制到远程主机，同时支持给定内容生成文件和修改权限等。其相关选项如下：</p>
+<blockquote>
+<p><code>src</code>　　　　 #被复制到远程主机的本地文件。可以是绝对路径，也可以是相对路径。如果路径是一个目录，则会递归复制，用法类似于”rsync”<br><code>content</code>　　#用于替换”src”，可以直接指定文件的内容。相当于重定向了</p>
+<p><code>dest</code>　　　 #必选项，将源文件复制到的远程主机的<strong>绝对路径</strong><br><code>backup</code>　　　#当文件内容发生改变后，在覆盖之前把源文件备份，备份文件包含时间信息<br><code>directory_mode</code>　　　　#递归设定目录的权限，默认为系统默认权限<br><code>force</code>　　　　#当目标主机包含该文件，但内容不同时，设为”yes”，表示强制覆盖；设为”no”，表示目标主机的目标位置不存在该文件才复制。默认为”yes”<br><code>others</code>　#所有的 file 模块中的选项可以在这里使用</p>
+</blockquote>
+<p>用法举例如下： <strong>① 复制文件：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m copy -a &#x27;src=~/hello dest=/data/hello&#x27; </span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;checksum&quot;: &quot;22596363b3de40b06f981fb85d82312e8c0ed511&quot;, </span><br><span class="line">    &quot;dest&quot;: &quot;/data/hello&quot;, </span><br><span class="line">    &quot;gid&quot;: 0, </span><br><span class="line">    &quot;group&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;md5sum&quot;: &quot;6f5902ac237024bdd0c176cb93063dc4&quot;, </span><br><span class="line">    &quot;mode&quot;: &quot;0644&quot;, </span><br><span class="line">    &quot;owner&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;size&quot;: 12, </span><br><span class="line">    &quot;src&quot;: &quot;/root/.ansible/tmp/ansible-tmp-1512437093.55-228281064292921/source&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;file&quot;, </span><br><span class="line">    &quot;uid&quot;: 0</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;checksum&quot;: &quot;22596363b3de40b06f981fb85d82312e8c0ed511&quot;, </span><br><span class="line">    &quot;dest&quot;: &quot;/data/hello&quot;, </span><br><span class="line">    &quot;gid&quot;: 0, </span><br><span class="line">    &quot;group&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;md5sum&quot;: &quot;6f5902ac237024bdd0c176cb93063dc4&quot;, </span><br><span class="line">    &quot;mode&quot;: &quot;0644&quot;, </span><br><span class="line">    &quot;owner&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;size&quot;: 12, </span><br><span class="line">    &quot;src&quot;: &quot;/root/.ansible/tmp/ansible-tmp-1512437093.74-44694985235189/source&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;file&quot;, </span><br><span class="line">    &quot;uid&quot;: 0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>② 给定内容生成文件，并制定权限</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m copy -a &#x27;content=&quot;I am keer\n&quot; dest=/data/name mode=666&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;checksum&quot;: &quot;0421570938940ea784f9d8598dab87f07685b968&quot;, </span><br><span class="line">    &quot;dest&quot;: &quot;/data/name&quot;, </span><br><span class="line">    &quot;gid&quot;: 0, </span><br><span class="line">    &quot;group&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;md5sum&quot;: &quot;497fa8386590a5fc89090725b07f175c&quot;, </span><br><span class="line">    &quot;mode&quot;: &quot;0666&quot;, </span><br><span class="line">    &quot;owner&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;size&quot;: 10, </span><br><span class="line">    &quot;src&quot;: &quot;/root/.ansible/tmp/ansible-tmp-1512437327.37-199512601767687/source&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;file&quot;, </span><br><span class="line">    &quot;uid&quot;: 0</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;checksum&quot;: &quot;0421570938940ea784f9d8598dab87f07685b968&quot;, </span><br><span class="line">    &quot;dest&quot;: &quot;/data/name&quot;, </span><br><span class="line">    &quot;gid&quot;: 0, </span><br><span class="line">    &quot;group&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;md5sum&quot;: &quot;497fa8386590a5fc89090725b07f175c&quot;, </span><br><span class="line">    &quot;mode&quot;: &quot;0666&quot;, </span><br><span class="line">    &quot;owner&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;size&quot;: 10, </span><br><span class="line">        &quot;src&quot;: &quot;/root/.ansible/tmp/ansible-tmp-1512437327.55-218104039503110/source&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;file&quot;, </span><br><span class="line">    &quot;uid&quot;: 0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们现在可以去查看一下我们生成的文件及其权限：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;ls -l /data/&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">total 28</span><br><span class="line">-rw-rw-rw-   1 root root   12 Dec  6 09:45 name</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">total 40</span><br><span class="line">-rw-rw-rw- 1 root     root       12 Dec  5 09:45 name</span><br></pre></td></tr></table></figure>
+
+<p>可以看出我们的name文件已经生成，并且权限为666。 ③ 关于覆盖我们把文件的内容修改一下，然后选择覆盖备份：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m copy -a &#x27;content=&quot;I am keerya\n&quot; backup=yes dest=/data/name mode=666&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;backup_file&quot;: &quot;/data/name.4394.2017-12-06@09:46:25~&quot;, </span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;checksum&quot;: &quot;064a68908ab9971ee85dbc08ea038387598e3778&quot;, </span><br><span class="line">    &quot;dest&quot;: &quot;/data/name&quot;, </span><br><span class="line">    &quot;gid&quot;: 0, </span><br><span class="line">    &quot;group&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;md5sum&quot;: &quot;8ca7c11385856155af52e560f608891c&quot;, </span><br><span class="line">    &quot;mode&quot;: &quot;0666&quot;, </span><br><span class="line">    &quot;owner&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;size&quot;: 12, </span><br><span class="line">    &quot;src&quot;: &quot;/root/.ansible/tmp/ansible-tmp-1512438383.78-228128616784888/source&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;file&quot;, </span><br><span class="line">    &quot;uid&quot;: 0</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;backup_file&quot;: &quot;/data/name.5962.2017-12-05@09:46:24~&quot;, </span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;checksum&quot;: &quot;064a68908ab9971ee85dbc08ea038387598e3778&quot;, </span><br><span class="line">    &quot;dest&quot;: &quot;/data/name&quot;, </span><br><span class="line">    &quot;gid&quot;: 0, </span><br><span class="line">    &quot;group&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;md5sum&quot;: &quot;8ca7c11385856155af52e560f608891c&quot;, </span><br><span class="line">    &quot;mode&quot;: &quot;0666&quot;, </span><br><span class="line">    &quot;owner&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;size&quot;: 12, </span><br><span class="line">    &quot;src&quot;: &quot;/root/.ansible/tmp/ansible-tmp-1512438384.0-170718946740009/source&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;file&quot;, </span><br><span class="line">    &quot;uid&quot;: 0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在我们可以去查看一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;ls -l /data/&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">total 28</span><br><span class="line">-rw-rw-rw-   1 root root   12 Dec  6 09:46 name</span><br><span class="line">-rw-rw-rw-   1 root root   10 Dec  6 09:45 name.4394.2017-12-06@09:46:25~</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">total 40</span><br><span class="line">-rw-rw-rw- 1 root     root       12 Dec  5 09:46 name</span><br><span class="line">-rw-rw-rw- 1 root     root       10 Dec  5 09:45 name.5962.2017-12-05@09:46:24~</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，我们的源文件已经被备份，我们还可以查看一下<code>name</code>文件的内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;cat /data/name&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">I am keerya</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">I am keerya</span><br></pre></td></tr></table></figure>
+
+<p>证明，这正是我们新导入的文件的内容。</p>
+<h3 id="5、file-模块"><a href="#5、file-模块" class="headerlink" title="5、file 模块"></a>5、file 模块</h3><p>该模块主要用于设置文件的属性，比如创建文件、创建链接文件、删除文件等。 　　下面是一些常见的命令：</p>
+<blockquote>
+<p><code>force</code>　#需要在两种情况下强制创建软链接，一种是源文件不存在，但之后会建立的情况下；另一种是目标软链接已存在，需要先取消之前的软链，然后创建新的软链，有两个选项：yes|no。force&#x3D;yes<br><code>group</code>　#定义文件&#x2F;目录的属组。后面可以加上<br><code>mode</code>：  #定义文件&#x2F;目录的权限<br><code>owner</code>　#定义文件&#x2F;目录的属主。后面必须跟上<br><code>path</code>：  #定义文件&#x2F;目录的路径<br><code>recurse</code>  #递归设置文件的属性，只对目录有效，后面跟上<br><code>src</code>： #被链接的源文件路径，只应用于<code>state=link</code>的情况<br><code>dest</code>　#被链接到的路径，只应用于<code>state=link</code>的情况<br><code>state</code>　#状态，有以下选项：<br>  <code> directory</code>：如果目录不存在，就创建目录 。    <code>link</code>：创建软链接 。  <code>hard</code>：创建硬链接 <code>touch</code>：如果文件不存在，则会创建一个新的文件，如果文件或目录已存在，则更新其最后修改时间  。          <code>absent</code>：删除目录、文件或者取消链接文件。</p>
+</blockquote>
+<p>用法举例如下： <strong>① 创建目录：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m file -a &#x27;path=/data/app state=directory&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;gid&quot;: 0, </span><br><span class="line">    &quot;group&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;mode&quot;: &quot;0755&quot;, </span><br><span class="line">    &quot;owner&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;path&quot;: &quot;/data/app&quot;, </span><br><span class="line">    &quot;size&quot;: 6, </span><br><span class="line">    &quot;state&quot;: &quot;directory&quot;, </span><br><span class="line">    &quot;uid&quot;: 0</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;gid&quot;: 0, </span><br><span class="line">    &quot;group&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;mode&quot;: &quot;0755&quot;, </span><br><span class="line">    &quot;owner&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;path&quot;: &quot;/data/app&quot;, </span><br><span class="line">    &quot;size&quot;: 4096, </span><br><span class="line">    &quot;state&quot;: &quot;directory&quot;, </span><br><span class="line">    &quot;uid&quot;: 0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以查看一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;ls -l /data&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">total 28</span><br><span class="line">drwxr-xr-x   2 root root    6 Dec  6 10:21 app</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">total 44</span><br><span class="line">drwxr-xr-x 2 root     root     4096 Dec  5 10:21 app</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，我们的目录已经创建完成。 <strong>② 创建链接文件</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m file -a &#x27;path=/data/bbb.jpg src=/data/aaa.jpg state=link&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;dest&quot;: &quot;/data/bbb.jpg&quot;, </span><br><span class="line">    &quot;gid&quot;: 0, </span><br><span class="line">    &quot;group&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;mode&quot;: &quot;0777&quot;, </span><br><span class="line">    &quot;owner&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;size&quot;: 7, </span><br><span class="line">    &quot;src&quot;: &quot;aaa.jpg&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;link&quot;, </span><br><span class="line">    &quot;uid&quot;: 0</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;dest&quot;: &quot;/data/bbb.jpg&quot;, </span><br><span class="line">    &quot;gid&quot;: 0, </span><br><span class="line">    &quot;group&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;mode&quot;: &quot;0777&quot;, </span><br><span class="line">    &quot;owner&quot;: &quot;root&quot;, </span><br><span class="line">    &quot;size&quot;: 7, </span><br><span class="line">    &quot;src&quot;: &quot;aaa.jpg&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;link&quot;, </span><br><span class="line">    &quot;uid&quot;: 0</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以去查看一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;ls -l /data&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">total 28</span><br><span class="line">-rw-r--r--   1 root root 5649 Dec  5 13:49 aaa.jpg</span><br><span class="line">lrwxrwxrwx   1 root root    7 Dec  6 10:25 bbb.jpg -&gt; aaa.jpg</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">total 44</span><br><span class="line">-rw-r--r-- 1 root     root     5649 Dec  4 14:44 aaa.jpg</span><br><span class="line">lrwxrwxrwx 1 root     root        7 Dec  5 10:25 bbb.jpg -&gt; aaa.jpg</span><br></pre></td></tr></table></figure>
+
+<p>我们的链接文件已经创建成功。 <strong>③ 删除文件</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m file -a &#x27;path=/data/a state=absent&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;path&quot;: &quot;/data/a&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;absent&quot;</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;path&quot;: &quot;/data/a&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;absent&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以查看一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;ls /data/a&#x27;</span><br><span class="line">192.168.37.122 | FAILED | rc=2 &gt;&gt;</span><br><span class="line">ls: cannot access /data/a: No such file or directory</span><br><span class="line"></span><br><span class="line">192.168.37.133 | FAILED | rc=2 &gt;&gt;</span><br><span class="line">ls: cannot access /data/a: No such file or directory</span><br></pre></td></tr></table></figure>
+
+<p>发现已经没有这个文件了。</p>
+<h3 id="6、fetch-模块"><a href="#6、fetch-模块" class="headerlink" title="6、fetch 模块"></a>6、fetch 模块</h3><p>该模块用于从远程某主机获取（复制）文件到本地。有两个选项：</p>
+<blockquote>
+<p><code>dest</code>：本机用来存放文件的目录<br><code>src</code>：在远程拉取的文件，并且必须是一个<strong>file</strong>，不能是<strong>目录</strong></p>
+</blockquote>
+<p>具体举例如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m fetch -a &#x27;src=/data/hello dest=/data&#x27;  </span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;checksum&quot;: &quot;22596363b3de40b06f981fb85d82312e8c0ed511&quot;, </span><br><span class="line">    &quot;dest&quot;: &quot;/data/192.168.37.122/data/hello&quot;, </span><br><span class="line">    &quot;md5sum&quot;: &quot;6f5902ac237024bdd0c176cb93063dc4&quot;, </span><br><span class="line">    &quot;remote_checksum&quot;: &quot;22596363b3de40b06f981fb85d82312e8c0ed511&quot;, </span><br><span class="line">    &quot;remote_md5sum&quot;: null</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;checksum&quot;: &quot;22596363b3de40b06f981fb85d82312e8c0ed511&quot;, </span><br><span class="line">    &quot;dest&quot;: &quot;/data/192.168.37.133/data/hello&quot;, </span><br><span class="line">    &quot;md5sum&quot;: &quot;6f5902ac237024bdd0c176cb93063dc4&quot;, </span><br><span class="line">    &quot;remote_checksum&quot;: &quot;22596363b3de40b06f981fb85d82312e8c0ed511&quot;, </span><br><span class="line">    &quot;remote_md5sum&quot;: null</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以在本机上查看一下文件是否复制成功。要注意，文件保存的路径是我们设置的接收目录下的<code>被管制主机ip</code>目录下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# cd /data/</span><br><span class="line">[root@server data]# ls</span><br><span class="line">1  192.168.37.122  192.168.37.133  fastdfs  web</span><br><span class="line">[root@server data]# cd 192.168.37.122</span><br><span class="line">[root@server 192.168.37.122]# ls</span><br><span class="line">data</span><br><span class="line">[root@server 192.168.37.122]# cd data/</span><br><span class="line">[root@server data]# ls</span><br><span class="line">hello</span><br><span class="line">[root@server data]# pwd</span><br><span class="line">/data/192.168.37.122/data</span><br></pre></td></tr></table></figure>
+
+<h3 id="7、cron-模块"><a href="#7、cron-模块" class="headerlink" title="7、cron 模块&#x2F;&#x2F;&#x2F;"></a>7、cron 模块&#x2F;&#x2F;&#x2F;</h3><p>该模块适用于管理<code>cron</code>计划任务的。 　　其使用的语法跟我们的<code>crontab</code>文件中的语法一致，同时，可以指定以下选项：</p>
+<blockquote>
+<p><code>day=</code> #日应该运行的工作( 1-31, <em>,</em> &#x2F;2, )<br><code>hour=</code> # 小时 ( 0-23, <em>,</em> &#x2F;2, )<br><code>minute=</code> #分钟( 0-59, <em>,</em> &#x2F;2, )<br><code>month=</code> # 月( 1-12, *, &#x2F;2, )<br><code>weekday=</code> # 周 ( 0-6 for Sunday-Saturday,, )<br><code>job=</code> #指明运行的命令是什么<br><code>name=</code> #定时任务描述<br><code>reboot</code> # 任务在重启时运行，不建议使用，建议使用special_time<br><code>special_time</code> #特殊的时间范围，参数：reboot（重启时），annually（每年），monthly（每月），weekly（每周），daily（每天），hourly（每小时）<br><code>state</code> #指定状态，present表示添加定时任务，也是默认设置，absent表示删除定时任务<br><code>user</code> # 以哪个用户的身份执行</p>
+</blockquote>
+<p>举例如下： <strong>① 添加计划任务</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m cron -a &#x27;name=&quot;ntp update every 5 min&quot; minute=*/5 job=&quot;/sbin/ntpdate 172.17.0.1 &amp;&gt; /dev/null&quot;&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;envs&quot;: [], </span><br><span class="line">    &quot;jobs&quot;: [</span><br><span class="line">        &quot;ntp update every 5 min&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;envs&quot;: [], </span><br><span class="line">    &quot;jobs&quot;: [</span><br><span class="line">        &quot;ntp update every 5 min&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以去查看一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;crontab -l&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">#Ansible: ntp update every 5 min</span><br><span class="line">*/5 * * * * /sbin/ntpdate 172.17.0.1 &amp;&gt; /dev/null</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">#Ansible: ntp update every 5 min</span><br><span class="line">*/5 * * * * /sbin/ntpdate 172.17.0.1 &amp;&gt; /dev/null</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，我们的计划任务已经设置成功了。 <strong>② 删除计划任务</strong> 　　如果我们的计划任务添加错误，想要删除的话，则执行以下操作： 　　首先我们查看一下现有的计划任务：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;crontab -l&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">#Ansible: ntp update every 5 min</span><br><span class="line">*/5 * * * * /sbin/ntpdate 172.17.0.1 &amp;&gt; /dev/null</span><br><span class="line">#Ansible: df everyday</span><br><span class="line">* 15 * * * df -lh &gt;&gt; /tmp/disk_total &amp;&gt; /dev/null</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">#Ansible: ntp update every 5 min</span><br><span class="line">*/5 * * * * /sbin/ntpdate 172.17.0.1 &amp;&gt; /dev/null</span><br><span class="line">#Ansible: df everyday</span><br><span class="line">* 15 * * * df -lh &gt;&gt; /tmp/disk_total &amp;&gt; /dev/null</span><br></pre></td></tr></table></figure>
+
+<p>然后执行删除操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m cron -a &#x27;name=&quot;df everyday&quot; hour=15 job=&quot;df -lh &gt;&gt; /tmp/disk_total &amp;&gt; /dev/null&quot; state=absent&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;envs&quot;: [], </span><br><span class="line">    &quot;jobs&quot;: [</span><br><span class="line">        &quot;ntp update every 5 min&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;envs&quot;: [], </span><br><span class="line">    &quot;jobs&quot;: [</span><br><span class="line">        &quot;ntp update every 5 min&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>删除完成后，我们再查看一下现有的计划任务确认一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;crontab -l&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">#Ansible: ntp update every 5 min</span><br><span class="line">*/5 * * * * /sbin/ntpdate 172.17.0.1 &amp;&gt; /dev/null</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">#Ansible: ntp update every 5 min</span><br><span class="line">*/5 * * * * /sbin/ntpdate 172.17.0.1 &amp;&gt; /dev/null</span><br></pre></td></tr></table></figure>
+
+<p>我们的删除操作已经成功。</p>
+<h3 id="8、yum-模块"><a href="#8、yum-模块" class="headerlink" title="8、yum 模块&#x2F;&#x2F;&#x2F;"></a>8、yum 模块&#x2F;&#x2F;&#x2F;</h3><p>顾名思义，该模块主要用于软件的安装。 　　其选项如下：</p>
+<blockquote>
+<p><code>name=</code>　　 #所安装的包的名称<br><code>state=</code>　　#<code>present</code>—&gt;安装， <code>latest</code>—&gt;安装最新的, <code>absent</code>—&gt; 卸载软件。<br><code>update_cache</code>　　#强制更新yum的缓存<br><code>conf_file</code>　　#指定远程yum安装时所依赖的配置文件（安装本地已有的包）。<br><code>disable_gpg_check</code>　　#是否禁止GPG checking，只用于<code>present</code>or <code>latest</code>。<br><code>disablerepo</code>　　#临时禁止使用yum库。 只用于安装或更新时。<br><code>enablerepo</code>　　 #临时使用的yum库。只用于安装或更新时。</p>
+</blockquote>
+<p>下面我们就来安装一个包试试看：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m yum -a &#x27;name=htop state=present&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;msg&quot;: &quot;&quot;, </span><br><span class="line">    &quot;rc&quot;: 0, </span><br><span class="line">    &quot;results&quot;: [</span><br><span class="line">        &quot;Loaded plugins: fastestmirror, langpacks\nLoading mirror speeds from cached hostfile\nResolving Dependencies\n--&gt; Running transaction check\n---&gt; Package htop.x86_64 0:2.0.2-1.el7 will be installed\n--&gt; Finished Dependency Resolution\n\nDependencies Resolved\n\n================================================================================\n Package         Arch              Version                Repository       Size\n================================================================================\nInstalling:\n htop            x86_64            2.0.2-1.el7            epel             98 k\n\nTransaction Summary\n================================================================================\nInstall  1 Package\n\nTotal download size: 98 k\nInstalled size: 207 k\nDownloading packages:\nRunning transaction check\nRunning transaction test\nTransaction test succeeded\nRunning transaction\n  Installing : htop-2.0.2-1.el7.x86_64                                      1/1 \n  Verifying  : htop-2.0.2-1.el7.x86_64                                      1/1 \n\nInstalled:\n  htop.x86_64 0:2.0.2-1.el7                                                     \n\nComplete!\n&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;msg&quot;: &quot;Warning: RPMDB altered outside of yum.\n** Found 3 pre-existing rpmdb problem(s), &#x27;yum check&#x27; output follows:\nipa-client-4.4.0-12.el7.centos.x86_64 has installed conflicts freeipa-client: ipa-client-4.4.0-12.el7.centos.x86_64\nipa-client-common-4.4.0-12.el7.centos.noarch has installed conflicts freeipa-client-common: ipa-client-common-4.4.0-12.el7.centos.noarch\nipa-common-4.4.0-12.el7.centos.noarch has installed conflicts freeipa-common: ipa-common-4.4.0-12.el7.centos.noarch\n&quot;, </span><br><span class="line">    &quot;rc&quot;: 0, </span><br><span class="line">    &quot;results&quot;: [</span><br><span class="line">        &quot;Loaded plugins: fastestmirror, langpacks\nLoading mirror speeds from cached hostfile\nResolving Dependencies\n--&gt; Running transaction check\n---&gt; Package htop.x86_64 0:2.0.2-1.el7 will be installed\n--&gt; Finished Dependency Resolution\n\nDependencies Resolved\n\n================================================================================\n Package         Arch              Version                Repository       Size\n================================================================================\nInstalling:\n htop            x86_64            2.0.2-1.el7            epel             98 k\n\nTransaction Summary\n================================================================================\nInstall  1 Package\n\nTotal download size: 98 k\nInstalled size: 207 k\nDownloading packages:\nRunning transaction check\nRunning transaction test\nTransaction test succeeded\nRunning transaction\n  Installing : htop-2.0.2-1.el7.x86_64                                      1/1 \n  Verifying  : htop-2.0.2-1.el7.x86_64                                      1/1 \n\nInstalled:\n  htop.x86_64 0:2.0.2-1.el7                                                     \n\nComplete!\n&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>安装成功。</p>
+<h3 id="9、service-模块"><a href="#9、service-模块" class="headerlink" title="9、service 模块"></a>9、service 模块</h3><p>该模块用于服务程序的管理。 　　其主要选项如下：</p>
+<blockquote>
+<p><code>arguments</code> #命令行提供额外的参数<br><code>enabled</code> #设置开机启动。<br><code>name=</code> #服务名称<br><code>runlevel</code> #开机启动的级别，一般不用指定。<br><code>sleep</code> #在重启服务的过程中，是否等待。如在服务关闭以后等待2秒再启动。(定义在剧本中。)<br><code>state</code> #有四种状态，分别为：<code>started</code>—&gt;启动服务， <code>stopped</code>—&gt;停止服务， <code>restarted</code>—&gt;重启服务， <code>reloaded</code>—&gt;重载配置</p>
+</blockquote>
+<p>下面是一些例子： <strong>① 开启服务并设置自启动</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m service -a &#x27;name=nginx state=started enabled=true&#x27; </span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;enabled&quot;: true, </span><br><span class="line">    &quot;name&quot;: &quot;nginx&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;started&quot;, </span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;enabled&quot;: true, </span><br><span class="line">    &quot;name&quot;: &quot;nginx&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;started&quot;, </span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以去查看一下端口是否打开：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;ss -ntl&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">State      Recv-Q Send-Q Local Address:Port               Peer Address:Port              </span><br><span class="line">LISTEN     0      128          *:80                       *:*                                  </span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">State      Recv-Q Send-Q Local Address:Port               Peer Address:Port                    </span><br><span class="line">LISTEN     0      128          *:80                       *:*</span><br></pre></td></tr></table></figure>
+
+<p>可以看出我们的80端口已经打开。 <strong>② 关闭服务</strong> 　　我们也可以通过该模块来关闭我们的服务：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m service -a &#x27;name=nginx state=stopped&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;name&quot;: &quot;nginx&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;stopped&quot;, </span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;name&quot;: &quot;nginx&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;stopped&quot;, </span><br><span class="line">    ……</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一样的，我们来查看一下端口：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;ss -ntl | grep 80&#x27;</span><br><span class="line">192.168.37.122 | FAILED | rc=1 &gt;&gt;</span><br><span class="line"></span><br><span class="line">192.168.37.133 | FAILED | rc=1 &gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，我们已经没有80端口了，说明我们的nginx服务已经关闭了。</p>
+<h3 id="10、user-模块"><a href="#10、user-模块" class="headerlink" title="10、user 模块"></a>10、user 模块</h3><p>该模块主要是用来管理用户账号。 　　其主要选项如下：</p>
+<blockquote>
+<p><code>comment</code>　　# 用户的描述信息<br><code>createhome</code>　　# 是否创建家目录<br><code>force</code>　　# 在使用state&#x3D;absent时, 行为与userdel –force一致.<br><code>group</code>　　# 指定基本组<br><code>groups</code>　　# 指定附加组，如果指定为(groups&#x3D;)表示删除所有组<br><code>home</code>　　    # 指定用户家目录<br><code>move_home</code>　　# 如果设置为home&#x3D;时, 试图将用户主目录移动到指定的目录<br><code>name</code>　　# 指定用户名<br><code>non_unique</code>　　# 该选项允许改变非唯一的用户ID值<br><code>password</code>　　# 指定用户密码,对密码加密可以使用python的crypt和passlib<br><code>remove</code>　　# 在使用state&#x3D;absent时, 行为是与userdel –remove一致	<br><code>shell</code>　　# 指定默认shell<br><code>state</code>　　# 设置帐号状态，不指定为创建，指定值为absent表示删除<br><code>system</code>　　# 当创建一个用户，设置这个用户是系统用户。这个设置不能更改现有用户<br><code>uid</code>　　# 指定用户的uid</p>
+</blockquote>
+<p>举例如下： <strong>① 添加一个用户并指定其 uid</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m user -a &#x27;name=keer uid=11111&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;comment&quot;: &quot;&quot;, </span><br><span class="line">    &quot;createhome&quot;: true, </span><br><span class="line">    &quot;group&quot;: 11111, </span><br><span class="line">    &quot;home&quot;: &quot;/home/keer&quot;, </span><br><span class="line">    &quot;name&quot;: &quot;keer&quot;, </span><br><span class="line">    &quot;shell&quot;: &quot;/bin/bash&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;present&quot;, </span><br><span class="line">    &quot;stderr&quot;: &quot;useradd: warning: the home directory already exists.\nNot copying any file from skel directory into it.\nCreating mailbox file: File exists\n&quot;, </span><br><span class="line">    &quot;system&quot;: false, </span><br><span class="line">    &quot;uid&quot;: 11111</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;comment&quot;: &quot;&quot;, </span><br><span class="line">    &quot;createhome&quot;: true, </span><br><span class="line">    &quot;group&quot;: 11111, </span><br><span class="line">    &quot;home&quot;: &quot;/home/keer&quot;, </span><br><span class="line">    &quot;name&quot;: &quot;keer&quot;, </span><br><span class="line">    &quot;shell&quot;: &quot;/bin/bash&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;present&quot;, </span><br><span class="line">    &quot;stderr&quot;: &quot;useradd: warning: the home directory already exists.\nNot copying any file from skel directory into it.\nCreating mailbox file: File exists\n&quot;, </span><br><span class="line">    &quot;system&quot;: false, </span><br><span class="line">    &quot;uid&quot;: 11111</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加完成，我们可以去查看一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;cat /etc/passwd |grep keer&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">keer:x:11111:11111::/home/keer:/bin/bash</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">keer:x:11111:11111::/home/keer:/bin/bash</span><br></pre></td></tr></table></figure>
+
+<p><strong>② 删除用户</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m user -a &#x27;name=keer state=absent&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;force&quot;: false, </span><br><span class="line">    &quot;name&quot;: &quot;keer&quot;, </span><br><span class="line">    &quot;remove&quot;: false, </span><br><span class="line">    &quot;state&quot;: &quot;absent&quot;</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;force&quot;: false, </span><br><span class="line">    &quot;name&quot;: &quot;keer&quot;, </span><br><span class="line">    &quot;remove&quot;: false, </span><br><span class="line">    &quot;state&quot;: &quot;absent&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一样的，删除之后，我们去看一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;cat /etc/passwd |grep keer&#x27;</span><br><span class="line">192.168.37.122 | FAILED | rc=1 &gt;&gt;</span><br><span class="line"></span><br><span class="line">192.168.37.133 | FAILED | rc=1 &gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>发现已经没有这个用户了。</p>
+<h3 id="11、group-模块"><a href="#11、group-模块" class="headerlink" title="11、group 模块"></a>11、group 模块</h3><p>该模块主要用于添加或删除组。 　　常用的选项如下：</p>
+<blockquote>
+<p><code>gid=</code>　　#设置组的GID号<br><code>name=</code>　　#指定组的名称<br><code>state=</code>　　#指定组的状态，默认为创建，设置值为<code>absent</code>为删除 <code>system=</code>　　#设置值为<code>yes</code>，表示创建为系统组</p>
+</blockquote>
+<p>举例如下： <strong>① 创建组</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m group -a &#x27;name=sanguo gid=12222&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;gid&quot;: 12222, </span><br><span class="line">    &quot;name&quot;: &quot;sanguo&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;present&quot;, </span><br><span class="line">    &quot;system&quot;: false</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;gid&quot;: 12222, </span><br><span class="line">    &quot;name&quot;: &quot;sanguo&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;present&quot;, </span><br><span class="line">    &quot;system&quot;: false</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建过后，我们来查看一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;cat /etc/group | grep 12222&#x27; </span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">sanguo:x:12222:</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">sanguo:x:12222:</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，我们的组已经创建成功了。 <strong>② 删除组</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m group -a &#x27;name=sanguo state=absent&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;name&quot;: &quot;sanguo&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;absent&quot;</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;name&quot;: &quot;sanguo&quot;, </span><br><span class="line">    &quot;state&quot;: &quot;absent&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>照例查看一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;cat /etc/group | grep 12222&#x27; </span><br><span class="line">192.168.37.122 | FAILED | rc=1 &gt;&gt;</span><br><span class="line"></span><br><span class="line">192.168.37.133 | FAILED | rc=1 &gt;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>已经没有这个组的相关信息了。</p>
+<h3 id="12、script-模块"><a href="#12、script-模块" class="headerlink" title="12、script 模块&#x2F;&#x2F;&#x2F;"></a>12、script 模块&#x2F;&#x2F;&#x2F;</h3><p>该模块用于将本机的脚本在被管理端的机器上运行。该模块直接指定脚本的路径即可，我们通过例子来看一看到底如何使用的：首先，我们写一个脚本，并给其加上执行权限：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# vim /tmp/df.sh</span><br><span class="line">    #!/bin/bash</span><br><span class="line">    date &gt;&gt; /tmp/disk_total.log </span><br><span class="line">    df -lh &gt;&gt; /tmp/disk_total.log </span><br><span class="line">[root@server ~]# chmod +x /tmp/df.sh</span><br></pre></td></tr></table></figure>
+
+<p>然后，我们直接运行命令来实现在被管理端执行该脚本：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m script -a &#x27;/tmp/df.sh&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;rc&quot;: 0, </span><br><span class="line">    &quot;stderr&quot;: &quot;Shared connection to 192.168.37.122 closed.\r\n&quot;, </span><br><span class="line">    &quot;stdout&quot;: &quot;&quot;, </span><br><span class="line">    &quot;stdout_lines&quot;: []</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;rc&quot;: 0, </span><br><span class="line">    &quot;stderr&quot;: &quot;Shared connection to 192.168.37.133 closed.\r\n&quot;, </span><br><span class="line">    &quot;stdout&quot;: &quot;&quot;, </span><br><span class="line">    &quot;stdout_lines&quot;: []</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>照例查看一下文件内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;cat /tmp/disk_total.log&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">Tue Dec  5 15:58:21 CST 2017</span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">/dev/sda2        47G  4.4G   43G  10% /</span><br><span class="line">devtmpfs        978M     0  978M   0% /dev</span><br><span class="line">tmpfs           993M   84K  993M   1% /dev/shm</span><br><span class="line">tmpfs           993M  9.1M  984M   1% /run</span><br><span class="line">tmpfs           993M     0  993M   0% /sys/fs/cgroup</span><br><span class="line">/dev/sda3        47G   33M   47G   1% /app</span><br><span class="line">/dev/sda1       950M  153M  798M  17% /boot</span><br><span class="line">tmpfs           199M   16K  199M   1% /run/user/42</span><br><span class="line">tmpfs           199M     0  199M   0% /run/user/0</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">Tue Dec  5 15:58:21 CST 2017</span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">/dev/sda2        46G  4.1G   40G  10% /</span><br><span class="line">devtmpfs        898M     0  898M   0% /dev</span><br><span class="line">tmpfs           912M   84K  912M   1% /dev/shm</span><br><span class="line">tmpfs           912M  9.0M  903M   1% /run</span><br><span class="line">tmpfs           912M     0  912M   0% /sys/fs/cgroup</span><br><span class="line">/dev/sda3       3.7G   15M  3.4G   1% /app</span><br><span class="line">/dev/sda1       1.9G  141M  1.6G   9% /boot</span><br><span class="line">tmpfs           183M   16K  183M   1% /run/user/42</span><br><span class="line">tmpfs           183M     0  183M   0% /run/user/0</span><br></pre></td></tr></table></figure>
+
+<p>可以看出已经执行成功了。</p>
+<h3 id="13、setup-模块"><a href="#13、setup-模块" class="headerlink" title="13、setup 模块"></a>13、setup 模块</h3><p>该模块主要用于收集信息，是通过调用facts组件来实现的。<br>　　facts组件是Ansible用于采集被管机器设备信息的一个功能，我们可以使用setup模块查机器的所有facts信息，可以使用filter来查看指定信息。整个facts信息被包装在一个JSON格式的数据结构中，ansible_facts是最上层的值。<br>　　facts就是变量，内建变量 。每个主机的各种信息，cpu颗数、内存大小等。会存在facts中的某个变量中。调用后返回很多对应主机的信息，在后面的操作中可以根据不同的信息来做不同的操作。如redhat系列用yum安装，而debian系列用apt来安装软件。<br><strong>① 查看信息</strong><br>　　我们可以直接用命令获取到变量的值，具体我们来看看例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m setup -a &#x27;filter=&quot;*mem*&quot;&#x27;   #查看内存</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;ansible_memfree_mb&quot;: 1116, </span><br><span class="line">        &quot;ansible_memory_mb&quot;: &#123;</span><br><span class="line">            &quot;nocache&quot;: &#123;</span><br><span class="line">                &quot;free&quot;: 1397, </span><br><span class="line">                &quot;used&quot;: 587</span><br><span class="line">            &#125;, </span><br><span class="line">            &quot;real&quot;: &#123;</span><br><span class="line">                &quot;free&quot;: 1116, </span><br><span class="line">                &quot;total&quot;: 1984, </span><br><span class="line">                &quot;used&quot;: 868</span><br><span class="line">            &#125;, </span><br><span class="line">            &quot;swap&quot;: &#123;</span><br><span class="line">                &quot;cached&quot;: 0, </span><br><span class="line">                &quot;free&quot;: 3813, </span><br><span class="line">                &quot;total&quot;: 3813, </span><br><span class="line">                &quot;used&quot;: 0</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, </span><br><span class="line">        &quot;ansible_memtotal_mb&quot;: 1984</span><br><span class="line">    &#125;, </span><br><span class="line">    &quot;changed&quot;: false</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;ansible_memfree_mb&quot;: 1203, </span><br><span class="line">        &quot;ansible_memory_mb&quot;: &#123;</span><br><span class="line">            &quot;nocache&quot;: &#123;</span><br><span class="line">                &quot;free&quot;: 1470, </span><br><span class="line">                &quot;used&quot;: 353</span><br><span class="line">            &#125;, </span><br><span class="line">            &quot;real&quot;: &#123;</span><br><span class="line">                &quot;free&quot;: 1203, </span><br><span class="line">                &quot;total&quot;: 1823, </span><br><span class="line">                &quot;used&quot;: 620</span><br><span class="line">            &#125;, </span><br><span class="line">            &quot;swap&quot;: &#123;</span><br><span class="line">                &quot;cached&quot;: 0, </span><br><span class="line">                &quot;free&quot;: 3813, </span><br><span class="line">                &quot;total&quot;: 3813, </span><br><span class="line">                &quot;used&quot;: 0</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, </span><br><span class="line">        &quot;ansible_memtotal_mb&quot;: 1823</span><br><span class="line">    &#125;, </span><br><span class="line">    &quot;changed&quot;: false</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以通过命令查看一下内存的大小以确认一下是否一致：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# ansible web -m shell -a &#x27;free -m&#x27;</span><br><span class="line">192.168.37.122 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">              total        used        free      shared  buff/cache   available</span><br><span class="line">Mem:           1984         404        1122           9         457        1346</span><br><span class="line">Swap:          3813           0        3813</span><br><span class="line"></span><br><span class="line">192.168.37.133 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">              total        used        free      shared  buff/cache   available</span><br><span class="line">Mem:           1823         292        1207           9         323        1351</span><br><span class="line">Swap:          3813           0        3813</span><br></pre></td></tr></table></figure>
+
+<p>可以看出信息是一致的。<br><strong>② 保存信息</strong><br>　　我们的setup模块还有一个很好用的功能就是可以保存我们所筛选的信息至我们的主机上，同时，文件名为我们被管制的主机的IP，这样方便我们知道是哪台机器出的问题。<br>　　我们可以看一看例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">[root@server tmp]# ansible web -m setup -a &#x27;filter=&quot;*mem*&quot;&#x27; --tree /tmp/facts</span><br><span class="line">192.168.37.122 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;ansible_memfree_mb&quot;: 1115, </span><br><span class="line">        &quot;ansible_memory_mb&quot;: &#123;</span><br><span class="line">            &quot;nocache&quot;: &#123;</span><br><span class="line">                &quot;free&quot;: 1396, </span><br><span class="line">                &quot;used&quot;: 588</span><br><span class="line">            &#125;, </span><br><span class="line">            &quot;real&quot;: &#123;</span><br><span class="line">                &quot;free&quot;: 1115, </span><br><span class="line">                &quot;total&quot;: 1984, </span><br><span class="line">                &quot;used&quot;: 869</span><br><span class="line">            &#125;, </span><br><span class="line">            &quot;swap&quot;: &#123;</span><br><span class="line">                &quot;cached&quot;: 0, </span><br><span class="line">                &quot;free&quot;: 3813, </span><br><span class="line">                &quot;total&quot;: 3813, </span><br><span class="line">                &quot;used&quot;: 0</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, </span><br><span class="line">        &quot;ansible_memtotal_mb&quot;: 1984</span><br><span class="line">    &#125;, </span><br><span class="line">    &quot;changed&quot;: false</span><br><span class="line">&#125;</span><br><span class="line">192.168.37.133 | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;ansible_facts&quot;: &#123;</span><br><span class="line">        &quot;ansible_memfree_mb&quot;: 1199, </span><br><span class="line">        &quot;ansible_memory_mb&quot;: &#123;</span><br><span class="line">            &quot;nocache&quot;: &#123;</span><br><span class="line">                &quot;free&quot;: 1467, </span><br><span class="line">                &quot;used&quot;: 356</span><br><span class="line">            &#125;, </span><br><span class="line">            &quot;real&quot;: &#123;</span><br><span class="line">                &quot;free&quot;: 1199, </span><br><span class="line">                &quot;total&quot;: 1823, </span><br><span class="line">                &quot;used&quot;: 624</span><br><span class="line">            &#125;, </span><br><span class="line">            &quot;swap&quot;: &#123;</span><br><span class="line">                &quot;cached&quot;: 0, </span><br><span class="line">                &quot;free&quot;: 3813, </span><br><span class="line">                &quot;total&quot;: 3813, </span><br><span class="line">                &quot;used&quot;: 0</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, </span><br><span class="line">        &quot;ansible_memtotal_mb&quot;: 1823</span><br><span class="line">    &#125;, </span><br><span class="line">    &quot;changed&quot;: false</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们可以去查看一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@server ~]# cd /tmp/facts/</span><br><span class="line">[root@server facts]# ls</span><br><span class="line">192.168.37.122  192.168.37.133</span><br><span class="line">[root@server facts]# cat 192.168.37.122 </span><br><span class="line">&#123;&quot;ansible_facts&quot;: &#123;&quot;ansible_memfree_mb&quot;: 1115, &quot;ansible_memory_mb&quot;: &#123;&quot;nocache&quot;: &#123;&quot;free&quot;: 1396, &quot;used&quot;: 588&#125;, &quot;real&quot;: &#123;&quot;free&quot;: 1115, &quot;total&quot;: 1984, &quot;used&quot;: 869&#125;, &quot;swap&quot;: &#123;&quot;cached&quot;: 0, &quot;free&quot;: 3813, &quot;total&quot;: 3813, &quot;used&quot;: 0&#125;&#125;, &quot;ansible_memtotal_mb&quot;: 1984&#125;, &quot;changed&quot;: false&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="14、get-url模块"><a href="#14、get-url模块" class="headerlink" title="14、get_url模块"></a>14、get_url模块</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">get_url模块</span><br><span class="line">用途： 用于将文件或软件从http、https或ftp下载到本地节点上</span><br><span class="line"></span><br><span class="line">常用参数：</span><br><span class="line"></span><br><span class="line">dest： 指定将文件下载的绝对路径---必须</span><br><span class="line">url： 文件的下载地址（网址）---必须</span><br><span class="line">url_username: 用于http基本认证的用户名</span><br><span class="line">url_password： 用于http基本认证的密码</span><br><span class="line">validate_certs： 如果否，SSL证书将不会验证。这只应在使用自签名证书的个人控制站点上使用</span><br><span class="line">owner： 指定属主</span><br><span class="line">group： 指定属组</span><br><span class="line">mode： 指定权限</span><br><span class="line"></span><br><span class="line">ansible -i /etc/ansible/hosts  zabbix -m get_url -a &quot;url=ftp://10.3.131.50/soft/wechat.py dest=/tmp&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="15、stat模块"><a href="#15、stat模块" class="headerlink" title="15、stat模块"></a>15、stat模块</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> 用途：检查文件或文件系统的状态</span><br><span class="line">注意：</span><br><span class="line">对于Windows目标，请改用win_stat模块</span><br><span class="line"></span><br><span class="line">选项：</span><br><span class="line">path：文件/对象的完整路径（必须）</span><br><span class="line"></span><br><span class="line">案例：</span><br><span class="line"></span><br><span class="line">name: install_apcu | Check if apcu local file is already configured.</span><br><span class="line">stat: path=&#123;&#123; php_apcu_file_path &#125;&#125;</span><br><span class="line">connection: local</span><br><span class="line">register: php_apcu_file_result</span><br><span class="line">常用的返回值判断：</span><br><span class="line">exists： 判断是否存在</span><br><span class="line">isuid： 调用用户的ID与所有者ID是否匹配</span><br></pre></td></tr></table></figure>
+
+<h3 id="16、unarchive模块"><a href="#16、unarchive模块" class="headerlink" title="16、unarchive模块"></a>16、unarchive模块</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">用途：从本地机器上复制存档后，将其解包。</span><br><span class="line">说明：</span><br><span class="line">该unarchive模块将解压缩一个存档。</span><br><span class="line">默认情况下，它将在解包之前将源文件从本地系统复制到目标。</span><br><span class="line">设置remote_src=yes为解包目标上已经存在的档案。</span><br><span class="line">对于Windows目标，请改用win_unzip模块。</span><br><span class="line"></span><br><span class="line">常用选项：</span><br><span class="line"></span><br><span class="line">dest：远程绝对路径，档案应该被解压缩</span><br><span class="line">exec：列出需要排除的目录和文件</span><br><span class="line">src：指定源</span><br><span class="line">creates：一个文件名，当它已经存在时，这个步骤将不会被运行。</span><br><span class="line"></span><br><span class="line">ansible -i /etc/ansible/hosts web -m unarchive -a &#x27;src=/root/easy-springmvc-maven.zip dest=/tmp&#x27;</span><br><span class="line"></span><br><span class="line">- name: Extract foo.tgz into /var/lib/foo</span><br><span class="line"> unarchive:</span><br><span class="line">   src: foo.tgz</span><br><span class="line">   dest: /var/lib/foo</span><br><span class="line"></span><br><span class="line">- name: Unarchive a file that is already on the remote machine</span><br><span class="line"> unarchive:</span><br><span class="line">   src: /tmp/foo.zip</span><br><span class="line">   dest: /usr/local/bin</span><br><span class="line">   remote_src: yes</span><br><span class="line"></span><br><span class="line">- name: Unarchive a file that needs to be downloaded (added in 2.0)</span><br><span class="line"> unarchive:</span><br><span class="line">   src: https://example.com/example.zip</span><br><span class="line">   dest: /usr/local/bin</span><br><span class="line">   remote_src: yes</span><br></pre></td></tr></table></figure>
+
+<h1 id="二、Ansible-模块拓展"><a href="#二、Ansible-模块拓展" class="headerlink" title="二、Ansible 模块拓展"></a>二、Ansible 模块拓展</h1><h2 id="uri模块"><a href="#uri模块" class="headerlink" title="uri模块"></a>uri模块</h2><p>在Ansible中，uri模块是一个用于发送HTTP、HTTPS、FTP等请求的模块，可以用于获取网页内容、下载文件、上传文件等。本质上，它是一个HTTP客户端模块。</p>
+<p>使用uri模块，需要指定一些参数来定义HTTP请求。下面是一些uri模块的常用参数：</p>
+<ul>
+<li>url：必须，指定请求的URL地址。</li>
+<li>method：指定HTTP请求方法，默认为GET。</li>
+<li>headers：HTTP请求头信息。</li>
+<li>body：HTTP请求体。</li>
+<li>status_code：HTTP响应的状态码。</li>
+<li>return_content：指定是否返回响应内容。</li>
+</ul>
+<p>下面是一个简单的uri模块的使用示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Get</span> <span class="string">the</span> <span class="string">content</span> <span class="string">of</span> <span class="string">a</span> <span class="string">web</span> <span class="string">page</span></span><br><span class="line">  <span class="attr">uri:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">https://www.example.com</span></span><br><span class="line">    <span class="attr">return_content:</span> <span class="literal">yes</span></span><br><span class="line">  <span class="attr">register:</span> <span class="string">result</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Print</span> <span class="string">the</span> <span class="string">content</span> <span class="string">of</span> <span class="string">the</span> <span class="string">web</span> <span class="string">page</span></span><br><span class="line">  <span class="attr">debug:</span></span><br><span class="line">    <span class="attr">var:</span> <span class="string">result.content</span></span><br></pre></td></tr></table></figure>
+
+<p>在这个示例中，uri模块被用来获取<a target="_blank" rel="noopener" href="https://www.example.com的网页内容,并将结果保存在result变量中.第二个任务使用debug模块输出结果./">https://www.example.com的网页内容，并将结果保存在result变量中。第二个任务使用debug模块输出结果。</a></p>
+<p>在实际使用中，uri模块可以结合其他模块来实现更复杂的功能。例如，可以使用uri模块下载文件、上传文件，或者通过uri模块发送POST请求来提交表单等。</p>
+<h2 id="lineinfile-模块"><a href="#lineinfile-模块" class="headerlink" title="lineinfile 模块"></a>lineinfile 模块</h2><p>在 Ansible 中，lineinfile 模块是用于在文件中搜索指定行，如果找到了该行则修改或添加内容，如果没有找到则添加一行新内容。</p>
+<p>使用 lineinfile 模块，需要指定以下参数：</p>
+<ul>
+<li>path：必需，指定要修改的文件路径。</li>
+<li>line：必需，指定要添加或修改的行的内容。</li>
+<li>regexp：必需，指定搜索的正则表达式。</li>
+<li>state：可选，指定是否应该删除匹配行或仅匹配行。如果设置为 present，则确保文件包含该行；如果设置为 absent，则确保文件不包含该行。</li>
+</ul>
+<p>下面是一个简单的 lineinfile 模块的使用示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Add</span> <span class="string">a</span> <span class="string">new</span> <span class="string">line</span> <span class="string">to</span> <span class="string">the</span> <span class="string">file</span></span><br><span class="line">  <span class="attr">lineinfile:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/etc/fstab</span></span><br><span class="line">    <span class="attr">line:</span> <span class="string">&#x27;/dev/sdb1 /mnt/data ext4 defaults 0 0&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>在这个示例中，lineinfile 模块用于将一行新内容添加到 &#x2F;etc&#x2F;fstab 文件中。如果文件中已经包含了该行，则该模块不会做出任何更改。</p>
+<p>下面是另一个示例，演示如何将文件中的特定行修改为新内容：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Modify</span> <span class="string">an</span> <span class="string">existing</span> <span class="string">line</span> <span class="string">in</span> <span class="string">the</span> <span class="string">file</span></span><br><span class="line">  <span class="attr">lineinfile:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/etc/fstab</span></span><br><span class="line">    <span class="attr">regexp:</span> <span class="string">&#x27;^/dev/sdb1&#x27;</span></span><br><span class="line">    <span class="attr">line:</span> <span class="string">&#x27;/dev/sdb1 /mnt/data ext4 defaults 1 1&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>在这个示例中，lineinfile 模块用于搜索以 &#x2F;dev&#x2F;sdb1 开头的行，并将该行的内容修改为指定的新内容。</p>
+<p>除了添加和修改行，lineinfile 模块还可以用于删除指定的行。下面是一个示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Remove</span> <span class="string">a</span> <span class="string">line</span> <span class="string">from</span> <span class="string">the</span> <span class="string">file</span></span><br><span class="line">  <span class="attr">lineinfile:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/etc/fstab</span></span><br><span class="line">    <span class="attr">regexp:</span> <span class="string">&#x27;^/dev/sdb1&#x27;</span></span><br><span class="line">    <span class="attr">state:</span> <span class="string">absent</span></span><br></pre></td></tr></table></figure>
+
+<p>在这个示例中，lineinfile 模块用于删除以 &#x2F;dev&#x2F;sdb1 开头的行。</p>
+<p>总之，lineinfile 模块可以方便地操作文件中的行，使得对文件进行修改变得更加简单。需要注意的是，该模块会对文件进行修改，因此在使用前应该确保已经备份了需要修改的文件。</p>
+<h2 id="wait-for-模块"><a href="#wait-for-模块" class="headerlink" title="wait_for 模块"></a>wait_for 模块</h2><h3 id="1、基于端口的方式"><a href="#1、基于端口的方式" class="headerlink" title="1、基于端口的方式"></a>1、基于端口的方式</h3><p><code>wait_for</code>模块是Ansible中一个非常有用的模块，它可以等待特定的条件满足，然后继续执行后续的任务。该模块可以用于等待远程主机上的某个端口、某个服务是否启动或某个文件是否存在等情况。</p>
+<p>下面是<code>wait_for</code>模块的基本用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- name: Wait for a TCP port to become available</span><br><span class="line">  wait_for:</span><br><span class="line">    host: localhost</span><br><span class="line">    port: 80</span><br></pre></td></tr></table></figure>
+
+<p>在这个示例中，<code>wait_for</code>模块将等待主机localhost上的TCP端口80变为可用。在等待期间，Ansible将阻塞当前任务，直到条件得到满足或达到了超时时间。默认情况下，超时时间为300秒（5分钟），可以通过<code>timeout</code>参数进行配置。</p>
+<p><code>wait_for</code>模块还支持其他条件，例如等待文件存在、等待HTTP响应码、等待正则表达式匹配等，具体取决于使用情况。以下是一个等待文件存在的示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- name: Wait for a file to become available</span><br><span class="line">  wait_for:</span><br><span class="line">    path: /path/to/file</span><br><span class="line">    state: present</span><br></pre></td></tr></table></figure>
+
+<p>在这个示例中，<code>wait_for</code>模块将等待远程主机上的<code>/path/to/file</code>文件存在。使用<code>state</code>参数指定等待文件的状态，可以是<code>present</code>（存在）或<code>absent</code>（不存在）。</p>
+<p><code>wait_for</code>模块还支持<code>msg</code>参数，可用于在等待期间输出自定义消息。以下是一个示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- name: Wait for a service to become available</span><br><span class="line">  wait_for:</span><br><span class="line">    host: localhost</span><br><span class="line">    port: 80</span><br><span class="line">    timeout: 60</span><br><span class="line">    msg: &quot;Waiting for service to become available&quot;</span><br></pre></td></tr></table></figure>
+
+<p>在这个示例中，<code>wait_for</code>模块将等待主机localhost上的TCP端口80变为可用，并输出自定义消息“Waiting for service to become available”。如果等待超时，Ansible将失败并输出相应的错误消息。</p>
+<h3 id="2、基于进程的方式"><a href="#2、基于进程的方式" class="headerlink" title="2、基于进程的方式"></a>2、基于进程的方式</h3><p>Ansible中的<code>wait_for</code>模块可以等待特定的进程是否存在。下面是一个使用<code>wait_for</code>模块等待特定进程的示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- name: Wait for a process to start</span><br><span class="line">  wait_for:</span><br><span class="line">    path: /usr/bin/process</span><br><span class="line">    search_regex: running</span><br></pre></td></tr></table></figure>
+
+<p>在这个示例中，<code>wait_for</code>模块将等待名为<code>process</code>的进程启动并输出特定的字符串<code>running</code>。如果进程未启动或未输出指定字符串，则任务将一直阻塞直到满足条件或超时。可以使用<code>timeout</code>参数设置超时时间，默认为300秒（5分钟）。</p>
+<p>此外，还可以通过使用<code>msg</code>参数设置等待期间输出的消息。以下是一个示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- name: Wait for a process to start</span><br><span class="line">  wait_for:</span><br><span class="line">    path: /usr/bin/process</span><br><span class="line">    search_regex: running</span><br><span class="line">    timeout: 60</span><br><span class="line">    msg: &quot;Waiting for process to start&quot;</span><br></pre></td></tr></table></figure>
+
+<p>在这个示例中，如果等待超时，将输出自定义消息“Waiting for process to start”。</p>
+<h3 id="3、基于文件的方式"><a href="#3、基于文件的方式" class="headerlink" title="3、基于文件的方式"></a>3、基于文件的方式</h3><p>wait_for模块通过轮询（默认为每秒轮询一次）来检查指定的条件是否满足，如果在超时时间内条件不满足，则任务失败。在等待文件产生时，可以使用“path”参数指定文件路径，并使用“state”参数指定文件状态为“present”。如果文件已经存在，则条件已经满足，任务将继续执行。如果文件不存在，则wait_for模块将在超时时间内等待文件的产生。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- name: 等待文件产生</span><br><span class="line">  wait_for:</span><br><span class="line">    path: /path/to/file</span><br><span class="line">    state: present</span><br><span class="line">    timeout: 60</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，wait_for模块将等待文件“&#x2F;path&#x2F;to&#x2F;file”出现，并在60秒后超时。如果文件在60秒内出现，则任务将继续执行。如果文件在60秒内未出现，则任务将失败。</p>
+<h2 id="synchronize-模块"><a href="#synchronize-模块" class="headerlink" title="synchronize 模块"></a>synchronize 模块</h2><p><code>synchronize</code> 模块是 Ansible 的一个模块，用于将本地目录或文件与远程主机上的目录或文件进行同步。相比于 <code>copy</code> 或 <code>template</code> 等模块，<code>synchronize</code> 可以更快地将大量文件或目录同步到远程主机，因为它使用了 rsync 协议。</p>
+<p>下面是 <code>synchronize</code> 模块的一些常用参数及其含义：</p>
+<ul>
+<li><code>src</code>: 要同步的本地目录或文件的路径。</li>
+<li><code>dest</code>: 要同步到的远程主机上的目录或文件的路径。</li>
+<li><code>mode</code>: 同步模式，可以是 push（将本地文件同步到远程主机）、pull（将远程主机上的文件同步到本地）或 rsync（使用 rsync 协议同步文件）。</li>
+<li><code>rsync_opts</code>: 传递给 rsync 命令的选项。例如，可以使用 <code>-av</code> 选项以归档模式同步文件，使用 <code>-z</code> 选项启用压缩等等。</li>
+<li><code>delete</code>: 是否在同步时删除远程主机上不存在的文件。默认为 <code>no</code>，不删除。</li>
+</ul>
+<p>下面是一个使用 <code>synchronize</code> 模块同步本地目录到远程主机的示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- name: Sync local directory to remote host</span><br><span class="line">  synchronize:</span><br><span class="line">    src: /path/to/local/directory</span><br><span class="line">    dest: /path/to/remote/directory</span><br><span class="line">    mode: push</span><br><span class="line">    rsync_opts: &quot;-avz&quot;</span><br><span class="line">    delete: yes</span><br></pre></td></tr></table></figure>
+
+<p>这个示例会将本地目录 <code>/path/to/local/directory</code> 同步到远程主机的 <code>/path/to/remote/directory</code> 目录下，使用 rsync 协议进行同步，并启用压缩。同时，将删除远程主机上不存在的文件。</p>
+<p>需要注意的是，<code>synchronize</code> 模块需要安装 rsync 工具。如果目标主机上没有安装 rsync，可以使用 Ansible 的 <code>raw</code> 模块或 <code>command</code> 模块来安装它。</p>
+<h2 id="git-模块"><a href="#git-模块" class="headerlink" title="git 模块"></a>git 模块</h2><p>Ansible的git模块允许在远程主机上操作git仓库，可以clone&#x2F;pull&#x2F;push git仓库。在Ansible中，使用git模块可以方便地维护代码库的版本控制。</p>
+<p>下面是git模块的一些常用选项：</p>
+<ul>
+<li><code>repo</code>：git仓库的URL，必需选项；</li>
+<li><code>dest</code>：本地文件系统上的目标目录，可以是绝对路径或相对路径；</li>
+<li><code>version</code>：表示要使用的版本，可以是分支名、标签名或提交哈希值；</li>
+<li><code>force</code>：如果<code>true</code>，则会强制执行git操作，即使目标文件夹已经存在；</li>
+<li><code>update</code>：如果<code>true</code>，则在执行操作时使用<code>git pull</code>命令更新代码库；</li>
+<li><code>recursive</code>：如果<code>true</code>，则递归地拉取子模块；</li>
+<li><code>key_file</code>：ssh私钥文件路径；</li>
+<li><code>accept_hostkey</code>：如果<code>yes</code>，则在第一次连接到远程仓库时自动接受主机密钥；</li>
+<li><code>clone</code>：如果<code>yes</code>，则会使用<code>git clone</code>命令克隆仓库，默认为<code>yes</code>；</li>
+<li><code>bare</code>：如果<code>yes</code>，则会使用<code>git clone --bare</code>命令克隆裸仓库，即不包含工作树。</li>
+</ul>
+<p>使用git模块可以在远程主机上执行git操作，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- name: Clone a git repository</span><br><span class="line">  git:</span><br><span class="line">    repo: https://github.com/ansible/ansible.git</span><br><span class="line">    dest: /home/user/ansible</span><br></pre></td></tr></table></figure>
+
+<p>上述代码会将ansible的git仓库克隆到<code>/home/user/ansible</code>目录下。</p>
+<p>除了上述常用选项外，git模块还有一些其他选项，例如：</p>
+<ul>
+<li><code>key_file_type</code>：ssh私钥文件类型；</li>
+<li><code>reference</code>：指定本地代码库的路径，可以加快克隆速度；</li>
+<li><code>depth</code>：指定克隆时获取历史记录的深度；</li>
+<li><code>recursive_after</code>：指定拉取子模块的时间，可以是<code>always</code>、<code>on-change</code>或<code>never</code>；</li>
+<li><code>rebase</code>：如果<code>true</code>，则在更新操作时使用<code>git pull --rebase</code>命令。</li>
+</ul>
+<p>通过使用Ansible的git模块，可以方便地在远程主机上执行git操作，简化了维护代码库的过程。</p>
+<h2 id="mount-模块"><a href="#mount-模块" class="headerlink" title="mount 模块"></a>mount 模块</h2><p><code>mount</code> 模块是 Ansible 提供的一个用于挂载文件系统的模块，可以在远程主机上挂载本地或者网络上的文件系统。</p>
+<p>该模块的常用参数包括：</p>
+<ul>
+<li><code>src</code>: 指定需要挂载的文件系统。可以是本地文件系统的设备文件，比如 <code>/dev/sdb1</code>，也可以是网络文件系统的位置，比如 <code>server:/share</code>。</li>
+<li><code>path</code>: 指定挂载点的路径。</li>
+<li><code>fstype</code>: 指定文件系统的类型。如果不指定，则根据挂载点自动判断文件系统类型。</li>
+<li><code>state</code>: 指定挂载状态。可选值为 <code>mounted</code> 或 <code>unmounted</code>，默认为 <code>mounted</code>。</li>
+<li><code>opts</code>: 指定挂载选项。选项可以用逗号分隔，比如 <code>rw,noatime</code>。</li>
+</ul>
+<p>下面是一个示例 playbook，演示了如何使用 <code>mount</code> 模块挂载一个 NFS 文件系统：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">- name: Mount NFS filesystem</span><br><span class="line">  hosts: all</span><br><span class="line">  become: true</span><br><span class="line">  vars:</span><br><span class="line">    nfs_mount: &quot;server:/share&quot;</span><br><span class="line">    nfs_path: &quot;/mnt/nfs&quot;</span><br><span class="line">    nfs_opts: &quot;rw,hard,intr&quot;</span><br><span class="line">  tasks:</span><br><span class="line">    - name: Ensure NFS mount directory exists</span><br><span class="line">      file:</span><br><span class="line">        path: &quot;&#123;&#123; nfs_path &#125;&#125;&quot;</span><br><span class="line">        state: directory</span><br><span class="line"></span><br><span class="line">    - name: Mount NFS filesystem</span><br><span class="line">      mount:</span><br><span class="line">        src: &quot;&#123;&#123; nfs_mount &#125;&#125;&quot;</span><br><span class="line">        path: &quot;&#123;&#123; nfs_path &#125;&#125;&quot;</span><br><span class="line">        fstype: nfs</span><br><span class="line">        opts: &quot;&#123;&#123; nfs_opts &#125;&#125;&quot;</span><br><span class="line">        state: mounted</span><br></pre></td></tr></table></figure>
+
+<p>这个 playbook 在远程主机上创建了 <code>/mnt/nfs</code> 目录，并将 <code>server:/share</code> 挂载到该目录下。挂载选项为 <code>rw,hard,intr</code>，文件系统类型为 NFS。如果文件系统已经被挂载，不会进行任何操作。如果挂载点已经存在但未挂载，将会尝试挂载。如果挂载失败，则任务将会失败。</p>
+<h2 id="package-模块"><a href="#package-模块" class="headerlink" title="package 模块"></a>package 模块</h2><p>在 Ansible 中，package 模块用于管理包的安装和卸载。它能够在许多操作系统上安装和卸载包，例如 RedHat、CentOS、Debian、Ubuntu 等。</p>
+<p>package 模块可以执行以下操作：</p>
+<p>-<br>安装包：通过使用 <code>name</code> 参数指定要安装的包名称即可安装包。例如，安装 <code>httpd</code> 包可以使用以下任务：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- name: Install httpd</span><br><span class="line">  package:</span><br><span class="line">    name: httpd</span><br><span class="line">    state: present</span><br></pre></td></tr></table></figure>
+
+
+<p>-<br>卸载包：通过使用 <code>state</code> 参数将其设置为 <code>absent</code> 即可卸载包。例如，卸载 <code>httpd</code> 包可以使用以下任务：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- name: Remove httpd</span><br><span class="line">  package:</span><br><span class="line">    name: httpd</span><br><span class="line">    state: absent</span><br></pre></td></tr></table></figure>
+
+
+<p>-<br>更新包：通过将 <code>state</code> 参数设置为 <code>latest</code> 即可更新包。例如，更新 <code>httpd</code> 包可以使用以下任务：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- name: Update httpd</span><br><span class="line">  package:</span><br><span class="line">    name: httpd</span><br><span class="line">    state: latest</span><br></pre></td></tr></table></figure>
+
+
+<p>-<br>确定包是否已安装：通过将 <code>state</code> 参数设置为 <code>query</code> 可以确定包是否已安装。如果包已安装，则任务将成功执行，否则任务将失败。例如，检查 <code>httpd</code> 包是否已安装可以使用以下任务：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- name: Check if httpd is installed</span><br><span class="line">  package:</span><br><span class="line">    name: httpd</span><br><span class="line">    state: query</span><br></pre></td></tr></table></figure>
+
+
+
+<p>除了这些基本操作之外，package 模块还支持其他参数，例如 <code>allow_downgrade</code>、<code>disable_gpg_check</code>、<code>update_cache</code> 等，这些参数可以根据需要进行设置。</p>
+<h2 id="template-模块"><a href="#template-模块" class="headerlink" title="template 模块"></a>template 模块</h2><p><code>template</code> 模块是 Ansible 中的一个常用模块，用于在目标主机上生成文件。它将一个源文件作为模板，在生成目标文件时将其渲染，使用用户定义的变量来填充模板中的占位符，从而生成目标文件。</p>
+<p><code>template</code> 模块的主要参数如下：</p>
+<ul>
+<li><code>src</code>：源模板文件的路径，相对于 Ansible 控制节点。</li>
+<li><code>dest</code>：目标文件的路径，相对于目标主机。</li>
+<li><code>owner</code>：目标文件的所有者。</li>
+<li><code>group</code>：目标文件的组。</li>
+<li><code>mode</code>：目标文件的权限。</li>
+<li><code>backup</code>：是否创建备份文件。</li>
+<li><code>validate</code>：用于验证生成的文件是否正确的命令或脚本。</li>
+<li><code>vars</code>：用于在模板中填充变量的字典。</li>
+<li><code>setype</code>：用于在 SELinux 中设置目标文件类型的字符串。</li>
+<li><code>selevel</code>：用于在 SELinux 中设置目标文件级别的字符串。</li>
+</ul>
+<p>下面是一个使用 <code>template</code> 模块的例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">- name: Generate config file</span><br><span class="line">  template:</span><br><span class="line">    src: /path/to/template.conf.j2</span><br><span class="line">    dest: /etc/app/config.conf</span><br><span class="line">    owner: appuser</span><br><span class="line">    group: appgroup</span><br><span class="line">    mode: 0644</span><br><span class="line">    vars:</span><br><span class="line">      key1: value1</span><br><span class="line">      key2: value2</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，<code>template</code> 模块将 <code>/path/to/template.conf.j2</code> 文件作为模板，渲染后生成 <code>/etc/app/config.conf</code> 文件，使用 <code>appuser</code> 用户和 <code>appgroup</code> 组作为所有者和组，设置权限为 <code>0644</code>，并且使用 <code>vars</code> 参数填充了模板中的变量。</p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2023/09/17/ansible 模块扩展/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81ansible-%E5%B8%B8%E7%94%A8%E6%A8%A1%E5%9D%97"><span class="toc-number">1.</span> <span class="toc-text">一、ansible 常用模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E4%B8%BB%E6%9C%BA%E8%BF%9E%E9%80%9A%E6%80%A7%E6%B5%8B%E8%AF%95"><span class="toc-number">1.0.1.</span> <span class="toc-text">1、主机连通性测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81command-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.2.</span> <span class="toc-text">2、command 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81shell-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.3.</span> <span class="toc-text">3、shell 模块 &#x2F;&#x2F;&#x2F;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81copy-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.4.</span> <span class="toc-text">4、copy 模块 &#x2F;&#x2F;&#x2F;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81file-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.5.</span> <span class="toc-text">5、file 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6%E3%80%81fetch-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.6.</span> <span class="toc-text">6、fetch 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7%E3%80%81cron-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.7.</span> <span class="toc-text">7、cron 模块&#x2F;&#x2F;&#x2F;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8%E3%80%81yum-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.8.</span> <span class="toc-text">8、yum 模块&#x2F;&#x2F;&#x2F;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9%E3%80%81service-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.9.</span> <span class="toc-text">9、service 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10%E3%80%81user-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.10.</span> <span class="toc-text">10、user 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11%E3%80%81group-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.11.</span> <span class="toc-text">11、group 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12%E3%80%81script-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.12.</span> <span class="toc-text">12、script 模块&#x2F;&#x2F;&#x2F;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13%E3%80%81setup-%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.13.</span> <span class="toc-text">13、setup 模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14%E3%80%81get-url%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.14.</span> <span class="toc-text">14、get_url模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15%E3%80%81stat%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.15.</span> <span class="toc-text">15、stat模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16%E3%80%81unarchive%E6%A8%A1%E5%9D%97"><span class="toc-number">1.0.16.</span> <span class="toc-text">16、unarchive模块</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Ansible-%E6%A8%A1%E5%9D%97%E6%8B%93%E5%B1%95"><span class="toc-number">2.</span> <span class="toc-text">二、Ansible 模块拓展</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#uri%E6%A8%A1%E5%9D%97"><span class="toc-number">2.1.</span> <span class="toc-text">uri模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lineinfile-%E6%A8%A1%E5%9D%97"><span class="toc-number">2.2.</span> <span class="toc-text">lineinfile 模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#wait-for-%E6%A8%A1%E5%9D%97"><span class="toc-number">2.3.</span> <span class="toc-text">wait_for 模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%9F%BA%E4%BA%8E%E7%AB%AF%E5%8F%A3%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="toc-number">2.3.1.</span> <span class="toc-text">1、基于端口的方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E5%9F%BA%E4%BA%8E%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="toc-number">2.3.2.</span> <span class="toc-text">2、基于进程的方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%9F%BA%E4%BA%8E%E6%96%87%E4%BB%B6%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="toc-number">2.3.3.</span> <span class="toc-text">3、基于文件的方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#synchronize-%E6%A8%A1%E5%9D%97"><span class="toc-number">2.4.</span> <span class="toc-text">synchronize 模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#git-%E6%A8%A1%E5%9D%97"><span class="toc-number">2.5.</span> <span class="toc-text">git 模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mount-%E6%A8%A1%E5%9D%97"><span class="toc-number">2.6.</span> <span class="toc-text">mount 模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#package-%E6%A8%A1%E5%9D%97"><span class="toc-number">2.7.</span> <span class="toc-text">package 模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#template-%E6%A8%A1%E5%9D%97"><span class="toc-number">2.8.</span> <span class="toc-text">template 模块</span></a></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/05/20/Python 2/">python二</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2023/07/21/shell_newrain/">shell编程</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2023/09/17/ansible 模块扩展/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系小曹宅，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">2262690094</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"不找了","artist":"隔壁老樊","url":"music/隔壁老樊 - 不找了.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"于是天气刚好","artist":"泪桥","url":"music/于是天气刚好 - 泪桥.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"安和桥","artist":"林芬宇","url":"music/林芬宇 - 安和桥.mp3","cover":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0SWQx6YrNA8lElaG4OOKLkNkNzLO1PflKg&usqp=CAU"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
