@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>我的技术与生活——小站首页 | Mr.Long</title>
+  <title>我的技术与生活——单用户模式破解密码 | Mr.Long</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/css/public.css" />
@@ -16,7 +16,7 @@
 
   <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
   <script>
-    document.title = `我的技术与生活——小站首页`
+    document.title = `我的技术与生活——单用户模式破解密码`
   </script>
 <meta name="generator" content="Hexo 7.3.0"></head>
 
@@ -344,257 +344,141 @@
     </div>
   </div>
 </div></div>
-      <div id="main-container" class="main-container"><link rel="stylesheet" href="/css/partial/archive.css" />
+      <div id="main-container" class="main-container">
 
 
+  <link rel="stylesheet" href="/css/partial/article.css" />
 
-    <link rel="stylesheet" href="/css/partial/index.css" />
-
-
-
-<div class="index">
-  <div class="index-left">
-    
-      <div class="index-article">
-        <!-- <img class="index-article--cover" src="https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5" alt=""> -->
-        <div class="index-article--box">
-          <img class="index-article--cover" data-cover="https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5" alt="磁盘阵列" />
-        </div>
-        <div class="index-article--content">
-          <a href="/2023/07/11/%E7%A3%81%E7%9B%98%E9%98%B5%E5%88%97RAID/">磁盘阵列 </a>
-          <div>
-            
-              <p>
-                <a class="post-category-link" href="/categories/Linux/">-Linux</a>
-              </p>
-            
-            
-              <p>
-                <a class="-link" href="/tags/Linux/" rel="tag">-Linux</a>
-              </p>
-            
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">单用户模式破解密码</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/Linux/">-Linux</a>
           </div>
-          <div class="bg"></div>
-        </div>
-      </div>
-    
-      <div class="index-article">
-        <!-- <img class="index-article--cover" src="https://haowallpaper.com/link/common/file/getCroppingImg/a4f0f8a8bbda6dc810ff3fad4a671f96a4f0f8a8bbda6dc810ff3fad4a671f96" alt=""> -->
-        <div class="index-article--box">
-          <img class="index-article--cover" data-cover="https://haowallpaper.com/link/common/file/getCroppingImg/a4f0f8a8bbda6dc810ff3fad4a671f96a4f0f8a8bbda6dc810ff3fad4a671f96" alt="LVM逻辑卷管理" />
-        </div>
-        <div class="index-article--content">
-          <a href="/2023/06/28/%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86--2/">LVM逻辑卷管理 </a>
-          <div>
-            
-              <p>
-                <a class="post-category-link" href="/categories/Linux/">-Linux</a>
-              </p>
-            
-            
-              <p>
-                <a class="-link" href="/tags/Linux/" rel="tag">-Linux</a>
-              </p>
-            
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            <a class="tag-link" href="/tags/Linux/" rel="tag">-Linux</a>
           </div>
-          <div class="bg"></div>
+          
+          <p class="article-info--date">日期：2023-07-01 12:19:22</p>
         </div>
+        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b" alt="" class="article-cover">
       </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h2 id="一、单用户模式破解密码"><a href="#一、单用户模式破解密码" class="headerlink" title="一、单用户模式破解密码"></a>一、单用户模式破解密码</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># cat /etc/redhat-release </span><br><span class="line">CentOS Linux release 7.7.1908 (Core)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">修复模式：</span><br><span class="line">1，特权模式：不需要root密码，直接以root账户身份登陆。</span><br><span class="line">破解密码时特权模式。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.重起系统,进入grub菜单</span><br><span class="line">2.选择要使用的内核</span><br><span class="line">3.按e</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/29063483/1709284363603-e7f2a9b8-db3a-4eec-92a0-f1033594c305.png#averageHue=%23080707&clientId=ue91da682-a98c-4&from=paste&id=ufd924258&originHeight=457&originWidth=814&originalType=url&ratio=1.712499976158142&rotation=0&showTitle=false&size=20006&status=done&style=none&taskId=uc0206ddb-5a94-48d1-886c-b2088dd0213&title=" alt="image.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">4.找到linux16那一行，把光标移动到最后，添加 init=/bin/sh 或 rd.break console=tty0</span><br><span class="line">5.ctrl+x #保存退出</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/29063483/1709284363508-ba80b94f-4219-4489-9c18-c2b12b37d3f6.png#averageHue=%230d0909&clientId=ue91da682-a98c-4&from=paste&id=uff57e889&originHeight=376&originWidth=841&originalType=url&ratio=1.712499976158142&rotation=0&showTitle=false&size=21824&status=done&style=none&taskId=uc1640270-77b7-4cb2-8cb6-61617c8bfac&title=" alt="image.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">6.进入系统后，以rw方式重新挂载/分区</span><br><span class="line">#mount -o remount,rw /sysroot</span><br><span class="line">#chroot /sysroot</span><br><span class="line">7.永久关闭selinux # 如果是中文系统可以执行 export LANG=en_US.UTF-8 切换到英文</span><br><span class="line">#vim /etc/sysconfig/selinux</span><br><span class="line">SELINUX=disabled</span><br><span class="line">8.修改密码</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/29063483/1709284363507-12fbb58f-1b53-4137-93a5-79072093a866.png#averageHue=%23121212&clientId=ue91da682-a98c-4&from=paste&id=u718462a6&originHeight=102&originWidth=458&originalType=url&ratio=1.712499976158142&rotation=0&showTitle=false&size=4760&status=done&style=none&taskId=uf0435bef-ac70-4e0a-94db-857004ce585&title=" alt="image.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">9.  # touch /.autorelabel  #重新识别新的root密码</span><br><span class="line">10. # exit</span><br><span class="line">11. # reboot</span><br></pre></td></tr></table></figure>
+<p><strong>测试登录</strong></p>
+<h2 id="二、方式破解密码-grub设置密码"><a href="#二、方式破解密码-grub设置密码" class="headerlink" title="二、方式破解密码-grub设置密码"></a>二、方式破解密码-grub设置密码</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">进入系统后，输入    </span><br><span class="line">vim /etc/grub.d/10_linux</span><br><span class="line">添加以下命令：</span><br><span class="line">cat &lt;&lt;EOF</span><br><span class="line">set superusers=&quot;newrain&quot;</span><br><span class="line">password newrain 123456</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/29063483/1709284462380-6362c837-bce5-4760-90f3-d4ad238f839d.png#averageHue=%23030302&clientId=ue91da682-a98c-4&from=paste&height=307&id=u7135f12f&originHeight=276&originWidth=692&originalType=binary&ratio=1.712499976158142&rotation=0&showTitle=false&size=765564&status=done&style=none&taskId=ud58a1741-6033-4ca5-8d0f-50731886c28&title=&width=769.0876159667969" alt="image.png"><br>生成新的grub文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grub2-mkconfig --output=/boot/grub2/grub.cfg</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/29063483/1709284484019-9146dd27-9e92-4348-9cda-b76e13287e69.png#averageHue=%23161616&clientId=ue91da682-a98c-4&from=paste&height=130&id=u9444e2bd&originHeight=117&originWidth=692&originalType=binary&ratio=1.712499976158142&rotation=0&showTitle=false&size=324575&status=done&style=none&taskId=ub510896b-f901-404e-ad98-17b5b6f87ea&title=&width=769.0876159667969" alt="image.png"><br>重启电脑，按e进入grub模式，发现被加密了，要帐号密码才能进入。<br><img src="https://cdn.nlark.com/yuque/0/2024/png/29063483/1709284530662-9d4f8a4e-074d-4a2f-a550-ad7ef5a843ab.png#averageHue=%23000000&clientId=ue91da682-a98c-4&from=paste&height=457&id=u1d547531&originHeight=411&originWidth=692&originalType=binary&ratio=1.712499976158142&rotation=0&showTitle=false&size=1139974&status=done&style=none&taskId=ub84b1190-dc9f-41b2-8c35-4f1e9ac2bea&title=&width=769.0876159667969" alt="image.png"></p>
+<h2 id="三、grub密码加密"><a href="#三、grub密码加密" class="headerlink" title="三、grub密码加密"></a>三、grub密码加密</h2><blockquote>
+<p>密文加密就是先把自己的密码转化为一串加密的字符串</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grub2-mkpasswd-pbkdf2</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/29063483/1709284640534-2e830910-4365-4fd3-80f2-8323afbc2ffc.png#averageHue=%230e0e0e&clientId=ue91da682-a98c-4&from=paste&height=87&id=u377c0f95&originHeight=78&originWidth=692&originalType=binary&ratio=1.712499976158142&rotation=0&showTitle=false&size=216413&status=done&style=none&taskId=ua0232430-d117-4159-8680-d0805afa041&title=&width=769.0876159667969" alt="image.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/grub.d/10_linux</span><br><span class="line">cat &lt;&lt;EOF</span><br><span class="line">set superusers=&quot;newrain&quot;</span><br><span class="line">password_pbkdf2 newrain 加密字符</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>后续步骤与grub加密相同</p>
+</blockquote>
+<h2 id="四、破解grub2-加密"><a href="#四、破解grub2-加密" class="headerlink" title="四、破解grub2 加密"></a>四、破解grub2 加密</h2><p>1、镜像引导<br>2、选择进入救援模式(第三个选项)<br>3、选择第二个，修复centos<br>4、选择第一个，下一步(continue)<br>5、进入系统后，执行 chroot &#x2F;mnt&#x2F;sysimage<br>6、删除 &#x2F;etc&#x2F;grub.d&#x2F;10_linux 中的加密部分<br>7、重新生成grub文件</p>
+
+    </article>
     
-      <div class="index-article">
-        <!-- <img class="index-article--cover" src="https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328" alt=""> -->
-        <div class="index-article--box">
-          <img class="index-article--cover" data-cover="https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328" alt="TCP协议" />
-        </div>
-        <div class="index-article--content">
-          <a href="/2023/06/21/TCP%E5%8D%8F%E8%AE%AE/">TCP协议 </a>
-          <div>
-            
-              <p>
-                <a class="post-category-link" href="/categories/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">-网络基础</a>
-              </p>
-            
-            
-              <p>
-                <a class="-link" href="/tags/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" rel="tag">-网络基础</a>
-              </p>
-            
-          </div>
-          <div class="bg"></div>
-        </div>
-      </div>
-    
-      <div class="index-article">
-        <!-- <img class="index-article--cover" src="https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e" alt=""> -->
-        <div class="index-article--box">
-          <img class="index-article--cover" data-cover="https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e" alt="走进网络世界" />
-        </div>
-        <div class="index-article--content">
-          <a href="/2023/06/20/%E8%B5%B0%E8%BF%9B%E7%BD%91%E7%BB%9C%E4%B8%96%E7%95%8C/">走进网络世界 </a>
-          <div>
-            
-              <p>
-                <a class="post-category-link" href="/categories/Linux/">-Linux</a>
-              </p>
-            
-            
-              <p>
-                <a class="-link" href="/tags/Linux/" rel="tag">-Linux</a>
-              </p>
-            
-          </div>
-          <div class="bg"></div>
-        </div>
-      </div>
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2023/07/01/破解密码/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
     
   </div>
-  <div class="index-center">
-    
-      <div class="index-article">
-        <!-- <img class="index-article--cover" data-cover="https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b" src="https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b" alt=""> -->
-        <div class="index-article--box">
-          <img class="index-article--cover" data-cover="https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b" alt="单用户模式破解密码" />
-        </div>
-        <div class="index-article--content">
-          <a href="/2023/07/01/%E7%A0%B4%E8%A7%A3%E5%AF%86%E7%A0%81/">单用户模式破解密码 </a>
-          <div>
-            
-              <p>
-                <a class="category-link" href="/categories/Linux/">-Linux</a>
-              </p>
-            
-            
-              <p>
-                <a class="-link" href="/tags/Linux/" rel="tag">-Linux</a>
-              </p>
-            
-          </div>
-          <div class="bg"></div>
-        </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%8D%95%E7%94%A8%E6%88%B7%E6%A8%A1%E5%BC%8F%E7%A0%B4%E8%A7%A3%E5%AF%86%E7%A0%81"><span class="toc-number">1.</span> <span class="toc-text">一、单用户模式破解密码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%96%B9%E5%BC%8F%E7%A0%B4%E8%A7%A3%E5%AF%86%E7%A0%81-grub%E8%AE%BE%E7%BD%AE%E5%AF%86%E7%A0%81"><span class="toc-number">2.</span> <span class="toc-text">二、方式破解密码-grub设置密码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81grub%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86"><span class="toc-number">3.</span> <span class="toc-text">三、grub密码加密</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E7%A0%B4%E8%A7%A3grub2-%E5%8A%A0%E5%AF%86"><span class="toc-number">4.</span> <span class="toc-text">四、破解grub2 加密</span></a></li></ol>
       </div>
-    
-      <div class="index-article">
-        <!-- <img class="index-article--cover" data-cover="https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3" src="https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3" alt=""> -->
-        <div class="index-article--box">
-          <img class="index-article--cover" data-cover="https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3" alt="PXE+Kickstart无人值守安PXE+Kickstart无人值守安装操作系" />
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2023/07/11/磁盘阵列RAID/">磁盘阵列</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2023/06/28/存储管理--2/">LVM逻辑卷管理</a>
+            </p>
+          
         </div>
-        <div class="index-article--content">
-          <a href="/2023/06/26/PXE+Kickstart%E6%97%A0%E4%BA%BA%E5%80%BC%E5%AE%88%E5%AE%89%E8%A3%85%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">PXE+Kickstart无人值守安PXE+Kickstart无人值守安装操作系 </a>
-          <div>
-            
-              <p>
-                <a class="category-link" href="/categories/Linux/">-Linux</a>
-              </p>
-            
-            
-              <p>
-                <a class="-link" href="/tags/Linux/" rel="tag">-Linux</a>
-              </p>
-            
-          </div>
-          <div class="bg"></div>
-        </div>
-      </div>
-    
-      <div class="index-article">
-        <!-- <img class="index-article--cover" data-cover="https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8" src="https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8" alt=""> -->
-        <div class="index-article--box">
-          <img class="index-article--cover" data-cover="https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8" alt="自建YUM源" />
-        </div>
-        <div class="index-article--content">
-          <a href="/2023/06/21/%E8%87%AA%E5%BB%BAyum%E6%BA%90%E7%AC%94%E8%AE%B0/">自建YUM源 </a>
-          <div>
-            
-              <p>
-                <a class="category-link" href="/categories/Linux/">-Linux</a>
-              </p>
-            
-            
-              <p>
-                <a class="-link" href="/tags/Linux/" rel="tag">-Linux</a>
-              </p>
-            
-          </div>
-          <div class="bg"></div>
-        </div>
-      </div>
-    
-  </div>
-  <div class="index-right">
-    <div class="index-right-wrapper">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">-Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">-网络基础</a></li></ul>
-      <ul class="tags" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" rel="tag">-网络基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">-Linux</a></li></ul>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">2023年07月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">2023年06月</a><span class="archive-list-count">5</span></li></ul>
+      
     </div>
   </div>
 </div>
 
 
 <script>
-  var allImgBoxs = document.querySelectorAll('.index-article--box');
-  var windowHeight = window.innerHeight;
-  var boxs = Array.from(allImgBoxs);
-  var timer = null;
-  boxs.forEach((box, idx) => {
-    if (!window.loadImageSet || !window.loadImageSet.includes(idx)) {
-      box.classList.add('img-loading');
-    } else {
-      const imgDom = box.querySelector('img');
-      imgDom.src = imgDom.dataset.cover;
-    }
-  });
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2023/07/01/破解密码/'
+  })
+</script>
 
-  function scrollFn() {
-    if (timer) {
-      return;
-    }
-    timer = setTimeout(() => {
-      loadImage();
-      timer = null;
-    }, 100)
-  }
 
-  setTimeout(() => {
-    loadImage();
-  }, 100);
-  if (!window.loadedImage) {
-    document.addEventListener('scroll', scrollFn);
-  }
-
-  function loadImage() {
-    const doc = document.documentElement;
-    const scrollTop = doc.scrollTop;
-    if (boxs.every(box => box.loadedImage)) {
-      document.removeEventListener('scroll', scrollFn);
-      window.loadedImage = 1;
-      return;
-    }
-    boxs.forEach((box, idx) => {
-      if (box.loadedImage) {
-        return;
-      }
-      if (box.getBoundingClientRect().top < windowHeight) {
-        const imgDom = box.querySelector('img');
-        imgDom.src = imgDom.dataset.cover;
-        // 图片成功加载
-        imgDom.onload = () => {
-          box.classList.remove('img-loading');
-          box.loadedImage = true;
-          if (!window.loadImageSet) {
-            window.loadImageSet = [];
-          }
-          window.loadImageSet.push(idx);
-        }
-        // 图片加载失败
-        imgDom.onerror = () => {
-          box.classList.remove('img-loading');
-          box.classList.add('img-error');
-          imgDom.src = '/imgs/404.png';
-        }
-      }
-    });
-  }
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
 </script> 
+
 </div>
       <div class="main-right-wrapper"><div class="main-right">
   <div class="main-right--board">

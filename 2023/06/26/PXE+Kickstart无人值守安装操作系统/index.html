@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——PXE+Kickstart无人值守安PXE+Kickstart无人值守安装操作系 | Mr.Long</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——PXE+Kickstart无人值守安PXE+Kickstart无人值守安装操作系`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/21/TCP协议/"},{"title":"PXE+Kickstart无人值守安PXE+Kickstart无人值守安装操作系","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a4f0f8a8bbda6dc810ff3fad4a671f96a4f0f8a8bbda6dc810ff3fad4a671f96","path":"2023/06/28/存储管理--2/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/11/磁盘阵列RAID/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/20/走进网络世界/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Mr.Long</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">唱跳rap篮球</span>
+          <span class="main-left--tag">宅但不肥</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/MyRong99/MyRong99.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>2</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>2</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>2 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>7 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>392天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">PXE+Kickstart无人值守安PXE+Kickstart无人值守安装操作系</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/Linux/">-Linux</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            <a class="tag-link" href="/tags/Linux/" rel="tag">-Linux</a>
+          </div>
+          
+          <p class="article-info--date">日期：2023-06-26 16:19:22</p>
+        </div>
+        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h3 id="什么是PXE？"><a href="#什么是PXE？" class="headerlink" title="什么是PXE？"></a>什么是PXE？</h3><p>PXE，全名Pre-boot Execution Environment，预启动执行环境；<br>通过网络接口启动计算机，不依赖本地存储设备（如硬盘）或本地已安装的操作系统；<br>由Intel和Systemsoft公司于1999年9月20日公布的技术；<br>Client&#x2F;Server的工作模式；<br>PXE客户端会调用网际协议(IP)、用户数据报协议(UDP)、动态主机设定协议(DHCP)、小型文件传输协议(TFTP)等网络协议；<br>PXE客户端(client)这个术语是指机器在PXE启动过程中的角色。一个PXE客户端可以是一台服务器、笔记本电脑或者其他装有PXE启动代码的机器（我们电脑的网卡）</p>
+<p>pxe+kickstart 全自动安装操作系统，（不包括win）<br>pxe是网卡上的芯片<br>kickstart软件   pylickstart  用来配置操作系统安装过程的配置文件ks.cfg</p>
+<p>initrd初始化磁盘影像文件</p>
+<p><img src="https://img.beyourself.org.cn/aHR0cHM6Ly9pLmxvbGkubmV0LzIwMTkvMDYvMjIvNWQwZDE0YzY3NTFiMDY1ODMxLnBuZw#id=lcg9R&originHeight=438&originWidth=896&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p>图中的vmlinux应该为vmliuz</p>
+<h3 id="PXE工作原理示意图说明"><a href="#PXE工作原理示意图说明" class="headerlink" title="PXE工作原理示意图说明"></a>PXE工作原理示意图说明</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">1. Client向PXE Server上的DHCP发送IP地址请求消息，DHCP检测Client是否合法（主要是检测Client的网卡MAC地址），如果合法则返回Client的IP地址，同时将启动文件pxelinux.0的位置信息一并传送给Client。</span><br><span class="line"></span><br><span class="line">2. Client向PXE Server上的TFTP发送获取pxelinux.0请求消息，TFTP接收到消息之后再向Client发送pxelinux.0大小信息，试探Client是否满意，当TFTP收到Client发回的同意大小信息之后，正式向Client发送pxelinux.0。</span><br><span class="line"></span><br><span class="line">3. Client执行接收到的pxelinux.0文件。</span><br><span class="line"></span><br><span class="line">4. Client向TFTP发送针对本机的配置信息（记录在TFTP的pxelinux.cfg目录下），TFTP将配置文件发回Client，继而Client根据配置文件执行后续操作。</span><br><span class="line"></span><br><span class="line">5. Client向TFTP发送Linux内核请求信息，TFTP接收到消息之后将内核文件发 送给Client。</span><br><span class="line"></span><br><span class="line">6. Client向TFTP发送根文件请求信息，TFTP接收到消息之后返回Linux根文件 系统。</span><br><span class="line"></span><br><span class="line">7. Client启动Linux内核（启动参数已经在4中的配置文件中设置好了）。</span><br><span class="line"></span><br><span class="line">8. Client通过NFS下载镜像文件，读取autoyast自动化安装脚本。 至此，Client正式进入自动化安装模式开始安装系统直到完成</span><br></pre></td></tr></table></figure>
+
+<h3 id="一、环境"><a href="#一、环境" class="headerlink" title="一、环境"></a>一、环境</h3><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>软件</td>
+<td>vmware</td>
+</tr>
+<tr>
+<td>系统</td>
+<td>centos7.5</td>
+</tr>
+<tr>
+<td>网络</td>
+<td>桥接</td>
+</tr>
+<tr>
+<td>ip地址</td>
+<td>10.20.157.100</td>
+</tr>
+</tbody></table>
+<h3 id="二、安装前准备"><a href="#二、安装前准备" class="headerlink" title="二、安装前准备"></a>二、安装前准备</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"># 关闭防火墙、selinux</span><br><span class="line">[root@localhost ~]# systemctl stop firewalld</span><br><span class="line">[root@localhost ~]# systemctl disable firewalld</span><br><span class="line">[root@localhost ~]# setenforce 0</span><br><span class="line">[root@localhost ~]# sed -i &#x27;s/SELINUX=.*/SELINUX=disabled/g&#x27; /etc/selinux/config</span><br><span class="line">或者  vim /etc/selinux/config  </span><br><span class="line"># 配置ip地址</span><br><span class="line">[root@localhost ~]# vim /etc/sysconfig/network-scripts/ifcfg-ens33</span><br><span class="line">TYPE=&quot;Ethernet&quot;</span><br><span class="line">PROXY_METHOD=&quot;none&quot;</span><br><span class="line">BROWSER_ONLY=&quot;no&quot;</span><br><span class="line">BOOTPROTO=&quot;static&quot;</span><br><span class="line">DEFROUTE=&quot;yes&quot;</span><br><span class="line">IPADDR=10.20.157.100</span><br><span class="line">PREFIX=24</span><br><span class="line">GATEWAY=10.20.157.1</span><br><span class="line">DNS1=114.114.114.114</span><br><span class="line">DNS2=8.8.8.8</span><br><span class="line">DEVICE=&quot;ens33&quot;</span><br><span class="line">ONBOOT=&quot;yes&quot;</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# systemctl restart network</span><br><span class="line"></span><br><span class="line"># 配置yum源并按章软件包</span><br><span class="line">[root@localhost ~]# rm -rf /etc/yum.repos.d/*</span><br><span class="line">[root@localhost ~]# curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line">[root@localhost ~]# curl -o /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo</span><br><span class="line">[root@localhost ~]# yum clean all</span><br><span class="line">[root@localhost ~]# yum makecache fast</span><br><span class="line">[root@localhost ~]# yum install -y dhcp tftp tftp-server syslinux wget vsftpd pykickstart</span><br></pre></td></tr></table></figure>
+
+<h3 id="三、dhcp服务器配置"><a href="#三、dhcp服务器配置" class="headerlink" title="三、dhcp服务器配置"></a>三、dhcp服务器配置</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim /etc/dhcp/dhcpd.conf</span><br><span class="line">#确保配置文件内容如下</span><br><span class="line">ddns-update-style interim;</span><br><span class="line">ignore client-updates;</span><br><span class="line">authoritative;</span><br><span class="line">allow booting;</span><br><span class="line">allow bootp;</span><br><span class="line">allow unknown-clients;</span><br><span class="line"> </span><br><span class="line"># A slightly different configuration for an internal subnet.</span><br><span class="line"> subnet 10.20.157.0 netmask 255.255.255.0 </span><br><span class="line">&#123;</span><br><span class="line">   range 10.20.157.110 10.20.157.200;</span><br><span class="line">   option domain-name-servers 10.20.157.1;</span><br><span class="line">   option domain-name &quot;server1.example.com&quot;;</span><br><span class="line">   option routers 10.20.157.1;</span><br><span class="line">   option broadcast-address 10.20.157.255;</span><br><span class="line">   default-lease-time 600;</span><br><span class="line">   max-lease-time 7200;</span><br><span class="line"> </span><br><span class="line">   # PXE SERVER IP</span><br><span class="line">   next-server 10.20.157.100;     # DHCP server ip</span><br><span class="line">   filename &quot;pxelinux.0&quot;;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="四、TFTP服务准备"><a href="#四、TFTP服务准备" class="headerlink" title="四、TFTP服务准备"></a>四、TFTP服务准备</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim /etc/xinetd.d/tftp</span><br><span class="line">#修改内容如下  （可以不改）</span><br><span class="line">service tftp</span><br><span class="line">&#123;</span><br><span class="line">     socket_type          = dgram</span><br><span class="line">     protocol                = udp</span><br><span class="line">     wait                      = yes</span><br><span class="line">     user                    = root</span><br><span class="line">     server                  = /usr/sbin/in.tftpd</span><br><span class="line">     server_args             = -s /var/lib/tftpboot</span><br><span class="line">     disable                 = no</span><br><span class="line">     per_source              = 11</span><br><span class="line">     cps                     = 100 2</span><br><span class="line">     flags                   = IPv4</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# cp /usr/share/syslinux/&#123;pxelinux.0,menu.c32,memdisk,mboot.c32,chain.c32&#125; /var/lib/tftpboot/</span><br><span class="line">[root@localhost ~]# mkdir /var/lib/tftpboot/pxelinux.cfg</span><br><span class="line">[root@localhost ~]# mkdir /var/lib/tftpboot/netboot</span><br></pre></td></tr></table></figure>
+
+<h3 id="五、VSftpd服务准备"><a href="#五、VSftpd服务准备" class="headerlink" title="五、VSftpd服务准备"></a>五、VSftpd服务准备</h3><p>在VMware中将cd驱动器链接   (已连接可以不改)<br><img src="https://img.beyourself.org.cn/19e6fdfcee284b6e87730b787069634f.png#id=wNigJ&originHeight=809&originWidth=745&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# mount /dev/cdrom /mnt</span><br><span class="line">[root@localhost ~]# cp -rf /mnt/* /var/ftp/pub/</span><br><span class="line"></span><br><span class="line"># 拷贝系统启动时需要的镜像文件</span><br><span class="line">[root@localhost ~]# cp /var/ftp/pub/images/pxeboot/vmlinuz /var/lib/tftpboot/netboot/</span><br><span class="line">[root@localhost ~]# cp /var/ftp/pub/images/pxeboot/initrd.img /var/lib/tftpboot/netboot/</span><br><span class="line"></span><br><span class="line"># 创建ks.cfg 文件</span><br><span class="line">[root@localhost ~]# vim /var/ftp/pub/ks.cfg</span><br><span class="line">#platform=x86, AMD64, or Intel EM64T</span><br><span class="line"> #version=DEVEL</span><br><span class="line"> # Firewall configuration</span><br><span class="line"> firewall --disabled</span><br><span class="line"> # Install OS instead of upgrade</span><br><span class="line"> install</span><br><span class="line"> # Use NFS installation media</span><br><span class="line"> url --url=&quot;ftp://10.20.157.100/pub/&quot;</span><br><span class="line"> rootpw --plaintext 123456</span><br><span class="line">#root的密码设为123456</span><br><span class="line"> # Use graphical install</span><br><span class="line"> graphical</span><br><span class="line"> firstboot disable</span><br><span class="line"> # System keyboard</span><br><span class="line"> keyboard us</span><br><span class="line"> # System language</span><br><span class="line"> lang en_US</span><br><span class="line"> # SELinux configuration</span><br><span class="line"> selinux disabled</span><br><span class="line"> # Installation logging level</span><br><span class="line"> logging level=info</span><br><span class="line"># System timezone</span><br><span class="line"> timezone Asia/Shanghai</span><br><span class="line"> # System bootloader configuration</span><br><span class="line"> bootloader location=mbr</span><br><span class="line"> clearpart --all --initlabel</span><br><span class="line"> part swap --asprimary --fstype=&quot;swap&quot; --size=1024</span><br><span class="line"> part /boot --fstype xfs --size=200</span><br><span class="line"> part pv.01 --size=1 --grow</span><br><span class="line"> volgroup rootvg01 pv.01</span><br><span class="line"> logvol / --fstype xfs --name=lv01 --vgname=rootvg01 --size=1 --grow</span><br><span class="line"> reboot</span><br><span class="line"></span><br><span class="line">%packages</span><br><span class="line"> @core</span><br><span class="line"> wget</span><br><span class="line"> %end</span><br><span class="line"></span><br><span class="line">%post</span><br><span class="line"> %end</span><br><span class="line"></span><br><span class="line"># 检查语法是否有错误</span><br><span class="line">[root@localhost ~]# ksvalidator /var/ftp/pub/ks.cfg</span><br></pre></td></tr></table></figure>
+
+<h3 id="六、PXE菜单"><a href="#六、PXE菜单" class="headerlink" title="六、PXE菜单"></a>六、PXE菜单</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim /var/lib/tftpboot/pxelinux.cfg/default</span><br><span class="line"> default menu.c32</span><br><span class="line"> prompt 0</span><br><span class="line"> timeout 30</span><br><span class="line"> MENU TITLE Togogo.net Linux Training</span><br><span class="line"></span><br><span class="line"> LABEL centos7_x64</span><br><span class="line"> MENU LABEL CentOS 7 X64 for newrain</span><br><span class="line"> KERNEL /netboot/vmlinuz</span><br><span class="line"> APPEND  initrd=/netboot/initrd.img inst.repo=ftp://10.20.157.100/pub ks=ftp://10.20.157.100/pub/ks.cfg</span><br></pre></td></tr></table></figure>
+
+<h3 id="七、重启服务"><a href="#七、重启服务" class="headerlink" title="七、重启服务"></a>七、重启服务</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# systemctl enable dhcpd vsftpd tftp</span><br><span class="line">[root@localhost ~]# systemctl restart dhcpd vsftpd tftp</span><br></pre></td></tr></table></figure>
+
+<h3 id="八、创建虚拟机-自动安装系统"><a href="#八、创建虚拟机-自动安装系统" class="headerlink" title="八、创建虚拟机-自动安装系统"></a>八、创建虚拟机-自动安装系统</h3><blockquote>
+<p>注意：内存必须大于2G<br><img src="https://img.beyourself.org.cn/d57f89576d27434a8df44c87af9b5b0d.png#id=Xr3LP&originHeight=809&originWidth=745&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+</blockquote>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2023/06/26/PXE+Kickstart无人值守安装操作系统/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFPXE%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">什么是PXE？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PXE%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E7%A4%BA%E6%84%8F%E5%9B%BE%E8%AF%B4%E6%98%8E"><span class="toc-number">2.</span> <span class="toc-text">PXE工作原理示意图说明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%8E%AF%E5%A2%83"><span class="toc-number">3.</span> <span class="toc-text">一、环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%AE%89%E8%A3%85%E5%89%8D%E5%87%86%E5%A4%87"><span class="toc-number">4.</span> <span class="toc-text">二、安装前准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81dhcp%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="toc-number">5.</span> <span class="toc-text">三、dhcp服务器配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81TFTP%E6%9C%8D%E5%8A%A1%E5%87%86%E5%A4%87"><span class="toc-number">6.</span> <span class="toc-text">四、TFTP服务准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E3%80%81VSftpd%E6%9C%8D%E5%8A%A1%E5%87%86%E5%A4%87"><span class="toc-number">7.</span> <span class="toc-text">五、VSftpd服务准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AD%E3%80%81PXE%E8%8F%9C%E5%8D%95"><span class="toc-number">8.</span> <span class="toc-text">六、PXE菜单</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E9%87%8D%E5%90%AF%E6%9C%8D%E5%8A%A1"><span class="toc-number">9.</span> <span class="toc-text">七、重启服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9F%E6%9C%BA-%E8%87%AA%E5%8A%A8%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F"><span class="toc-number">10.</span> <span class="toc-text">八、创建虚拟机-自动安装系统</span></a></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2023/06/28/存储管理--2/">LVM逻辑卷管理</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2023/06/21/TCP协议/">TCP协议</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2023/06/26/PXE+Kickstart无人值守安装操作系统/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系小曹宅，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">2262690094</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"不找了","artist":"隔壁老樊","url":"music/隔壁老樊 - 不找了.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"于是天气刚好","artist":"泪桥","url":"music/于是天气刚好 - 泪桥.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"安和桥","artist":"林芬宇","url":"music/林芬宇 - 安和桥.mp3","cover":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0SWQx6YrNA8lElaG4OOKLkNkNzLO1PflKg&usqp=CAU"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
