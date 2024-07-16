@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>我的技术与生活——自建YUM源 | Mr.Long</title>
+  <title>我的技术与生活——小站首页 | Mr.Long</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/css/public.css" />
@@ -16,7 +16,7 @@
 
   <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
   <script>
-    document.title = `我的技术与生活——自建YUM源`
+    document.title = `我的技术与生活——小站首页`
   </script>
 <meta name="generator" content="Hexo 7.3.0"></head>
 
@@ -351,56 +351,97 @@
 
 <div class="article-container">
   <div class="article">
-    <h1 class="article-title">自建YUM源</h1>
+    <h1 class="article-title"></h1>
     <div class="article-info">
       <div class="article-info--item">
         <div class="article-info--info">
           
           <div class="article-info--categories">
             <span>分类：</span>
-            <a class="category-link" href="/categories/Linux/">-Linux</a>
+            
           </div>
           
           
           <div class="article-info--tags">
             <span>标签：</span>
-            <a class="tag-link" href="/tags/Linux/" rel="tag">-Linux</a>
+            
           </div>
           
-          <p class="article-info--date">日期：2023-06-21 12:19:22</p>
+          <p class="article-info--date">日期：2024-07-15 19:14:40</p>
         </div>
-        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8" alt="" class="article-cover">
+        <img src="/imgs/default-cover.webp" alt="" class="article-cover">
       </div>
     </div>
     <article class="article-content markdown-body">
-      <h2 id="本地源"><a href="#本地源" class="headerlink" title="本地源"></a>本地源</h2><h3 id="一、使用本地的镜像文件来制作yum源-做完记得删除"><a href="#一、使用本地的镜像文件来制作yum源-做完记得删除" class="headerlink" title="一、使用本地的镜像文件来制作yum源(做完记得删除)"></a>一、使用本地的镜像文件来制作yum源(做完记得删除)</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">1、挂载dvd镜像或将镜像拷贝到机器中</span><br><span class="line"><span class="built_in">mkdir</span> /yum-repo</span><br><span class="line">mount /dev/cdrom /yum-repo <span class="comment"># 如果我们在设置中挂载了镜像使用这个方法</span></span><br><span class="line">mount 镜像的路径  /yum-repo <span class="comment"># 如果我们拷贝镜像到了系统中，可以用这种方法</span></span><br><span class="line"></span><br><span class="line">2、准备本地yum源文件</span><br><span class="line">vim /etc/yum.repos.d/xa2401.repo <span class="comment"># 源文件必须以.repo结尾</span></span><br><span class="line"><span class="comment"># 源标识</span></span><br><span class="line">[xa2401]</span><br><span class="line"><span class="comment"># 源名字</span></span><br><span class="line">name=xa2401-base</span><br><span class="line"><span class="comment"># 源地址，本地用file://</span></span><br><span class="line">baseurl=file:///yum-repo</span><br><span class="line"><span class="comment"># 是否检查</span></span><br><span class="line">gpgcheck=0</span><br><span class="line"><span class="comment"># 是否开启</span></span><br><span class="line">enabled=1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      <p>title: TCP协议<br>cover: ‘<a target="_blank" rel="noopener" href="https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328">https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328</a>‘<br>author: CAO<br>tags:<br>    -网络基础<br>categories:<br>    -网络基础<br>date: 2023-06-23 15:19:22</p>
+<p>TCP协议最重要的特点：可靠性，是可靠的，因为有确认机制</p>
+<p>确认机制：两端要建立连接，要经过两端的确认，才能进行数据传输</p>
+<h2 id="TCP协议有11种状态："><a href="#TCP协议有11种状态：" class="headerlink" title="TCP协议有11种状态："></a>TCP协议有11种状态：</h2><p>TCP链接状态有哪些，分别代表什么意思：</p>
+<p>listen：侦听来自远方的TCP端口连接请求</p>
+<p>SYN-SENT：再发送连接请求后等待匹配的连接请求</p>
+<p>SYN-RECEIVED：再收到和发送一个连接请求后等待对方连接请求的确认</p>
+<p>LISHED：代表打开一个连接</p>
+<p>FIN-WAIT-1：等待远程TCP连接中断请求，或先前的连接中断请求的确认</p>
+<p>FIN-WAIT-2：从远程TCP等待连接中断请求</p>
+<p>CLOSE-WAIT：等待从本地用户发来的连接中断请求</p>
+<p>CLOSING：等待远程TCP对连接中断的确认</p>
+<p>LAST-ACK：等待原来的发向远程TCP的连接中断请求的确认</p>
+<p>TIME-WAIT：等待足够的时间以确保TCP接收到连接中断请求的确认</p>
+<p>CLOSED：没有任何连接状态</p>
+<p><img src="https://blog-1305991344.cos.ap-beijing.myqcloud.com/uPic/image-20230801003349801.png" alt="image-20230801003349801"></p>
+<p>三次握手过程说明（一去一回再一去）</p>
+<p>在TCP&#x2F;IP协议中，TCP协议提供可靠的连接业务，并且TCP协议是有11种状态的，经典的C-S架构；</p>
+<p>第一次握手：建立连接时，客户端发送SYN包到服务器，并进入SYN_SENT状态，等待服务器确认；</p>
+<p>第二次握手：服务器收到SYN包，必须向客户端发送一个SYN（ack&#x3D;j+1），同时也发送一个syn+ack的包，此时服务器进入SYN_RECEIVED状态；</p>
+<p>第三次握手：客户端收到服务器的SYN+ACK包，向服务器发送确认包ACK（ack&#x3D;k+1），此包发送完毕，客户端和服务器进入established状态，完成三次握手，客户端与服务器开始传输数据。 </p>
+<p><strong>网络中TCP报文头部</strong></p>
+<p><img src="https://blog-1305991344.cos.ap-beijing.myqcloud.com/uPic/70.png" alt="img"></p>
+<p>SYN 网络中TCP报文头部的一个字段</p>
+<p>ACK 网络中TCP报文头部的一个字段</p>
+<p>数据包，报文封装与解封装</p>
+<p><img src="https://blog-1305991344.cos.ap-beijing.myqcloud.com/uPic/image-20230801013410186.png"></p>
+<p>四次挥手过程说明（一去，两回，一去）</p>
+<p>1、客户端主动发送断开TCP连接请求的报文，其中包含seq，FIN字段置为1，表示需要断开TCP连接；</p>
+<p>2、服务端接收到客户端发送的请求后，会回复客户端发送的TCP断开请求，其中包含seq，而且会产生ACK字段，ACK字段数值是在客户端发送过来的seq序列号基础上加1进行回复，以便客户端收到信息时，知晓自己的TCP断开请求已经得到验证；（FIN&#x3D;1，ACK&#x3D;x+1，seq&#x3D;y）</p>
+<p>3、服务端在回复完客户端的TCP断开请求后，不会马上进行TCP连接的断开，服务端会先确保断开前，所有传输到客户端的数据是否已传输完毕，一旦确认数据传输完毕，就会将回复报文的FIN字段置1，并产生随机seq序列号；</p>
+<p>4、客户端收到服务端的TCP断开请求后，会回复服务端的断开请求，包含随机生成的seq字段和ACK字段，ACK字段会在服务端的TCP断开请求的seq基础上加1，从而完成服务端请求的验证回复。</p>
+<p>至此TCP断开的四次挥手。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">四次挥手的状态</span><br><span class="line">客户端主动关闭，状态从ESTAB-LISHED到FIN-WAIT-1到FIN-WAIT-2到TIME-WAIT到CLOSED</span><br><span class="line">服务端的变化从ESTAB-LISHED到CLOSE-WAIT到LAST-AKC到CLOSED</span><br></pre></td></tr></table></figure>
 
-<h3 id="二、自己准备的包做成yum源"><a href="#二、自己准备的包做成yum源" class="headerlink" title="二、自己准备的包做成yum源"></a>二、自己准备的包做成yum源</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">1、你可以在网上下载包，或在其他机器上缓存包并拷贝到一个目录中。可以看到我的这个目录下全都是rpm包</span><br><span class="line">[root@localhost ~]# <span class="built_in">ls</span> /package/ | <span class="built_in">head</span> -2</span><br><span class="line">adcli-0.8.1-16.el7_9.1.x86_64.rpm</span><br><span class="line">at-3.1.13-25.el7_9.x86_64.rpm</span><br><span class="line"></span><br><span class="line">2、安装制作yum源的工具</span><br><span class="line">yum install -y createrepo</span><br><span class="line"></span><br><span class="line">3、制作源</span><br><span class="line">createrepo /package</span><br><span class="line"></span><br><span class="line">4、创建源文件</span><br><span class="line"><span class="comment"># 源标识</span></span><br><span class="line">[xa2401]</span><br><span class="line"><span class="comment"># 源名字</span></span><br><span class="line">name=xa2401-base</span><br><span class="line"><span class="comment"># 源地址，本地用file://</span></span><br><span class="line">baseurl=file:///package</span><br><span class="line"><span class="comment"># 是否检查</span></span><br><span class="line">gpgcheck=0</span><br><span class="line"><span class="comment"># 是否开启</span></span><br><span class="line">enabled=1</span><br></pre></td></tr></table></figure>
-
-<h2 id="远程源"><a href="#远程源" class="headerlink" title="远程源"></a>远程源</h2><h3 id="一、使用ftp制作远程源"><a href="#一、使用ftp制作远程源" class="headerlink" title="一、使用ftp制作远程源"></a>一、使用ftp制作远程源</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">1、关闭防火墙和selinux</span><br><span class="line">systemctl stop firewalld</span><br><span class="line">setenforce 0</span><br><span class="line"></span><br><span class="line">2、安装vsftpd</span><br><span class="line">yum install -y vsftpd</span><br><span class="line"></span><br><span class="line">3、创建目录并拷贝包，然后授权</span><br><span class="line">mkdir /var/ftp/xa2401-ftp</span><br><span class="line">ls /yum-repo/Packages/* | head -100 | xargs -i cp &#123;&#125; /var/ftp/xa2401-ftp/  # 拷贝一些包过来</span><br><span class="line">createrepo /var/ftp/xa2401-ftp/ # 创建为yum源</span><br><span class="line">chown ftp.ftp -R /var/ftp/xa2401-ftp</span><br><span class="line"></span><br><span class="line">4、启动并访问测试</span><br><span class="line">systemctl start vsftpd</span><br><span class="line">打开此电脑，地址栏访问 ftp://ip地址，如果可以看到，表示配置正确</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">5、客户端配置源文件</span><br><span class="line">vim /etc/yum.repos.d/xa2401-ftp.repo # 源文件必须以.repo结尾</span><br><span class="line"># 源标识</span><br><span class="line">[xa2401-ftp]</span><br><span class="line"># 源名字</span><br><span class="line">name=xa2401-ftp</span><br><span class="line"># 源地址，远程用ftp://</span><br><span class="line">baseurl=ftp://192.168.75.248</span><br><span class="line"># 是否检查</span><br><span class="line">gpgcheck=0</span><br><span class="line"># 是否开启</span><br><span class="line">enabled=1</span><br></pre></td></tr></table></figure>
-
-<h2 id="如何获取阿里云的源"><a href="#如何获取阿里云的源" class="headerlink" title="如何获取阿里云的源"></a>如何获取阿里云的源</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# yum install -y yum-utils</span><br><span class="line">[root@localhost ~]# yum repolist</span><br><span class="line">已加载插件：fastestmirror</span><br><span class="line">Loading mirror speeds from cached hostfile</span><br><span class="line"> * base: mirrors.aliyun.com</span><br><span class="line"> * extras: mirrors.aliyun.com</span><br><span class="line"> * updates: mirrors.aliyun.com</span><br><span class="line">源标识                   源名称                                                  状态</span><br><span class="line">base/7/x86_64            CentOS-7 - Base - mirrors.aliyun.com                    10,072</span><br><span class="line">epel/x86_64              Extra Packages for Enterprise Linux 7 - x86_64          13,785</span><br><span class="line">extras/7/x86_64          CentOS-7 - Extras - mirrors.aliyun.com                     519</span><br><span class="line">updates/7/x86_64         CentOS-7 - Updates - mirrors.aliyun.com                  5,766</span><br><span class="line">xa2401-ftp               xa2401-ftp                                                 100</span><br><span class="line">repolist: 30,242</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# reposync -r base -r epel -r extras -r updates</span><br></pre></td></tr></table></figure>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+<h1 id="三次握手，四次挥手"><a href="#三次握手，四次挥手" class="headerlink" title="三次握手，四次挥手"></a>三次握手，四次挥手</h1><p><img src="https://blog-1305991344.cos.ap-beijing.myqcloud.com/uPic/image-20230801013446437.png" alt="image-20230801013446437"></p>
+<h2 id="请描述TCP协议三次握手的过程"><a href="#请描述TCP协议三次握手的过程" class="headerlink" title="请描述TCP协议三次握手的过程"></a>请描述TCP协议三次握手的过程</h2><p>笔试：不要用文字描述，要画图（C-S架构，发送报文的方向及状态）</p>
+<p>面试官问：说说TCP协议建立连接的过程（三次握手，一去一回再一去）</p>
+<p>6000：</p>
+<p> 客户端先向服务端先发一个请求，然后服务端收到请求后给客户端一个回应，然后客户端收到回应后，向服务端再发确认请求，然后才进行数据传输</p>
+<p>8000：</p>
+<p>客户端向服务端发送请求，发送了一个TCP报文，并且报文中包含SYN字段；服务端收到请求后在向客户端回应一个包，回应的包，在原有的基础上多一个ACK字段；客户端再向服务端回应一个ACK字段，在原有基础上加1，然后两端建立连接。</p>
+<p>正确回答方式：先介绍TCP协议是什么，让面试官眼前一亮：协议，可靠</p>
+<h2 id="请描述TCP协议四次挥手的过程"><a href="#请描述TCP协议四次挥手的过程" class="headerlink" title="请描述TCP协议四次挥手的过程"></a>请描述TCP协议四次挥手的过程</h2><p>笔试：不要用文字描述，要画图（C-S架构，发送报文的方向及状态）</p>
+<p>6000：</p>
+<p>客户端向服务端发送一个请求，服务端向客户端发送两次消息确认，客户端再向服务端发送确认消息。</p>
+<p>8000：</p>
+<p>客户端向服务端发送一个FIN&#x3D;1的请求，服务端向客户端返回一个包含ACK的包，然后等数据传输完成后，服务端再向客户端发送一个FIN&#x3D;1，ACK的包，最后客户端向服务端发送一个ACK的包，最后完成四次挥手</p>
+<p>正确回答方式：状态变化：客户端的状态变化，服务端的状态变化</p>
+<p>客户端和服务端都是从ESTAB-LISHED变为CLOSED</p>
+<h2 id="为什么是四次挥手而不是三次挥手呢？"><a href="#为什么是四次挥手而不是三次挥手呢？" class="headerlink" title="为什么是四次挥手而不是三次挥手呢？"></a>为什么是四次挥手而不是三次挥手呢？</h2><p>这个因为第一次挥手表示客户端发送了一个fin的包，表示客户端已发送数据完毕，但是服务端这个时候可能还有数据没有发送完成，先发送给客户端一个ask的包，等待自己的数据发送完成才能向客户端发送一个 fin的包，表示自己的数据也已发送完成。</p>
+<p>举个例子：A 和 B 打电话，通话即将结束后，A 说 “我没啥要说的了”，B 回答 “我知道了”，于是 A 向 B 的连接释放了。但是 B 可能还会有要说的话，于是 B 可能又巴拉巴拉说了一通，最后 B 说“我说完了”，A 回答“知道了”，于是 B 向 A 的连接释放了，这样整个通话就结束了。</p>
+<h2 id="TCP三次握手哪一阶段容易受到攻击，为什么？"><a href="#TCP三次握手哪一阶段容易受到攻击，为什么？" class="headerlink" title="TCP三次握手哪一阶段容易受到攻击，为什么？"></a>TCP三次握手哪一阶段容易受到攻击，为什么？</h2><p>第一次握手：建立连接时，客户端发送syn包(syn&#x3D;j)到服务器，并进入SYN SEND状态，等待服务器确认；</p>
+<p>第二次握手：服务器收到syn包，必须确认客户的SYN (ack&#x3D;j+1) ，同时自己也发送一个SYN包(syn&#x3D;k) ，即SYN+ ACK包，此时服务器进入SYN RECV状态；</p>
+<p>第三次握手：客户端收到服务器的SYN + ACK包，向服务器发送确认包ACK(ack&#x3D;k+1)，此包发送完毕，客户端和服务器进入ESTABLISHED状态，完成三次握手。完成三次握手，客户端与服务器开始传送数据；<br>TCP三次握手在第二阶段容易受到攻击，即syn溢出攻击，如果客户机伪造出大量第一次的sys同步报文，服务端就会依次消耗掉很多资源来保存客户端的信息，并进行确认，实际上确认是会失败的，但失败需要一定的时间，因为服务端会连续多次进行第二次握手确认后才认定失败。那么短时间有大量的sys同步报文涌向服务端，服务端资源可能被耗尽，就可能导致正常的客户端得不到响应而失败。即拒绝服务攻击</p>
+<h2 id="怎么防范这种攻击？"><a href="#怎么防范这种攻击？" class="headerlink" title="怎么防范这种攻击？"></a>怎么防范这种攻击？</h2><p>1、缩短服务器接收客户端SYN报文之后的等待连接时间，即SYN timeout时间，也就是server接收到SYN报文段，到最后放弃此连接请求的超时时间，将SYN timeout设置的更低，便可以成倍的减少server的负荷，但是过低的SYN timeout可能会影响正常的TCP连接的建立，一旦网络不通畅便可能导致client连接请求失败</p>
+<h2 id="2、SYN-cookie-SYN-proxy-无缝集成（较好的解决方案）"><a href="#2、SYN-cookie-SYN-proxy-无缝集成（较好的解决方案）" class="headerlink" title="2、SYN cookie + SYN proxy 无缝集成（较好的解决方案）"></a>2、<strong>SYN cookie + SYN proxy 无缝集成（较好的解决方案）</strong></h2><p>1&gt; SYN cookie：当server接收到client的SYN之后，不立即分配资源，而是根据client发送过来的SYN包计算出一个cookie值，这个cookie值用来存储server返回给client的SYN+ACK数据包中的初始序列号，当client返回第三次握手的ACK包之后进行校验，如果校验成功则server分配资源，建立连接。<br>2&gt; SYN proxy代理，作为server与client连接的代理，代替server与client建立三次握手的连接，同时SYN proxy与client建立好了三次握手连接之后，确保是正常的TCP连接，而不是TCP泛洪攻击，那么SYN proxy就与server建立三次握手连接，作为代理（网关？）来连通client与server。（类似VPN了解一下。）</p>
+<h2 id="四次挥手之后client为什么还要等待2MSL的时间才释放资源关闭连接？"><a href="#四次挥手之后client为什么还要等待2MSL的时间才释放资源关闭连接？" class="headerlink" title="四次挥手之后client为什么还要等待2MSL的时间才释放资源关闭连接？"></a><strong>四次挥手之后client为什么还要等待2MSL的时间才释放资源关闭连接？</strong></h2><ol>
+<li>如果client第四次挥手的确认报文段没有被server接收，那么server便会重发第三次挥手的FIN报文段，因此client要停留2MSL的时长来处理可能会重复收到的报文段。</li>
+<li>让之前建立的client-server通信过程中或者是挥手过程中由于网络不通畅产生的滞留报文段失效。如果不等待2MSL，那么建立新连接之后，可能会收到上一次连接的旧报文段，可能会造成混乱。</li>
+</ol>
 
     </article>
     
     <div class="read-nums">
       <!-- id 将作为查询条件 -->
-      <span id="2023/06/21/自建yum源笔记/" class="leancloud_visitors" data-flag-title="Your Article Title">
+      <span id="2024/07/15/TCP协议/" class="leancloud_visitors" data-flag-title="Your Article Title">
         <em class="post-meta-item-text">浏览量</em>
         <i class="leancloud-visitors-count"></i>
       </span>
@@ -416,20 +457,15 @@
     <div class="article-catelogue--wrapper">
       <div class="catelogue catelogue-1">
         <h3>目录</h3>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E6%BA%90"><span class="toc-number">1.</span> <span class="toc-text">本地源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0%E7%9A%84%E9%95%9C%E5%83%8F%E6%96%87%E4%BB%B6%E6%9D%A5%E5%88%B6%E4%BD%9Cyum%E6%BA%90-%E5%81%9A%E5%AE%8C%E8%AE%B0%E5%BE%97%E5%88%A0%E9%99%A4"><span class="toc-number">1.1.</span> <span class="toc-text">一、使用本地的镜像文件来制作yum源(做完记得删除)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E8%87%AA%E5%B7%B1%E5%87%86%E5%A4%87%E7%9A%84%E5%8C%85%E5%81%9A%E6%88%90yum%E6%BA%90"><span class="toc-number">1.2.</span> <span class="toc-text">二、自己准备的包做成yum源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9C%E7%A8%8B%E6%BA%90"><span class="toc-number">2.</span> <span class="toc-text">远程源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BD%BF%E7%94%A8ftp%E5%88%B6%E4%BD%9C%E8%BF%9C%E7%A8%8B%E6%BA%90"><span class="toc-number">2.1.</span> <span class="toc-text">一、使用ftp制作远程源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96%E9%98%BF%E9%87%8C%E4%BA%91%E7%9A%84%E6%BA%90"><span class="toc-number">3.</span> <span class="toc-text">如何获取阿里云的源</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP%E5%8D%8F%E8%AE%AE%E6%9C%8911%E7%A7%8D%E7%8A%B6%E6%80%81%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">TCP协议有11种状态：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="toc-number"></span> <span class="toc-text">三次握手，四次挥手</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%B7%E6%8F%8F%E8%BF%B0TCP%E5%8D%8F%E8%AE%AE%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">请描述TCP协议三次握手的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%B7%E6%8F%8F%E8%BF%B0TCP%E5%8D%8F%E8%AE%AE%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">请描述TCP协议四次挥手的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E8%80%8C%E4%B8%8D%E6%98%AF%E4%B8%89%E6%AC%A1%E6%8C%A5%E6%89%8B%E5%91%A2%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">为什么是四次挥手而不是三次挥手呢？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%93%AA%E4%B8%80%E9%98%B6%E6%AE%B5%E5%AE%B9%E6%98%93%E5%8F%97%E5%88%B0%E6%94%BB%E5%87%BB%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">TCP三次握手哪一阶段容易受到攻击，为什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E9%98%B2%E8%8C%83%E8%BF%99%E7%A7%8D%E6%94%BB%E5%87%BB%EF%BC%9F"><span class="toc-number">5.</span> <span class="toc-text">怎么防范这种攻击？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81SYN-cookie-SYN-proxy-%E6%97%A0%E7%BC%9D%E9%9B%86%E6%88%90%EF%BC%88%E8%BE%83%E5%A5%BD%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">2、SYN cookie + SYN proxy 无缝集成（较好的解决方案）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E4%B9%8B%E5%90%8Eclient%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E8%A6%81%E7%AD%89%E5%BE%852MSL%E7%9A%84%E6%97%B6%E9%97%B4%E6%89%8D%E9%87%8A%E6%94%BE%E8%B5%84%E6%BA%90%E5%85%B3%E9%97%AD%E8%BF%9E%E6%8E%A5%EF%BC%9F"><span class="toc-number">7.</span> <span class="toc-text">四次挥手之后client为什么还要等待2MSL的时间才释放资源关闭连接？</span></a></li></ol>
       </div>
       
         <div class="catelogue catelogue-2">
-          
-            <p>
-              <span>上一篇：</span>
-              <a href="/2024/07/15/TCP协议/"></a>
-            </p>
            
           
             <p>
               <span>下一篇</span>
-              <a href="/2023/06/20/走进网络世界/">走进网络世界</a>
+              <a href="/2023/06/21/自建yum源笔记/">自建YUM源</a>
             </p>
           
         </div>
@@ -451,7 +487,7 @@
     recordIP: config.recordIP,
     visitor: config.visitor,
     enableQQ: config.enableQQ,
-    path: '2023/06/21/自建yum源笔记/'
+    path: '2024/07/15/TCP协议/'
   })
 </script>
 
