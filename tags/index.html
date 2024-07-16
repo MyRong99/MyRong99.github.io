@@ -193,7 +193,7 @@
   const ipt = document.querySelector('#search-input')
   const btn = document.querySelector('#search-btn')
   const layer = document.querySelector('#search-layer')
-  const posts = JSON.parse(`[{"title":"Hello World","cover":"https://haowallpaper.com/link/common/file/previewFileImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/06/18/hello-world/"},{"title":"自建YUM源","path":"2024/07/16/自建yum源笔记/"},{"title":"走进网络世界","path":"2024/07/16/走进网络世界/"}]`)
+  const posts = JSON.parse(`[{"title":"Hello World","cover":"https://haowallpaper.com/link/common/file/previewFileImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/06/18/hello-world/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/20/走进网络世界/"}]`)
   ipt.addEventListener('keyup', e => {
     if (e.key === 'Enter') {
       handleSearch()
@@ -258,19 +258,19 @@
       <div class="main-left--statics">
         <a href="/categories">
           <div>
-            <span>1</span>
+            <span>2</span>
             <span>分类</span>
           </div>
         </a>
         <a href="/tags">
           <div>
-            <span>1</span>
+            <span>2</span>
             <span>标签</span>
           </div>
         </a>
         <a href="/archives">
           <div>
-            <span>2 </span>
+            <span>1 </span>
             <span>归档</span>
           </div>
         </a>
@@ -352,7 +352,7 @@
 <div class="tags">
   <h2 class="tags-title">小站标签</h2>
   <div class="tags-list">
-    <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 10px;">-其他</a>
+    <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 10px;">-其他</a> <a href="/tags/%E8%BF%90%E7%BB%B4%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 20px;">-运维基础知识</a>
   </div>
 </div>
 
