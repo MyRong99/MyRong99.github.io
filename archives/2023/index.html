@@ -193,7 +193,7 @@
   const ipt = document.querySelector('#search-input')
   const btn = document.querySelector('#search-btn')
   const layer = document.querySelector('#search-layer')
-  const posts = JSON.parse(`[{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/28/LVM逻辑卷管理 /"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/21/LV逻辑卷扩展/"},{"title":"python一","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/05/20/Python 1 /"},{"title":"python二","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/05/20/Python 2/"},{"title":"python三","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/05/25/Python 3/"},{"title":"python四","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/05/30/Python 4/"},{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/21/TCP协议/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"shell编程","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2023/07/21/shell_newrain/"},{"title":"ansible模块","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1","path":"2023/09/17/ansible 模块扩展/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/21/文件权限/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/19/磁盘存储管理1/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/11/磁盘阵列RAID/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/21/网络管理基础/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/20/走进网络世界/"}]`)
+  const posts = JSON.parse(`[{"title":"docker命令","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/02/21/Docker命令大全/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/21/LV逻辑卷扩展/"},{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/28/LVM逻辑卷管理 /"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"python一","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/05/20/Python 1 /"},{"title":"python三","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/05/25/Python 3/"},{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/21/TCP协议/"},{"title":"python二","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/05/20/Python 2/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/02/11/docker容器/"},{"title":"python四","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/05/30/Python 4/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/21/文件权限/"},{"title":"shell编程","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2023/07/21/shell_newrain/"},{"title":"ansible模块","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1","path":"2023/09/17/ansible 模块扩展/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/11/磁盘阵列RAID/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/21/网络管理基础/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/19/磁盘存储管理1/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/20/走进网络世界/"}]`)
   ipt.addEventListener('keyup', e => {
     if (e.key === 'Enter') {
       handleSearch()
@@ -258,19 +258,19 @@
       <div class="main-left--statics">
         <a href="/categories">
           <div>
-            <span>5</span>
+            <span>6</span>
             <span>分类</span>
           </div>
         </a>
         <a href="/tags">
           <div>
-            <span>5</span>
+            <span>6</span>
             <span>标签</span>
           </div>
         </a>
         <a href="/archives">
           <div>
-            <span>4 </span>
+            <span>5 </span>
             <span>归档</span>
           </div>
         </a>
@@ -327,7 +327,7 @@
       </h5>
       <p class="main-left--subtitle">
         <span>文章数目：</span>
-        <span>19 篇</span>
+        <span>21 篇</span>
       </p>
       <p class="main-left--subtitle">
         <span>最近动态：</span>
@@ -335,7 +335,7 @@
       </p>
       <p class="main-left--subtitle">
         <span>上线时间：</span>
-        <span>392天</span>
+        <span>394天</span>
       </p>
       <p class="main-left--subtitle">
         <span>当前版本：</span>
@@ -591,9 +591,9 @@
   </div>
   <div class="index-right">
     <div class="index-right-wrapper">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Ansible/">-Ansible</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">-Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">-Python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SHELL/">-SHELL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">-网络基础</a></li></ul>
-      <ul class="tags" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" rel="tag">-网络基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SHELL/" rel="tag">-SHELL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">-Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">-Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ansible/" rel="tag">-Ansible</a></li></ul>
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">2024年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">2023年09月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">2023年07月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">2023年06月</a><span class="archive-list-count">11</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Ansible/">-Ansible</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">-Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">-Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">-Python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SHELL/">-SHELL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/">-网络基础</a></li></ul>
+      <ul class="tags" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/" rel="tag">-网络基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SHELL/" rel="tag">-SHELL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">-Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">-Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">-Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ansible/" rel="tag">-Ansible</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">2024年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">2024年02月</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">2023年09月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">2023年07月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">2023年06月</a><span class="archive-list-count">11</span></li></ul>
     </div>
   </div>
 </div>

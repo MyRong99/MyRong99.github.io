@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>我的技术与生活——磁盘阵列 | Mr.Long</title>
+  <title>我的技术与生活——docker命令 | Mr.Long</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/css/public.css" />
@@ -16,7 +16,7 @@
 
   <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
   <script>
-    document.title = `我的技术与生活——磁盘阵列`
+    document.title = `我的技术与生活——docker命令`
   </script>
 <meta name="generator" content="Hexo 7.3.0"></head>
 
@@ -351,88 +351,152 @@
 
 <div class="article-container">
   <div class="article">
-    <h1 class="article-title">磁盘阵列</h1>
+    <h1 class="article-title">docker命令</h1>
     <div class="article-info">
       <div class="article-info--item">
         <div class="article-info--info">
           
           <div class="article-info--categories">
             <span>分类：</span>
-            <a class="category-link" href="/categories/Linux/">-Linux</a>
+            <a class="category-link" href="/categories/Docker/">-Docker</a>
           </div>
           
           
           <div class="article-info--tags">
             <span>标签：</span>
-            <a class="tag-link" href="/tags/Linux/" rel="tag">-Linux</a>
+            <a class="tag-link" href="/tags/Docker/" rel="tag">-Docker</a>
           </div>
           
-          <p class="article-info--date">日期：2023-07-11 12:19:22</p>
+          <p class="article-info--date">日期：2024-02-21 19:19:22</p>
         </div>
-        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5" alt="" class="article-cover">
+        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5" alt="" class="article-cover">
       </div>
     </div>
     <article class="article-content markdown-body">
-      <h1 id="企业级磁盘阵列"><a href="#企业级磁盘阵列" class="headerlink" title="企业级磁盘阵列"></a>企业级磁盘阵列</h1><h3 id="一、-什么是磁盘阵列"><a href="#一、-什么是磁盘阵列" class="headerlink" title="一、 什么是磁盘阵列"></a>一、 什么是磁盘阵列</h3><p>磁盘阵列是由很多块独立的磁盘，组合成一个容量巨大的磁盘组，利用个别磁盘提供数据所产生加成效果提升整个磁盘系统效能。利用这项技术，将数据切割成许多区段，分别存放在各个硬盘上。 独立磁盘冗余阵列(RAID，redundant array of independent disks)是把相同的数据存储在多个硬盘的不同 的地方(因此，冗余地)的方法。通过把数据放在多个硬盘上，输入输出操作能以平衡的方式交叠，改良性能。因 为多个硬盘增加了平均故障间隔时间(MTBF)，储存冗余数据也增加了容错。</p>
-<h3 id="二、功能"><a href="#二、功能" class="headerlink" title="二、功能"></a>二、功能</h3><p>(1)通过对磁盘上的数据进行条带化，实现对数据成块存取，减少磁盘的机械寻道时间，提高了数据存取速度。</p>
-<p>(2)通过对一个阵列中的几块磁盘同时读取，减少了磁盘的机械寻道时间，提高数据存取速度。</p>
-<p>(3)通过镜像或者存储奇偶校验信息的方式，实现了对数据的冗余保护</p>
-<h3 id="三、RAID级别"><a href="#三、RAID级别" class="headerlink" title="三、RAID级别"></a>三、RAID级别</h3><p>三:<strong>RAID</strong>级别</p>
-<p>单类型：RAID0, RAID1, RAID2, RAID3, RAID4, RAID5, RAID6</p>
-<p>混合型：RAID7, RAID10&#x2F;01, RAID50, RAID53, RAID60</p>
-<p><strong>raid0</strong> 最少需要两块磁盘，分别往每一块磁盘上写一部分数据<br>优点:读写速度快<br>缺点:没有其他raid级别安全性高<br><strong>raid1</strong> 又叫镜像<strong>raid</strong></p>
-<p>最少需要两块磁盘，每块磁盘上都会存储一份完整数据<br>优点:安全性高，读速度快<br>缺点:写速度慢<br><strong>raid5</strong> 最少需要3块磁盘，两块磁盘存数据，一块磁盘存校验位优点:可以找回丢失的数据 冗余磁盘–&gt;当某一块磁盘坏掉后，冗余磁盘会自动替换上去<br>安全性比raid1还高读写速度在raid0和raid1之间</p>
-<h3 id="磁盘阵列RAID"><a href="#磁盘阵列RAID" class="headerlink" title="磁盘阵列RAID"></a>磁盘阵列RAID</h3><p>RAID：廉价磁盘冗余阵列（Redundant Array of Independent Disks）<br>作 用：容错、提升读写速率</p>
-<table>
-<thead>
-<tr>
-<th>RAID类型</th>
-<th>个数</th>
-<th>利用率</th>
-<th>优缺点</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>RAID0   条带集</td>
-<td>2＋</td>
-<td>100%</td>
-<td>读写速率最快，不容错</td>
-</tr>
-<tr>
-<td>RAID1   镜像集</td>
-<td>2</td>
-<td>50%</td>
-<td>读写速率一般，容错</td>
-</tr>
-<tr>
-<td>RAID5   带奇偶校验条带集</td>
-<td>3＋</td>
-<td>(n-1）&#x2F;n</td>
-<td>读写速率快，容错，允许坏一块</td>
-</tr>
-<tr>
-<td>RAID6   带奇偶校验条带集双校验dp</td>
-<td>4＋</td>
-<td>(n-2）&#x2F;n</td>
-<td>读写快，容错，允许坏两块</td>
-</tr>
-<tr>
-<td>RAID10 RAID1的安全＋RAID0的高速</td>
-<td>4</td>
-<td>50%</td>
-<td>读写速率快，容错</td>
-</tr>
-</tbody></table>
-<p><img src="https://img.beyourself.org.cn/5d3e63da18de144158.png#id=spoaY&originHeight=181&originWidth=481&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
-<p><img src="https://img.beyourself.org.cn/5d3e63ea4fb6759224.png#id=u8OBX&originHeight=179&originWidth=483&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
-<p><img src="https://img.beyourself.org.cn/5d3e64001b3cd77708.png#id=qHl2i&originHeight=202&originWidth=482&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line">一、不同场景RAID的使用</span><br><span class="line">RAID 实现方式</span><br><span class="line">硬RAID： 需要RAID卡，有自己的CPU，处理速度快，有电池和无电池</span><br><span class="line">软RAID：	 通过操作系统实现，比如Windows、Linux</span><br><span class="line"></span><br><span class="line">二、RAID5 (3块硬盘) + 热备(1块硬盘)</span><br><span class="line">1. 准备4块硬盘</span><br><span class="line">[root@tianyun ~]# ll /dev/sd*</span><br><span class="line">brw-rw---- 1 root disk 8,  48 Jan 13 16:07 /dev/sdd</span><br><span class="line">brw-rw---- 1 root disk 8,  64 Jan 13 16:07 /dev/sde</span><br><span class="line">brw-rw---- 1 root disk 8,  80 Jan 13 16:07 /dev/sdf</span><br><span class="line">brw-rw---- 1 root disk 8,  80 Jan 13 16:07 /dev/sdg</span><br><span class="line">   </span><br><span class="line">2. 创建RAID</span><br><span class="line">[root@tianyun ~]# yum -y install mdadm  		    //确保mdadm命令可用</span><br><span class="line">[root@tianyun ~]# mdadm -C /dev/md0 -l5 -n3 -x1 /dev/sd&#123;d,e,f,g&#125;</span><br><span class="line">mdadm: array /dev/md0 started.</span><br><span class="line">-C					创建RAID</span><br><span class="line">/dev/md0		第一个RAID设备</span><br><span class="line">-l5 				RAID5</span><br><span class="line">-n					RAID成员的数量</span><br><span class="line">-x					热备磁盘的数量</span><br><span class="line"></span><br><span class="line">3. 格式化，挂载</span><br><span class="line">[root@tianyun ~]# mkfs.xfs /dev/md0</span><br><span class="line">[root@tianyun ~]# mkdir /mnt/raid5</span><br><span class="line">[root@tianyun ~]# mount /dev/md0 /mnt/raid5</span><br><span class="line">[root@tianyun ~]# cp -rf /etc /mnt/raid5/etc1</span><br><span class="line"></span><br><span class="line">4. 查看RAID信息</span><br><span class="line">[root@tianyun ~]# mdadm -D /dev/md0     			//-D 查看详细信息</span><br><span class="line">/dev/md0:</span><br><span class="line">        Version : 1.2</span><br><span class="line">  Creation Time : Mon Jan 13 16:28:47 2014</span><br><span class="line">     Raid Level : raid5</span><br><span class="line">     Array Size : 2095104 (2046.34 MiB 2145.39 MB)</span><br><span class="line">  Used Dev Size : 1047552 (1023.17 MiB 1072.69 MB)</span><br><span class="line">   Raid Devices : 3</span><br><span class="line">  Total Devices : 4</span><br><span class="line">    Persistence : Superblock is persistent</span><br><span class="line"></span><br><span class="line">    Update Time : Mon Jan 13 16:34:51 2014</span><br><span class="line">          State : clean </span><br><span class="line"> Active Devices : 3</span><br><span class="line">Working Devices : 4</span><br><span class="line"> Failed Devices : 0</span><br><span class="line">  Spare Devices : 1</span><br><span class="line"></span><br><span class="line">         Layout : left-symmetric</span><br><span class="line">     Chunk Size : 512K</span><br><span class="line">    Number   Major   Minor   RaidDevice State</span><br><span class="line">       0       8       48        0      active sync   /dev/sdd</span><br><span class="line">       1       8       64        1      active sync   /dev/sde</span><br><span class="line">       4       8       80        2      active sync   /dev/sdf</span><br><span class="line"></span><br><span class="line">       3       8       96        -      spare   /dev/sdg</span><br><span class="line"></span><br><span class="line">5. 模拟一块硬盘损坏，并移除</span><br><span class="line">终端一：</span><br><span class="line">[root@tianyun ~]# watch -n 0.5 &#x27;mdadm -D /dev/md0 | tail&#x27;  	//watch持续查看</span><br><span class="line">终端二：</span><br><span class="line">[root@tianyun ~]# mdadm /dev/md0 -f /dev/sde -r /dev/sde  </span><br><span class="line">//模拟坏了并移除  -f  --fail  -r  --remove</span><br><span class="line"></span><br><span class="line">6. 设置RAID开机生效</span><br><span class="line">[root@tianyun ~]# mdadm -D -s</span><br><span class="line">ARRAY /dev/md0 metadata=1.2 name=sxl1.com:0 UUID=c6761621:8878498f:f5be209e</span><br><span class="line">[root@tianyun ~]# mdadm -D -s &gt; /etc/mdadm.conf</span><br><span class="line"></span><br><span class="line">========================================================</span><br><span class="line">mdadm选项：</span><br><span class="line">-s  --scan</span><br><span class="line">-S  --stop</span><br><span class="line">-D  --detail</span><br><span class="line">-C  --create</span><br><span class="line">-f   --fail  模拟损坏</span><br><span class="line">-r   --remove  拔出硬盘</span><br><span class="line">-a  插回硬盘</span><br><span class="line">-n  --raid-devices=3</span><br><span class="line">-x  --spare-devices=1</span><br><span class="line">-l   --level=5</span><br><span class="line"></span><br><span class="line">raid5 删除操作</span><br><span class="line">1、卸载raid挂载</span><br><span class="line">umount /dev/md0</span><br><span class="line"></span><br><span class="line">2、停止raid</span><br><span class="line">mdadm -S /dev/md0</span><br><span class="line"></span><br><span class="line">3、删除raid卷</span><br><span class="line">mdadm --misc --zero-superblock /dev/sd&#123;b,c,d,e&#125;</span><br></pre></td></tr></table></figure>
+      <h1 id="Docker拉取和上传镜像"><a href="#Docker拉取和上传镜像" class="headerlink" title="Docker拉取和上传镜像"></a>Docker拉取和上传镜像</h1><h1 id="Docker命令大全"><a href="#Docker命令大全" class="headerlink" title="Docker命令大全"></a>Docker命令大全</h1><h2 id="基础操作"><a href="#基础操作" class="headerlink" title="基础操作"></a>基础操作</h2><ul>
+<li><p><code>docker run</code>：运行一个容器。<br>示例：<code>docker run ubuntu</code></p>
+</li>
+<li><p><code>docker ps</code>：列出正在运行的容器。<br>示例：<code>docker ps</code></p>
+</li>
+<li><p><code>docker ps -a</code>：列出所有容器。<br>示例：<code>docker ps -a</code></p>
+</li>
+<li><p><code>docker stop</code>：停止容器。<br>示例：<code>docker stop my_container</code></p>
+</li>
+<li><p><code>docker start</code>：启动容器。<br>示例：<code>docker start my_container</code></p>
+</li>
+<li><p><code>docker restart</code>：重启容器。<br>示例：<code>docker restart my_container</code></p>
+</li>
+<li><p><code>docker rm</code>：删除容器。<br>示例：<code>docker rm my_container</code></p>
+</li>
+<li><p><code>docker rmi</code>：删除镜像。<br>示例：<code>docker rmi my_image</code></p>
+</li>
+<li><p><code>docker pull</code>：从Docker Hub下载镜像。<br>示例：<code>docker pull ubuntu</code></p>
+</li>
+<li><p><code>docker images</code>：列出本地镜像。<br>示例：<code>docker images</code></p>
+</li>
+<li><p><code>docker build</code>：从Dockerfile构建镜像。<br>示例：<code>docker build -t my_image .</code></p>
+</li>
+<li><p><code>docker create</code>：创建但不启动一个新的容器。<br>示例：<code>docker create --name my_container ubuntu</code></p>
+</li>
+<li><p><code>docker info</code>：显示Docker系统的详细信息。<br>示例：<code>docker info</code></p>
+</li>
+</ul>
+<h2 id="容器管理"><a href="#容器管理" class="headerlink" title="容器管理"></a>容器管理</h2><ul>
+<li><p><code>docker exec</code>：在运行的容器中执行命令。<br>示例：<code>docker exec -it my_container bash</code></p>
+</li>
+<li><p><code>docker attach</code>：连接到容器的标准输入输出流。<br>示例：<code>docker attach my_container</code></p>
+</li>
+<li><p><code>docker cp</code>：在容器与主机间拷贝文件。<br>示例：<code>docker cp my_container:/path/to/file /host/path</code></p>
+</li>
+<li><p><code>docker logs</code>：查看容器日志。<br>示例：<code>docker logs my_container</code></p>
+</li>
+<li><p><code>docker inspect</code>：查看容器或镜像的详细信息。<br>示例：<code>docker inspect my_container</code></p>
+</li>
+<li><p><code>docker port</code>：列出容器端口映射。<br>示例：<code>docker port my_container</code></p>
+</li>
+</ul>
+<h2 id="镜像管理"><a href="#镜像管理" class="headerlink" title="镜像管理"></a>镜像管理</h2><ul>
+<li><p><code>docker commit</code>：从容器创建新的镜像。<br>示例：<code>docker commit my_container my_new_image</code></p>
+</li>
+<li><p><code>docker save</code>：保存镜像到本地tar文件。<br>示例：<code>docker save -o my_image.tar my_image</code></p>
+</li>
+<li><p><code>docker load</code>：从tar文件加载镜像。<br>示例：<code>docker load -i my_image.tar</code></p>
+</li>
+<li><p><code>docker import</code>：从tar文件导入镜像。<br>示例：<code>docker import my_image.tar my_new_image</code></p>
+</li>
+<li><p><code>docker history</code>：显示镜像构建历史。<br>示例：<code>docker history my_image</code></p>
+</li>
+<li><p><code>docker tag</code>：给镜像打标签。<br>示例：<code>docker tag my_image my_repo/my_image:latest</code></p>
+</li>
+<li><p><code>docker push</code>：将镜像推送到镜像仓库。<br>示例：<code>docker push my_repo/my_image:latest</code></p>
+</li>
+<li><p><code>docker search</code>：从Docker Hub搜索镜像。<br>示例：<code>docker search ubuntu</code></p>
+</li>
+</ul>
+<h2 id="网络管理"><a href="#网络管理" class="headerlink" title="网络管理"></a>网络管理</h2><ul>
+<li><p><code>docker network ls</code>：列出网络。<br>示例：<code>docker network ls</code></p>
+</li>
+<li><p><code>docker network create</code>：创建网络。<br>示例：<code>docker network create my_network</code></p>
+</li>
+<li><p><code>docker network connect</code>：连接容器到网络。<br>示例：<code>docker network connect my_network my_container</code></p>
+</li>
+<li><p><code>docker network disconnect</code>：断开容器与网络的连接。<br>示例：<code>docker network disconnect my_network my_container</code></p>
+</li>
+</ul>
+<h2 id="数据管理"><a href="#数据管理" class="headerlink" title="数据管理"></a>数据管理</h2><ul>
+<li><p><code>docker volume create</code>：创建数据卷。<br>示例：<code>docker volume create my_volume</code></p>
+</li>
+<li><p><code>docker volume ls</code>：列出数据卷。<br>示例：<code>docker volume ls</code></p>
+</li>
+<li><p><code>docker volume inspect</code>：检查数据卷详情。<br>示例：<code>docker volume inspect my_volume</code></p>
+</li>
+<li><p><code>docker volume rm</code>：删除数据卷。<br>示例：<code>docker volume rm my_volume</code></p>
+</li>
+</ul>
+<h2 id="Swarm与服务管理"><a href="#Swarm与服务管理" class="headerlink" title="Swarm与服务管理"></a>Swarm与服务管理</h2><ul>
+<li><p><code>docker swarm init</code>：初始化Swarm模式。<br>示例：<code>docker swarm init</code></p>
+</li>
+<li><p><code>docker swarm join</code>：加入Swarm集群。<br>示例：<code>docker swarm join --token SWMTKN-1-xxxxxxx</code></p>
+</li>
+<li><p><code>docker service create</code>：创建服务。<br>示例：<code>docker service create --name my_service nginx</code></p>
+</li>
+<li><p><code>docker service ls</code>：列出服务。<br>示例：<code>docker service ls</code></p>
+</li>
+</ul>
+<h2 id="安全与系统管理"><a href="#安全与系统管理" class="headerlink" title="安全与系统管理"></a>安全与系统管理</h2><ul>
+<li><p><code>docker system prune</code>：清理系统资源。<br>示例：<code>docker system prune</code></p>
+</li>
+<li><p><code>docker system df</code>：显示Docker磁盘使用情况。<br>示例：<code>docker system df</code></p>
+</li>
+</ul>
+<h2 id="进阶与故障排查"><a href="#进阶与故障排查" class="headerlink" title="进阶与故障排查"></a>进阶与故障排查</h2><ul>
+<li><p><code>docker events</code>：查看Docker事件流。<br>示例：<code>docker events</code></p>
+</li>
+<li><p><code>docker diff</code>：查看容器文件系统变化。<br>示例：<code>docker diff my_container</code></p>
+</li>
+</ul>
+<h2 id="Docker-Compose"><a href="#Docker-Compose" class="headerlink" title="Docker Compose"></a>Docker Compose</h2><ul>
+<li><p><code>docker-compose up</code>：启动服务。<br>示例：<code>docker-compose up</code></p>
+</li>
+<li><p><code>docker-compose down</code>：停止并删除容器、网络、卷、镜像。<br>示例：<code>docker-compose down</code></p>
+</li>
+<li><p><code>docker-compose ps</code>：列出容器。<br>示例：<code>docker-compose ps</code></p>
+</li>
+<li><p><code>docker-compose logs</code>：查看容器日志。<br>示例：<code>docker-compose logs</code></p>
+</li>
+<li><p><code>docker-compose build</code>：构建或重新构建服务。<br>示例：<code>docker-compose build</code></p>
+</li>
+<li><p><code>docker-compose pull</code>：拉取服务镜像。<br>示例：<code>docker-compose pull</code></p>
+</li>
+<li><p><code>docker-compose start</code>：启动已停止的服务。<br>示例：<code>docker-compose start</code></p>
+</li>
+</ul>
 
     </article>
     
     <div class="read-nums">
       <!-- id 将作为查询条件 -->
-      <span id="2023/07/11/磁盘阵列RAID/" class="leancloud_visitors" data-flag-title="Your Article Title">
+      <span id="2024/02/21/Docker命令大全/" class="leancloud_visitors" data-flag-title="Your Article Title">
         <em class="post-meta-item-text">浏览量</em>
         <i class="leancloud-visitors-count"></i>
       </span>
@@ -448,20 +512,20 @@
     <div class="article-catelogue--wrapper">
       <div class="catelogue catelogue-1">
         <h3>目录</h3>
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BC%81%E4%B8%9A%E7%BA%A7%E7%A3%81%E7%9B%98%E9%98%B5%E5%88%97"><span class="toc-number">1.</span> <span class="toc-text">企业级磁盘阵列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81-%E4%BB%80%E4%B9%88%E6%98%AF%E7%A3%81%E7%9B%98%E9%98%B5%E5%88%97"><span class="toc-number">1.0.1.</span> <span class="toc-text">一、 什么是磁盘阵列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%8A%9F%E8%83%BD"><span class="toc-number">1.0.2.</span> <span class="toc-text">二、功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81RAID%E7%BA%A7%E5%88%AB"><span class="toc-number">1.0.3.</span> <span class="toc-text">三、RAID级别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A3%81%E7%9B%98%E9%98%B5%E5%88%97RAID"><span class="toc-number">1.0.4.</span> <span class="toc-text">磁盘阵列RAID</span></a></li></ol></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker%E6%8B%89%E5%8F%96%E5%92%8C%E4%B8%8A%E4%BC%A0%E9%95%9C%E5%83%8F"><span class="toc-number">1.</span> <span class="toc-text">Docker拉取和上传镜像</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker%E5%91%BD%E4%BB%A4%E5%A4%A7%E5%85%A8"><span class="toc-number">2.</span> <span class="toc-text">Docker命令大全</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C"><span class="toc-number">2.1.</span> <span class="toc-text">基础操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86"><span class="toc-number">2.2.</span> <span class="toc-text">容器管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86"><span class="toc-number">2.3.</span> <span class="toc-text">镜像管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86"><span class="toc-number">2.4.</span> <span class="toc-text">网络管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%AE%A1%E7%90%86"><span class="toc-number">2.5.</span> <span class="toc-text">数据管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swarm%E4%B8%8E%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="toc-number">2.6.</span> <span class="toc-text">Swarm与服务管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E4%B8%8E%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86"><span class="toc-number">2.7.</span> <span class="toc-text">安全与系统管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E9%98%B6%E4%B8%8E%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5"><span class="toc-number">2.8.</span> <span class="toc-text">进阶与故障排查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-Compose"><span class="toc-number">2.9.</span> <span class="toc-text">Docker Compose</span></a></li></ol></li></ol>
       </div>
       
         <div class="catelogue catelogue-2">
           
             <p>
               <span>上一篇：</span>
-              <a href="/2023/07/21/shell_newrain/">shell编程</a>
+              <a href="/2024/05/20/Python 2/">python二</a>
             </p>
            
           
             <p>
               <span>下一篇</span>
-              <a href="/2023/07/01/破解密码/">单用户模式破解密码</a>
+              <a href="/2024/02/11/docker容器/">docker容器</a>
             </p>
           
         </div>
@@ -483,7 +547,7 @@
     recordIP: config.recordIP,
     visitor: config.visitor,
     enableQQ: config.enableQQ,
-    path: '2023/07/11/磁盘阵列RAID/'
+    path: '2024/02/21/Docker命令大全/'
   })
 </script>
 
