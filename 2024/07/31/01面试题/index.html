@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>我的技术与生活——docker命令 | Mr.Long</title>
+  <title>我的技术与生活——小站首页 | Mr.Long</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/css/public.css" />
@@ -16,7 +16,7 @@
 
   <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
   <script>
-    document.title = `我的技术与生活——docker命令`
+    document.title = `我的技术与生活——小站首页`
   </script>
 <meta name="generator" content="Hexo 7.3.0"></head>
 
@@ -351,152 +351,50 @@
 
 <div class="article-container">
   <div class="article">
-    <h1 class="article-title">docker命令</h1>
+    <h1 class="article-title"></h1>
     <div class="article-info">
       <div class="article-info--item">
         <div class="article-info--info">
           
           <div class="article-info--categories">
             <span>分类：</span>
-            <a class="category-link" href="/categories/Docker/">-Docker</a>
+            
           </div>
           
           
           <div class="article-info--tags">
             <span>标签：</span>
-            <a class="tag-link" href="/tags/Docker/" rel="tag">-Docker</a>
+            
           </div>
           
-          <p class="article-info--date">日期：2024-03-21 14:55:20</p>
+          <p class="article-info--date">日期：2024-07-31 21:34:15</p>
         </div>
-        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5" alt="" class="article-cover">
+        <img src="/imgs/default-cover.webp" alt="" class="article-cover">
       </div>
     </div>
     <article class="article-content markdown-body">
-      <h1 id="Docker拉取和上传镜像"><a href="#Docker拉取和上传镜像" class="headerlink" title="Docker拉取和上传镜像"></a>Docker拉取和上传镜像</h1><h1 id="Docker命令大全"><a href="#Docker命令大全" class="headerlink" title="Docker命令大全"></a>Docker命令大全</h1><h2 id="基础操作"><a href="#基础操作" class="headerlink" title="基础操作"></a>基础操作</h2><ul>
-<li><p><code>docker run</code>：运行一个容器。<br>示例：<code>docker run ubuntu</code></p>
-</li>
-<li><p><code>docker ps</code>：列出正在运行的容器。<br>示例：<code>docker ps</code></p>
-</li>
-<li><p><code>docker ps -a</code>：列出所有容器。<br>示例：<code>docker ps -a</code></p>
-</li>
-<li><p><code>docker stop</code>：停止容器。<br>示例：<code>docker stop my_container</code></p>
-</li>
-<li><p><code>docker start</code>：启动容器。<br>示例：<code>docker start my_container</code></p>
-</li>
-<li><p><code>docker restart</code>：重启容器。<br>示例：<code>docker restart my_container</code></p>
-</li>
-<li><p><code>docker rm</code>：删除容器。<br>示例：<code>docker rm my_container</code></p>
-</li>
-<li><p><code>docker rmi</code>：删除镜像。<br>示例：<code>docker rmi my_image</code></p>
-</li>
-<li><p><code>docker pull</code>：从Docker Hub下载镜像。<br>示例：<code>docker pull ubuntu</code></p>
-</li>
-<li><p><code>docker images</code>：列出本地镜像。<br>示例：<code>docker images</code></p>
-</li>
-<li><p><code>docker build</code>：从Dockerfile构建镜像。<br>示例：<code>docker build -t my_image .</code></p>
-</li>
-<li><p><code>docker create</code>：创建但不启动一个新的容器。<br>示例：<code>docker create --name my_container ubuntu</code></p>
-</li>
-<li><p><code>docker info</code>：显示Docker系统的详细信息。<br>示例：<code>docker info</code></p>
-</li>
-</ul>
-<h2 id="容器管理"><a href="#容器管理" class="headerlink" title="容器管理"></a>容器管理</h2><ul>
-<li><p><code>docker exec</code>：在运行的容器中执行命令。<br>示例：<code>docker exec -it my_container bash</code></p>
-</li>
-<li><p><code>docker attach</code>：连接到容器的标准输入输出流。<br>示例：<code>docker attach my_container</code></p>
-</li>
-<li><p><code>docker cp</code>：在容器与主机间拷贝文件。<br>示例：<code>docker cp my_container:/path/to/file /host/path</code></p>
-</li>
-<li><p><code>docker logs</code>：查看容器日志。<br>示例：<code>docker logs my_container</code></p>
-</li>
-<li><p><code>docker inspect</code>：查看容器或镜像的详细信息。<br>示例：<code>docker inspect my_container</code></p>
-</li>
-<li><p><code>docker port</code>：列出容器端口映射。<br>示例：<code>docker port my_container</code></p>
-</li>
-</ul>
-<h2 id="镜像管理"><a href="#镜像管理" class="headerlink" title="镜像管理"></a>镜像管理</h2><ul>
-<li><p><code>docker commit</code>：从容器创建新的镜像。<br>示例：<code>docker commit my_container my_new_image</code></p>
-</li>
-<li><p><code>docker save</code>：保存镜像到本地tar文件。<br>示例：<code>docker save -o my_image.tar my_image</code></p>
-</li>
-<li><p><code>docker load</code>：从tar文件加载镜像。<br>示例：<code>docker load -i my_image.tar</code></p>
-</li>
-<li><p><code>docker import</code>：从tar文件导入镜像。<br>示例：<code>docker import my_image.tar my_new_image</code></p>
-</li>
-<li><p><code>docker history</code>：显示镜像构建历史。<br>示例：<code>docker history my_image</code></p>
-</li>
-<li><p><code>docker tag</code>：给镜像打标签。<br>示例：<code>docker tag my_image my_repo/my_image:latest</code></p>
-</li>
-<li><p><code>docker push</code>：将镜像推送到镜像仓库。<br>示例：<code>docker push my_repo/my_image:latest</code></p>
-</li>
-<li><p><code>docker search</code>：从Docker Hub搜索镜像。<br>示例：<code>docker search ubuntu</code></p>
-</li>
-</ul>
-<h2 id="网络管理"><a href="#网络管理" class="headerlink" title="网络管理"></a>网络管理</h2><ul>
-<li><p><code>docker network ls</code>：列出网络。<br>示例：<code>docker network ls</code></p>
-</li>
-<li><p><code>docker network create</code>：创建网络。<br>示例：<code>docker network create my_network</code></p>
-</li>
-<li><p><code>docker network connect</code>：连接容器到网络。<br>示例：<code>docker network connect my_network my_container</code></p>
-</li>
-<li><p><code>docker network disconnect</code>：断开容器与网络的连接。<br>示例：<code>docker network disconnect my_network my_container</code></p>
-</li>
-</ul>
-<h2 id="数据管理"><a href="#数据管理" class="headerlink" title="数据管理"></a>数据管理</h2><ul>
-<li><p><code>docker volume create</code>：创建数据卷。<br>示例：<code>docker volume create my_volume</code></p>
-</li>
-<li><p><code>docker volume ls</code>：列出数据卷。<br>示例：<code>docker volume ls</code></p>
-</li>
-<li><p><code>docker volume inspect</code>：检查数据卷详情。<br>示例：<code>docker volume inspect my_volume</code></p>
-</li>
-<li><p><code>docker volume rm</code>：删除数据卷。<br>示例：<code>docker volume rm my_volume</code></p>
-</li>
-</ul>
-<h2 id="Swarm与服务管理"><a href="#Swarm与服务管理" class="headerlink" title="Swarm与服务管理"></a>Swarm与服务管理</h2><ul>
-<li><p><code>docker swarm init</code>：初始化Swarm模式。<br>示例：<code>docker swarm init</code></p>
-</li>
-<li><p><code>docker swarm join</code>：加入Swarm集群。<br>示例：<code>docker swarm join --token SWMTKN-1-xxxxxxx</code></p>
-</li>
-<li><p><code>docker service create</code>：创建服务。<br>示例：<code>docker service create --name my_service nginx</code></p>
-</li>
-<li><p><code>docker service ls</code>：列出服务。<br>示例：<code>docker service ls</code></p>
-</li>
-</ul>
-<h2 id="安全与系统管理"><a href="#安全与系统管理" class="headerlink" title="安全与系统管理"></a>安全与系统管理</h2><ul>
-<li><p><code>docker system prune</code>：清理系统资源。<br>示例：<code>docker system prune</code></p>
-</li>
-<li><p><code>docker system df</code>：显示Docker磁盘使用情况。<br>示例：<code>docker system df</code></p>
-</li>
-</ul>
-<h2 id="进阶与故障排查"><a href="#进阶与故障排查" class="headerlink" title="进阶与故障排查"></a>进阶与故障排查</h2><ul>
-<li><p><code>docker events</code>：查看Docker事件流。<br>示例：<code>docker events</code></p>
-</li>
-<li><p><code>docker diff</code>：查看容器文件系统变化。<br>示例：<code>docker diff my_container</code></p>
-</li>
-</ul>
-<h2 id="Docker-Compose"><a href="#Docker-Compose" class="headerlink" title="Docker Compose"></a>Docker Compose</h2><ul>
-<li><p><code>docker-compose up</code>：启动服务。<br>示例：<code>docker-compose up</code></p>
-</li>
-<li><p><code>docker-compose down</code>：停止并删除容器、网络、卷、镜像。<br>示例：<code>docker-compose down</code></p>
-</li>
-<li><p><code>docker-compose ps</code>：列出容器。<br>示例：<code>docker-compose ps</code></p>
-</li>
-<li><p><code>docker-compose logs</code>：查看容器日志。<br>示例：<code>docker-compose logs</code></p>
-</li>
-<li><p><code>docker-compose build</code>：构建或重新构建服务。<br>示例：<code>docker-compose build</code></p>
-</li>
-<li><p><code>docker-compose pull</code>：拉取服务镜像。<br>示例：<code>docker-compose pull</code></p>
-</li>
-<li><p><code>docker-compose start</code>：启动已停止的服务。<br>示例：<code>docker-compose start</code></p>
-</li>
-</ul>
+      <h1 id="01面试题！！！！！！！！！！！！"><a href="#01面试题！！！！！！！！！！！！" class="headerlink" title="01面试题！！！！！！！！！！！！"></a>01面试题！！！！！！！！！！！！</h1><h2 id="自我介绍："><a href="#自我介绍：" class="headerlink" title="自我介绍："></a>自我介绍：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">面试官好，我叫曹俊龙。今年刚毕业于渭南师范学院主修专业是数字媒体技术，很高兴能参加贵公司的这次面试。</span><br><span class="line">我熟悉linux操作系统；目前掌握的编程语言有shell正在学习python，能够独立编写一些脚本，配合ansible进行自动化操作，编写过playbook剧本。</span><br><span class="line">对redis、rabbitmq、nginx、tomcat等一些中间件比较熟悉；搭建过redis的集群，熟悉nginx和tomcat的性能调优，配置过nginx的负载均衡、反向代理和流量控制等等。</span><br><span class="line">数据库的话比较熟悉mysql一点，做过mysql的数据备份等等。熟悉filebeat加elk集群的部署和维护。</span><br><span class="line">因为我上家公司用的监控平台是zabbix加grafana，所以对zabbix也是比较熟悉的。</span><br><span class="line">还有熟悉阿里云、腾讯云ECS，SLB，RDS、OSS、CDN云产品。CI/CD方面，熟悉Jenkins的自动化构建、测试和上线，编写过pipeline流水线。</span><br><span class="line">熟悉docker容器，能够编写dockerfile和docker-compose。对最近很火的容器编排k8s也了解一点。</span><br><span class="line">以上是我的个人介绍。</span><br></pre></td></tr></table></figure>
+
+<h2 id="胡浩凯："><a href="#胡浩凯：" class="headerlink" title="胡浩凯："></a>胡浩凯：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">高并发场景</span><br><span class="line">用户访问业务中的突发流量一般怎么处理</span><br><span class="line">服务器安全问题有没有处理过</span><br><span class="line">waf（防火墙）</span><br><span class="line">网络攻击如何处理</span><br><span class="line">ddos高防</span><br><span class="line">dns解析类型</span><br><span class="line">cname解析</span><br><span class="line">域名备案mysql处理大表更新</span><br><span class="line">gitlab和jenkins之间的自动发布</span><br><span class="line">mysql慢查询日志</span><br><span class="line">公司业务</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">之前在公司属于什么位置 </span><br><span class="line">代码更新用什么 </span><br><span class="line">平常遇到一些什么问题 </span><br><span class="line">top命令</span><br><span class="line">怎么看平均负载 </span><br><span class="line">怎么看待平均负载 </span><br><span class="line">top里的virt还有res是什么意思</span><br><span class="line">用虚拟地址有什么好处 </span><br><span class="line">环境里很卡顿 ，除了cpu利用率高 还有什么情况会导致</span><br><span class="line">判断环境内存还有多少用什么命令</span><br><span class="line">docker和k8s的区别和联系</span><br><span class="line">常用的docker命令</span><br><span class="line">缓存雪崩和缓存穿透是什么 </span><br><span class="line">平常和其他团队怎么合作的 </span><br><span class="line">rpm和yum有哪些命令</span><br><span class="line">内核对应的是哪个rpm包 </span><br><span class="line">操作系统内核了解吗 </span><br><span class="line">遇到比较紧急的问题 今天要解决</span><br></pre></td></tr></table></figure>
+
+<h2 id="波波："><a href="#波波：" class="headerlink" title="波波："></a>波波：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">自我介绍</span><br><span class="line"></span><br><span class="line">入职之后如何展开工作</span><br><span class="line">网络架构涉及的设备</span><br><span class="line">交换机的配置应用</span><br><span class="line">服务器Linux命令</span><br><span class="line">写过什么shell脚本</span><br><span class="line">公司网络安全方面做过什么</span><br><span class="line">怎么保证24小时网络不间断，做网络部署</span><br><span class="line"></span><br><span class="line">HR问题</span><br><span class="line">桌面运维，网络运维</span><br><span class="line">新的工作内容，你觉得挑战在哪里</span><br><span class="line">哪些是你自学的</span><br><span class="line">公司it有多少人</span><br><span class="line">你主要对接是甲方运维吗？</span><br><span class="line">会有专门的it负责本公司的运维吗？</span><br><span class="line">是你还是其他同事</span><br><span class="line">跟谁汇报工作</span><br><span class="line">离职原因</span><br><span class="line">你觉得你胜任这个岗位，你的优势在哪？</span><br><span class="line">你列举一个和其他部门沟通比较困难的案例</span><br><span class="line">现在看了哪些其他的机会？</span><br><span class="line">现在想找一个什么样的工作</span><br><span class="line">自己的职业规划</span><br><span class="line">面试反问</span><br></pre></td></tr></table></figure>
+
+<h2 id="洪繁-西安里恩"><a href="#洪繁-西安里恩" class="headerlink" title="洪繁   西安里恩"></a>洪繁   西安里恩</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">自我介绍</span><br><span class="line">服务器架构</span><br><span class="line">云产品用的啥</span><br><span class="line">公司主要做什么</span><br><span class="line">运维有多少人</span><br><span class="line">CICD搭建流程</span><br><span class="line">Pineline写过吗</span><br><span class="line">有没有使用过堡垒机</span><br><span class="line">服务器怎么进行管理</span><br><span class="line">服务器账号是怎么使用，是有共享还是？</span><br><span class="line">授权流程是怎样的？</span><br><span class="line">最擅长哪块技能？</span><br><span class="line">工作中写过文档吗？技术文档</span><br><span class="line">离职原因</span><br><span class="line">脚本用的什么写的</span><br><span class="line">用脚本怎么查看某个log日志，怎么查看日志其中的关键字，比如查找某个日志中的ip以及uri</span><br><span class="line">监控脚本写过吗？写过什么？</span><br><span class="line">Nginx做过什么配置，性能方面做过什么？</span><br><span class="line">对新工作的期望？</span><br><span class="line">现在学习的新技术？</span><br><span class="line">容器和虚拟机的区别？</span><br><span class="line">后端用的什么语言？</span><br><span class="line">写过dockerfile和docker compose吗？</span><br><span class="line"></span><br><span class="line">人事</span><br><span class="line">入学时间，毕业时间</span><br><span class="line">学校情况</span><br><span class="line">毕业设计介绍</span><br><span class="line">实习情况</span><br><span class="line">是否是离职状态？</span><br><span class="line">是否在西安？</span><br><span class="line"></span><br><span class="line">反问</span><br><span class="line">问技术官答的怎么样？</span><br><span class="line">公司的技术栈和架构？</span><br><span class="line">公司用的什么监控平台？</span><br><span class="line">我需要提前学习什么？</span><br></pre></td></tr></table></figure>
+
+<h2 id="坦言荣"><a href="#坦言荣" class="headerlink" title="坦言荣"></a>坦言荣</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">1、你们公司的服务中间件用的是什么？</span><br><span class="line">2、你们公司项目的整体架构是怎么样的？</span><br><span class="line">3、你们有没有用K8s做过服务部署？</span><br><span class="line">4、数据库工程师考的是什么？</span><br><span class="line">5、怎么查询一个表在那个数据库下面？</span><br><span class="line">6、一个数据库脚本，里面有建表，删表，新增字段，修改字段，对于这个脚本你怎么考虑执行它？</span><br><span class="line">7、这个环境现在只有你一个人，你要自己考虑去判断这个脚本里面内容的执行？</span><br><span class="line">8、你是怎么判断数据是否重要的？标准</span><br><span class="line">9、简单说一下数据库的备份操作？</span><br><span class="line">10、如何主动发现平台运行中可能出现的一些问题，你是否有自己的想法和思路提前预防系统运行的漏洞？</span><br><span class="line">11、你用zabbix是公司流程要求，还是你自己的方法？</span><br><span class="line">12、你有没有你自己的方法？</span><br><span class="line">14、你在上家公司有没有自己写过服务器监控脚本？</span><br><span class="line">15、你是如何定义运维在整个工作中的位置？</span><br><span class="line">16、你觉得运维重要还是开发重要？</span><br><span class="line">17、你用过阿里云的那些组件？</span><br><span class="line">18、你在你的实习公司干的怎么样，有有没有考虑留下来？</span><br><span class="line">19、你的专业主要是学什么的？</span><br><span class="line">20、你的专业是和服务器是没关系的吗？</span><br><span class="line">21、你对数据分析的整个流程是怎么样的？</span><br><span class="line">22、从数据的爬取到数据分析，你是全程参与的吗？</span><br><span class="line">23、你的项目中你觉得最有难度的是哪个？</span><br><span class="line">24、你是怎么学习的？</span><br><span class="line">25、若如果录用你，你可以在公司附近租房子吗？</span><br><span class="line">26、你做这些项目那个人最多？</span><br><span class="line">27、你们是怎么配合的？</span><br><span class="line">28、你们运维之间的分工？</span><br><span class="line">29、你们加班多不？</span><br><span class="line">30、经常性的会在晚上加班，你的看法是？</span><br><span class="line">31、你未来的一个规划是？</span><br><span class="line">32、一些检测工具你能自己开发吗？</span><br><span class="line">33、你期望薪资？</span><br><span class="line">34、你今年毕业，没有参加秋招吗？</span><br><span class="line">35、你原本是想留在实习公司吗？</span><br><span class="line">36、秋招为什么不来西安找？</span><br><span class="line">37、你手里现在还有offer吗？</span><br><span class="line">38、你为什么想来我们公司？</span><br><span class="line">39、你对象在哪工作？</span><br></pre></td></tr></table></figure>
+
+<h2 id="健民"><a href="#健民" class="headerlink" title="健民"></a>健民</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">1.自我介绍</span><br><span class="line">2.服务器常见故障，怎么处理的</span><br><span class="line">3.cdn方面</span><br><span class="line">4.数据抓包用过哪些</span><br><span class="line">5.tomcat配置文件</span><br><span class="line">6.Linux怎么看进程、怎么看几天前的进程问题</span><br><span class="line">7.运维工作中遇到过什么问题</span><br><span class="line">8.你们后端有几台服务器</span><br><span class="line">9.你做过的项目中最大的架构是啥样的</span><br><span class="line">10.为什么选择来南京</span><br><span class="line">11.你们云服务器怎么监控的</span><br><span class="line">12.你们工作中用到过哪些数据库</span><br><span class="line">13.你做过的这个项目日常流量有多大</span><br><span class="line">14.你这个项目后端服务器多少台？能抗得住这么高的流量吗？怎么处理的？</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">薛建民面试问题：</span><br><span class="line">1.日志格式不一样的话怎么办？</span><br><span class="line">2.字段名称不一致看有关联但是都不一致怎么办</span><br><span class="line">3.字段名称一致内容不一致怎么办？</span><br><span class="line">MySQL主从原理</span><br><span class="line">binlog日志丢失怎么办</span><br><span class="line">主库挂的怎么办？</span><br><span class="line">主库宕掉从库怎么变成主库？</span><br><span class="line">学生版，班级表，成绩表，想知道每个班的前三名是谁？</span><br><span class="line">人员表，省份表，统计多少人？</span><br><span class="line">tcp的七层协议都代表什么都有什么用？</span><br><span class="line">网络有丢包在几层看？</span><br><span class="line">tcp和udp的区别？</span><br><span class="line">shell都用来做什么</span><br><span class="line">应用健康探测应该怎么写？用的什么方式 本机做还是怎么做</span><br><span class="line">跨机器做网络丢包怎么处理？</span><br><span class="line">内存告警怎么做？</span><br><span class="line">离职的原因？</span><br></pre></td></tr></table></figure>
+
 
     </article>
     
     <div class="read-nums">
       <!-- id 将作为查询条件 -->
-      <span id="2024/03/21/Docker命令大全/" class="leancloud_visitors" data-flag-title="Your Article Title">
+      <span id="2024/07/31/01面试题/" class="leancloud_visitors" data-flag-title="Your Article Title">
         <em class="post-meta-item-text">浏览量</em>
         <i class="leancloud-visitors-count"></i>
       </span>
@@ -512,20 +410,15 @@
     <div class="article-catelogue--wrapper">
       <div class="catelogue catelogue-1">
         <h3>目录</h3>
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker%E6%8B%89%E5%8F%96%E5%92%8C%E4%B8%8A%E4%BC%A0%E9%95%9C%E5%83%8F"><span class="toc-number">1.</span> <span class="toc-text">Docker拉取和上传镜像</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker%E5%91%BD%E4%BB%A4%E5%A4%A7%E5%85%A8"><span class="toc-number">2.</span> <span class="toc-text">Docker命令大全</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C"><span class="toc-number">2.1.</span> <span class="toc-text">基础操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86"><span class="toc-number">2.2.</span> <span class="toc-text">容器管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86"><span class="toc-number">2.3.</span> <span class="toc-text">镜像管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86"><span class="toc-number">2.4.</span> <span class="toc-text">网络管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%AE%A1%E7%90%86"><span class="toc-number">2.5.</span> <span class="toc-text">数据管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Swarm%E4%B8%8E%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="toc-number">2.6.</span> <span class="toc-text">Swarm与服务管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E4%B8%8E%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86"><span class="toc-number">2.7.</span> <span class="toc-text">安全与系统管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E9%98%B6%E4%B8%8E%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5"><span class="toc-number">2.8.</span> <span class="toc-text">进阶与故障排查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-Compose"><span class="toc-number">2.9.</span> <span class="toc-text">Docker Compose</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#01%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81"><span class="toc-number">1.</span> <span class="toc-text">01面试题！！！！！！！！！！！！</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E6%88%91%E4%BB%8B%E7%BB%8D%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">自我介绍：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%A1%E6%B5%A9%E5%87%AF%EF%BC%9A"><span class="toc-number">1.2.</span> <span class="toc-text">胡浩凯：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A2%E6%B3%A2%EF%BC%9A"><span class="toc-number">1.3.</span> <span class="toc-text">波波：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B4%AA%E7%B9%81-%E8%A5%BF%E5%AE%89%E9%87%8C%E6%81%A9"><span class="toc-number">1.4.</span> <span class="toc-text">洪繁   西安里恩</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9D%A6%E8%A8%80%E8%8D%A3"><span class="toc-number">1.5.</span> <span class="toc-text">坦言荣</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%81%A5%E6%B0%91"><span class="toc-number">1.6.</span> <span class="toc-text">健民</span></a></li></ol></li></ol>
       </div>
       
         <div class="catelogue catelogue-2">
-          
-            <p>
-              <span>上一篇：</span>
-              <a href="/2024/07/31/01面试题/"></a>
-            </p>
            
           
             <p>
               <span>下一篇</span>
-              <a href="/2024/03/11/docker容器/">docker容器</a>
+              <a href="/2024/03/21/Docker命令大全/">docker命令</a>
             </p>
           
         </div>
@@ -547,7 +440,7 @@
     recordIP: config.recordIP,
     visitor: config.visitor,
     enableQQ: config.enableQQ,
-    path: '2024/03/21/Docker命令大全/'
+    path: '2024/07/31/01面试题/'
   })
 </script>
 
