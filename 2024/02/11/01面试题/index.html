@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>我的技术与生活——小站首页 | Mr.Long</title>
+  <title>我的技术与生活——offer | Mr.Long</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/css/public.css" />
@@ -16,7 +16,7 @@
 
   <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
   <script>
-    document.title = `我的技术与生活——小站首页`
+    document.title = `我的技术与生活——offer`
   </script>
 <meta name="generator" content="Hexo 7.3.0"></head>
 
@@ -193,7 +193,7 @@
   const ipt = document.querySelector('#search-input')
   const btn = document.querySelector('#search-btn')
   const layer = document.querySelector('#search-layer')
-  const posts = JSON.parse(`[{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/28/LVM逻辑卷管理 /"},{"title":"docker命令","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/Docker命令大全/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/14/LV逻辑卷扩展/"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"python三","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/25/Python 3/"},{"title":"python四","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/03/01/Python 4/"},{"title":"python二","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/21/Python 2/"},{"title":"ansible模块","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1","path":"2023/08/17/ansible 模块扩展/"},{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/23/TCP协议/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/11/docker容器/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/01/文件权限/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/09/磁盘阵列RAID/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/25/磁盘存储管理1/"},{"title":"shell编程","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2023/07/21/shell_newrain/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/11/网络管理基础/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/16/走进网络世界/"},{"title":"python一","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/20/Python 1 /"},{"title":"","path":"2024/07/31/01面试题/"}]`)
+  const posts = JSON.parse(`[{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/28/LVM逻辑卷管理 /"},{"title":"docker命令","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/Docker命令大全/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/14/LV逻辑卷扩展/"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"python三","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/25/Python 3/"},{"title":"python四","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/03/01/Python 4/"},{"title":"python二","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/21/Python 2/"},{"title":"ansible模块","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1","path":"2023/08/17/ansible 模块扩展/"},{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/23/TCP协议/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/11/docker容器/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/01/文件权限/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/09/磁盘阵列RAID/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/25/磁盘存储管理1/"},{"title":"shell编程","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2023/07/21/shell_newrain/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/11/网络管理基础/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/16/走进网络世界/"},{"title":"python一","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/20/Python 1 /"},{"title":"offer","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/02/11/01面试题/"}]`)
   ipt.addEventListener('keyup', e => {
     if (e.key === 'Enter') {
       handleSearch()
@@ -270,7 +270,7 @@
         </a>
         <a href="/archives">
           <div>
-            <span>6 </span>
+            <span>5 </span>
             <span>归档</span>
           </div>
         </a>
@@ -331,7 +331,7 @@
       </p>
       <p class="main-left--subtitle">
         <span>最近动态：</span>
-        <span>1周前</span>
+        <span>今天</span>
       </p>
       <p class="main-left--subtitle">
         <span>上线时间：</span>
@@ -351,7 +351,7 @@
 
 <div class="article-container">
   <div class="article">
-    <h1 class="article-title"></h1>
+    <h1 class="article-title">offer</h1>
     <div class="article-info">
       <div class="article-info--item">
         <div class="article-info--info">
@@ -367,13 +367,13 @@
             
           </div>
           
-          <p class="article-info--date">日期：2024-07-31 21:34:15</p>
+          <p class="article-info--date">日期：2024-02-11 19:19:22</p>
         </div>
-        <img src="/imgs/default-cover.webp" alt="" class="article-cover">
+        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5" alt="" class="article-cover">
       </div>
     </div>
     <article class="article-content markdown-body">
-      <h1 id="01面试题！！！！！！！！！！！！"><a href="#01面试题！！！！！！！！！！！！" class="headerlink" title="01面试题！！！！！！！！！！！！"></a>01面试题！！！！！！！！！！！！</h1><h2 id="自我介绍："><a href="#自我介绍：" class="headerlink" title="自我介绍："></a>自我介绍：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">面试官好，我叫曹俊龙。今年刚毕业于渭南师范学院主修专业是数字媒体技术，很高兴能参加贵公司的这次面试。</span><br><span class="line">我熟悉linux操作系统；目前掌握的编程语言有shell正在学习python，能够独立编写一些脚本，配合ansible进行自动化操作，编写过playbook剧本。</span><br><span class="line">对redis、rabbitmq、nginx、tomcat等一些中间件比较熟悉；搭建过redis的集群，熟悉nginx和tomcat的性能调优，配置过nginx的负载均衡、反向代理和流量控制等等。</span><br><span class="line">数据库的话比较熟悉mysql一点，做过mysql的数据备份等等。熟悉filebeat加elk集群的部署和维护。</span><br><span class="line">因为我上家公司用的监控平台是zabbix加grafana，所以对zabbix也是比较熟悉的。</span><br><span class="line">还有熟悉阿里云、腾讯云ECS，SLB，RDS、OSS、CDN云产品。CI/CD方面，熟悉Jenkins的自动化构建、测试和上线，编写过pipeline流水线。</span><br><span class="line">熟悉docker容器，能够编写dockerfile和docker-compose。对最近很火的容器编排k8s也了解一点。</span><br><span class="line">以上是我的个人介绍。</span><br></pre></td></tr></table></figure>
+      <h2 id="自我介绍："><a href="#自我介绍：" class="headerlink" title="自我介绍："></a>自我介绍：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">面试官好，我叫曹俊龙。今年刚毕业于渭南师范学院主修专业是数字媒体技术，很高兴能参加贵公司的这次面试。</span><br><span class="line">我熟悉linux操作系统；目前掌握的编程语言有shell正在学习python，能够独立编写一些脚本，配合ansible进行自动化操作，编写过playbook剧本。</span><br><span class="line">对redis、rabbitmq、nginx、tomcat等一些中间件比较熟悉；搭建过redis的集群，熟悉nginx和tomcat的性能调优，配置过nginx的负载均衡、反向代理和流量控制等等。</span><br><span class="line">数据库的话比较熟悉mysql一点，做过mysql的数据备份等等。熟悉filebeat加elk集群的部署和维护。</span><br><span class="line">因为我上家公司用的监控平台是zabbix加grafana，所以对zabbix也是比较熟悉的。</span><br><span class="line">还有熟悉阿里云、腾讯云ECS，SLB，RDS、OSS、CDN云产品。CI/CD方面，熟悉Jenkins的自动化构建、测试和上线，编写过pipeline流水线。</span><br><span class="line">熟悉docker容器，能够编写dockerfile和docker-compose。对最近很火的容器编排k8s也了解一点。</span><br><span class="line">以上是我的个人介绍。</span><br></pre></td></tr></table></figure>
 
 <h2 id="胡浩凯："><a href="#胡浩凯：" class="headerlink" title="胡浩凯："></a>胡浩凯：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">高并发场景</span><br><span class="line">用户访问业务中的突发流量一般怎么处理</span><br><span class="line">服务器安全问题有没有处理过</span><br><span class="line">waf（防火墙）</span><br><span class="line">网络攻击如何处理</span><br><span class="line">ddos高防</span><br><span class="line">dns解析类型</span><br><span class="line">cname解析</span><br><span class="line">域名备案mysql处理大表更新</span><br><span class="line">gitlab和jenkins之间的自动发布</span><br><span class="line">mysql慢查询日志</span><br><span class="line">公司业务</span><br></pre></td></tr></table></figure>
 
@@ -394,7 +394,7 @@
     
     <div class="read-nums">
       <!-- id 将作为查询条件 -->
-      <span id="2024/07/31/01面试题/" class="leancloud_visitors" data-flag-title="Your Article Title">
+      <span id="2024/02/11/01面试题/" class="leancloud_visitors" data-flag-title="Your Article Title">
         <em class="post-meta-item-text">浏览量</em>
         <i class="leancloud-visitors-count"></i>
       </span>
@@ -410,15 +410,20 @@
     <div class="article-catelogue--wrapper">
       <div class="catelogue catelogue-1">
         <h3>目录</h3>
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#01%E9%9D%A2%E8%AF%95%E9%A2%98%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81"><span class="toc-number">1.</span> <span class="toc-text">01面试题！！！！！！！！！！！！</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E6%88%91%E4%BB%8B%E7%BB%8D%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">自我介绍：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%A1%E6%B5%A9%E5%87%AF%EF%BC%9A"><span class="toc-number">1.2.</span> <span class="toc-text">胡浩凯：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A2%E6%B3%A2%EF%BC%9A"><span class="toc-number">1.3.</span> <span class="toc-text">波波：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B4%AA%E7%B9%81-%E8%A5%BF%E5%AE%89%E9%87%8C%E6%81%A9"><span class="toc-number">1.4.</span> <span class="toc-text">洪繁   西安里恩</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9D%A6%E8%A8%80%E8%8D%A3"><span class="toc-number">1.5.</span> <span class="toc-text">坦言荣</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%81%A5%E6%B0%91"><span class="toc-number">1.6.</span> <span class="toc-text">健民</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E6%88%91%E4%BB%8B%E7%BB%8D%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">自我介绍：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%A1%E6%B5%A9%E5%87%AF%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">胡浩凯：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B3%A2%E6%B3%A2%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">波波：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B4%AA%E7%B9%81-%E8%A5%BF%E5%AE%89%E9%87%8C%E6%81%A9"><span class="toc-number">4.</span> <span class="toc-text">洪繁   西安里恩</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9D%A6%E8%A8%80%E8%8D%A3"><span class="toc-number">5.</span> <span class="toc-text">坦言荣</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%81%A5%E6%B0%91"><span class="toc-number">6.</span> <span class="toc-text">健民</span></a></li></ol>
       </div>
       
         <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/02/20/Python 1 /">python一</a>
+            </p>
            
           
             <p>
               <span>下一篇</span>
-              <a href="/2024/03/21/Docker命令大全/">docker命令</a>
+              <a href="/2023/08/17/ansible 模块扩展/">ansible模块</a>
             </p>
           
         </div>
@@ -440,7 +445,7 @@
     recordIP: config.recordIP,
     visitor: config.visitor,
     enableQQ: config.enableQQ,
-    path: '2024/07/31/01面试题/'
+    path: '2024/02/11/01面试题/'
   })
 </script>
 
