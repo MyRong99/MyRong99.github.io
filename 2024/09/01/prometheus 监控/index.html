@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——小站首页 | Mr.Long</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——小站首页`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/28/LVM逻辑卷管理 /"},{"title":"docker命令","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/Docker命令大全/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/14/LV逻辑卷扩展/"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"python三","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/25/Python 3/"},{"title":"python四","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/03/01/Python 4/"},{"title":"python二","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/21/Python 2/"},{"title":"ansible模块","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1","path":"2023/08/17/ansible 模块扩展/"},{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/23/TCP协议/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/11/docker容器/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/01/文件权限/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/09/磁盘阵列RAID/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/25/磁盘存储管理1/"},{"title":"shell编程","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2023/07/21/shell_newrain/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/11/网络管理基础/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/16/走进网络世界/"},{"title":"python一","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/20/Python 1 /"},{"title":"","path":"2024/09/01/PromQL 讲解/"},{"title":"","path":"2024/09/01/galera/"},{"title":"","path":"2024/09/01/nginx2/"},{"title":"","path":"2024/09/01/nginx1/"},{"title":"","path":"2024/09/01/nnginx5/"},{"title":"","path":"2024/09/01/redis集群/"},{"title":"","path":"2024/09/01/prometheus 监控/"},{"title":"","path":"2024/09/01/shell脚本/"},{"title":"","path":"2024/09/01/node_exporter/"},{"title":"","path":"2024/09/01/容器技术-Docker1/"},{"title":"","path":"2024/09/01/容器技术-docker2/"},{"title":"","path":"2024/09/01/容器技术docker4/"},{"title":"","path":"2024/09/01/容器技术-docker5/"},{"title":"","path":"2024/09/01/微服务概念/"},{"title":"","path":"2024/09/01/自定义监控/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Mr.Long</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">唱跳rap篮球</span>
+          <span class="main-left--tag">宅但不肥</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/MyRong99/MyRong99.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>3</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>4</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>6 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>36 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>439天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title"></h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            
+          </div>
+          
+          <p class="article-info--date">日期：2024-09-01 17:23:36</p>
+        </div>
+        <img src="/imgs/default-cover.webp" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <p>title: prometheus<br>cover: ‘<a target="_blank" rel="noopener" href="https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966">https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966</a>‘<br>author: CAO<br>tags:<br>    -Prometheus<br>categories:<br>    -Prometheus<br>date: 2024-06-16 16:30:26</p>
+<h2 id="prometheus-介绍"><a href="#prometheus-介绍" class="headerlink" title="prometheus 介绍"></a>prometheus 介绍</h2><p>Prometheus 是一个开源的系统监控和警报工具，广泛用于监视和度量应用程序、服务和基础设施的性能和可用性。它最初由SoundCloud开发并开源，现在是一个独立的开源项目，由Cloud Native Computing Foundation（CNCF）托管。以下是关于 Prometheus 的一些主要特点和功能：</p>
+<ol>
+<li><strong>多维数据模型</strong>：Prometheus 使用多维数据模型来存储和查询监控数据。每个数据样本都包括时间戳和一组标签（labels），这允许用户对数据进行高度维度化的查询和分析。</li>
+<li><strong>PromQL 查询语言</strong>：Prometheus 提供了强大的查询语言，称为 PromQL，用于执行各种复杂的数据查询、聚合和变换操作。PromQL 支持范围查询、集合运算、数学运算和聚合等功能。</li>
+<li><strong>灵活的数据收集</strong>：Prometheus 支持多种数据收集方式，包括主动拉取（pull）和被动推送（push）模式。它可以通过各种数据源（如HTTP、Exposition格式的端点、JMX、Node Exporter等）获取监控数据。</li>
+<li><strong>动态发现和自动注册</strong>：Prometheus 支持服务发现，可以自动发现和注册新的监控目标，特别适合在容器化环境中动态添加和移除应用程序和服务。</li>
+<li><strong>警报和通知</strong>：Prometheus 具有内置的警报管理系统，允许用户定义和配置警报规则。当警报触发时，它可以通过各种渠道发送通知，如电子邮件、Slack、PagerDuty等。</li>
+<li><strong>可扩展性</strong>：Prometheus 可以通过联邦（Federation）和远程写入功能轻松扩展，以支持多个 Prometheus 实例的集成和数据汇总。</li>
+<li><strong>内置 Web UI</strong>：Prometheus 提供一个内置的Web界面，允许用户查询和可视化监控数据，查看警报规则以及检查目标的状态。</li>
+<li><strong>生态系统和插件</strong>：Prometheus 生态系统非常丰富，包括各种导出器、Grafana仪表板、Alertmanager、Pushgateway 等工具，可以扩展和增强 Prometheus 的功能。</li>
+<li><strong>云原生支持</strong>：Prometheus 适合在云原生环境中运行，特别是在Kubernetes集群中。它能够轻松地与云原生工具和平台集成。</li>
+</ol>
+<p>Prometheus 被广泛用于监控微服务架构、容器化应用、云基础设施和传统的物理服务器。它是一个功能强大、灵活且可扩展的监控工具，广受社区欢迎，用于监视生产环境中的各种应用程序和服务。</p>
+<h2 id="prometheus-对比-zabbix"><a href="#prometheus-对比-zabbix" class="headerlink" title="prometheus 对比 zabbix"></a>prometheus 对比 zabbix</h2><p><strong>Prometheus 的优势</strong>:</p>
+<ol>
+<li><strong>云原生和容器友好</strong>：Prometheus 被设计为云原生和容器化环境的监控解决方案。它支持动态发现和监控Kubernetes和Docker等容器化环境中的应用程序和服务。</li>
+<li><strong>强大的多维数据模型</strong>：Prometheus 使用标签（labels）来对监控数据进行多维度的分类和查询，这使得数据分析和告警配置更加灵活和强大。</li>
+<li><strong>强大的查询语言</strong>：Prometheus Query Language（PromQL）非常适合对时间序列数据进行查询和分析，可以执行复杂的数据分析操作。</li>
+<li><strong>开源和活跃的社区</strong>：Prometheus 是一个开源项目，拥有庞大的社区支持和活跃的开发。这意味着有大量的插件、导出器和仪表板可供使用。</li>
+<li><strong>性能和扩展性</strong>：Prometheus 的性能非常出色，能够高效地处理大量的时间序列数据。它还支持联邦（Federation）和远程写入等功能，以支持多个 Prometheus 实例的集成和扩展。</li>
+</ol>
+<p><strong>Prometheus 的劣势</strong>:</p>
+<ol>
+<li><strong>长期存储</strong>：Prometheus 的默认存储系统不适合长期存储，因此通常需要与其他长期存储方案集成，如 Thanos 或 Cortex。</li>
+<li><strong>复杂性</strong>：Prometheus 配置可能需要更多的手动设置，尤其是在大型环境中，这可能会导致一些复杂性。</li>
+</ol>
+<p><strong>Zabbix 的优势</strong>:</p>
+<ol>
+<li><strong>综合性</strong>：Zabbix 提供了全面的监控功能，包括主机性能监控、网络监控、应用程序监控、日志监控等。它是一个综合性的监控解决方案。</li>
+<li><strong>可视化和仪表板</strong>：Zabbix 提供了丰富的仪表板和可视化工具，帮助用户更容易地分析监控数据。</li>
+<li><strong>通知和告警</strong>：Zabbix 具有强大的通知和告警功能，可以通过多种渠道（如电子邮件、SMS、Slack等）通知管理员和运维人员。</li>
+<li><strong>长期存储</strong>：Zabbix 具有内置的数据库用于长期存储监控数据，因此可以长期保留历史数据。</li>
+</ol>
+<p><strong>Zabbix 的劣势</strong>:</p>
+<ol>
+<li><strong>配置复杂性</strong>：Zabbix 的配置可能较为复杂，特别是在大型环境中，需要耗费较多的时间和精力来进行配置和维护。</li>
+<li><strong>不太适合云原生环境</strong>：Zabbix 通常需要较多的手动配置来适应云原生和容器化环境，与容器编排平台（如Kubernetes）的集成可能需要额外的工作。</li>
+</ol>
+<p>总的来说，Prometheus 更适合云原生、容器化环境，具有强大的多维数据模型和灵活的查询语言。Zabbix 则更适合那些需要全面监控功能、可视化和长期存储的传统监控需求。选择哪个系统通常会取决于您的具体需求、环境和技术栈。您也可以考虑将它们结合使用，以满足不同方面的监控需求。</p>
+<h2 id="prometheus-监控插件"><a href="#prometheus-监控插件" class="headerlink" title="prometheus 监控插件"></a>prometheus 监控插件</h2><blockquote>
+<p>还包括一些其他的插件未列出</p>
+<p><a target="_blank" rel="noopener" href="https://prometheus.io/docs/instrumenting/exporters/">官网插件列表</a></p>
+</blockquote>
+<ol>
+<li><strong>Node Exporter</strong>: <ul>
+<li>Node Exporter 用于监控主机级别的系统性能和资源利用情况，包括 CPU、内存、磁盘、网络、负载等。</li>
+</ul>
+</li>
+<li><strong>Blackbox Exporter</strong>: <ul>
+<li>Blackbox Exporter 用于执行网络探测，监控网络服务的可用性和性能。它可以执行HTTP、TCP、ICMP等类型的探测。</li>
+</ul>
+</li>
+<li><strong>JMX Exporter</strong>: <ul>
+<li>JMX Exporter 用于监控Java应用程序，通过JMX接口暴露Java应用程序内部的性能数据。</li>
+</ul>
+</li>
+<li><strong>cAdvisor (Container Advisor)</strong>: <ul>
+<li>cAdvisor 用于监控容器的性能和资源利用情况，包括Docker容器和Kubernetes容器。</li>
+</ul>
+</li>
+<li><strong>PostgreSQL Exporter</strong>: <ul>
+<li>PostgreSQL Exporter 用于监控PostgreSQL数据库的性能和查询统计信息。</li>
+</ul>
+</li>
+<li><strong>MySQL Exporter</strong>: <ul>
+<li>MySQL Exporter 用于监控MySQL数据库的性能和查询统计信息。</li>
+</ul>
+</li>
+<li><strong>Redis Exporter</strong>: <ul>
+<li>Redis Exporter 用于监控Redis数据库的性能和统计信息。</li>
+</ul>
+</li>
+<li><strong>Nginx Exporter</strong>: <ul>
+<li>Nginx Exporter 用于监控Nginx Web服务器的性能和请求统计信息。</li>
+</ul>
+</li>
+<li><strong>Apache Exporter</strong>: <ul>
+<li>Apache Exporter 用于监控Apache HTTP服务器的性能和请求统计信息。</li>
+</ul>
+</li>
+<li><strong>Prometheus MySQL Exporter</strong>:</li>
+</ol>
+<ul>
+<li>这个Exporter用于监控Prometheus自身的性能和状态，包括Prometheus的TSDB状态和查询性能。</li>
+</ul>
+<h2 id="prometheus-服务配置解析"><a href="#prometheus-服务配置解析" class="headerlink" title="prometheus 服务配置解析"></a>prometheus 服务配置解析</h2><h3 id="主配置文件"><a href="#主配置文件" class="headerlink" title="主配置文件"></a>主配置文件</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这是 Prometheus 配置文件示例</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 全局配置部分</span></span><br><span class="line"><span class="attr">global:</span></span><br><span class="line">  <span class="comment"># 设置数据抓取的时间间隔为每15秒。默认为每1分钟。</span></span><br><span class="line">  <span class="attr">scrape_interval:</span> <span class="string">15s</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 设置规则评估的时间间隔为每15秒。默认为每1分钟。</span></span><br><span class="line">  <span class="attr">evaluation_interval:</span> <span class="string">15s</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 警报配置部分</span></span><br><span class="line"><span class="attr">alerting:</span></span><br><span class="line">  <span class="comment"># 配置警报管理器的地址。警报管理器用于接收和处理警报信息。</span></span><br><span class="line">  <span class="attr">alertmanagers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">static_configs:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">targets:</span></span><br><span class="line">          <span class="comment"># 这里应该配置警报管理器的地址和端口。当前示例中被注释掉，因此没有激活警报通知。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 规则文件部分</span></span><br><span class="line"><span class="attr">rule_files:</span></span><br><span class="line">  <span class="comment"># 在这里可以列出要加载的规则文件。每个规则文件定义了监控规则和警报规则。</span></span><br><span class="line">  <span class="comment"># 例如: </span></span><br><span class="line">  <span class="comment"># - &quot;first_rules.yml&quot;</span></span><br><span class="line">  <span class="comment"># - &quot;second_rules.yml&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据抓取配置部分</span></span><br><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&quot;prometheus&quot;</span></span><br><span class="line">    <span class="comment"># 这是一个抓取任务的名称，将作为标签添加到抓取的时间序列数据中。</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&quot;192.168.75.149:9090&quot;</span>]</span><br><span class="line">      <span class="comment"># 指定要抓取的目标的地址。在这个示例中，Prometheus自身是监控目标。</span></span><br><span class="line">  <span class="comment"># 如果还需要添加其他配置，可以在下方编写</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&quot;node_exporter&quot;</span></span><br><span class="line">  	<span class="attr">static_configs:</span></span><br><span class="line">  	  <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&quot;192.168.75.149:9100&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+<h3 id="scrape-configs-配置块"><a href="#scrape-configs-配置块" class="headerlink" title="scrape_configs 配置块"></a>scrape_configs 配置块</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义一个抓取任务的名称，可以根据需要命名</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&quot;example_job&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用静态配置，指定抓取目标的地址</span></span><br><span class="line"><span class="attr">static_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&quot;example-target:8080&quot;</span>]</span><br><span class="line">  <span class="comment"># 在这里，您需要指定要监控的目标的地址和端口，例如 &quot;example-target&quot; 主机的端口 8080</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定要抓取的 metrics 路径，通常是监控数据的 HTTP 路径</span></span><br><span class="line"><span class="attr">metrics_path:</span> <span class="string">&quot;/custom_metrics&quot;</span></span><br><span class="line"><span class="comment"># 这里定义了要从目标服务中获取监控数据的路径。默认情况下，Prometheus 使用 /metrics。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加参数，可用于过滤或改变抓取的数据</span></span><br><span class="line"><span class="attr">params:</span></span><br><span class="line">  <span class="attr">param1:</span> [<span class="string">&quot;value1&quot;</span>, <span class="string">&quot;value2&quot;</span>]</span><br><span class="line">  <span class="comment"># 这些参数用于向抓取请求添加额外的参数。参数可以用于过滤或限定要获取的监控数据。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 重新定义标签，将 __address__ 标签的值替换为 &quot;example_instance&quot;</span></span><br><span class="line"><span class="attr">relabel_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">source_labels:</span> [<span class="string">__address__</span>]</span><br><span class="line">    <span class="attr">target_label:</span> <span class="string">instance</span></span><br><span class="line">    <span class="attr">replacement:</span> <span class="string">&quot;example_instance&quot;</span></span><br><span class="line">  <span class="comment"># 在这里，对抓取的时间序列数据进行标签重命名或过滤。这个示例将 &quot;__address__&quot; 标签的值替换为 &quot;example_instance&quot;。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定抓取时间间隔为每30秒</span></span><br><span class="line"><span class="attr">scrape_interval:</span> <span class="string">30s</span></span><br><span class="line"><span class="comment"># 这里设置了从目标服务获取数据的频率。每30秒，Prometheus将尝试从目标获取数据。</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定抓取任务的超时时间为10秒</span></span><br><span class="line"><span class="attr">scrape_timeout:</span> <span class="string">10s</span></span><br><span class="line"><span class="comment"># 这定义了每次抓取请求的最大持续时间。如果在10秒内无法获取数据，抓取任务将超时。</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="static-configs-配置块"><a href="#static-configs-配置块" class="headerlink" title="static_configs 配置块"></a>static_configs 配置块</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">static_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&quot;example-target:8080&quot;</span>]</span><br><span class="line">    <span class="comment"># 这是要监控的目标的地址和端口。在这个示例中，&quot;example-target&quot; 主机的端口 8080。</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 可选配置选项：</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># labels：为抓取的时间序列数据添加自定义标签。这些标签可以用于数据的维度划分。</span></span><br><span class="line">    <span class="comment"># 例如：</span></span><br><span class="line">    <span class="comment"># labels:</span></span><br><span class="line">    <span class="comment">#   environment: &quot;production&quot;</span></span><br><span class="line">    <span class="comment">#   service: &quot;web&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># metric_relabel_configs：允许您在抓取时修改或重命名指标名称。</span></span><br><span class="line">    <span class="comment"># 例如：</span></span><br><span class="line">    <span class="comment"># metric_relabel_configs:</span></span><br><span class="line">    <span class="comment">#   - source_labels: [__name__]</span></span><br><span class="line">    <span class="comment">#     target_label: new_metric_name</span></span><br><span class="line">    <span class="comment">#     replacement: &quot;renamed_metric&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># relabel_configs：除了 metric_relabel_configs，您还可以使用 relabel_configs 来对抓取的数据的标签进行重命名、过滤或修改。</span></span><br><span class="line">    <span class="comment"># 例如：</span></span><br><span class="line">    <span class="comment"># relabel_configs:</span></span><br><span class="line">    <span class="comment">#   - source_labels: [instance]</span></span><br><span class="line">    <span class="comment">#     target_label: my_instance</span></span><br><span class="line">    <span class="comment">#     replacement: &quot;renamed_instance&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># params：可用于过滤或改变抓取的数据的参数。</span></span><br><span class="line">    <span class="comment"># 例如：</span></span><br><span class="line">    <span class="comment"># params:</span></span><br><span class="line">    <span class="comment">#   param1: [&quot;value1&quot;, &quot;value2&quot;]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="告警规则配置"><a href="#告警规则配置" class="headerlink" title="告警规则配置"></a>告警规则配置</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">groups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">&#x27;disk-usage-alerts&#x27;</span></span><br><span class="line">    <span class="comment"># 这是告警组的名称</span></span><br><span class="line">    <span class="attr">rules:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">alert:</span> <span class="string">DiskSpaceUsageHigh</span></span><br><span class="line">        <span class="comment"># 这是告警规则的名称</span></span><br><span class="line">        <span class="attr">expr:</span> <span class="number">100</span> <span class="bullet">-</span> <span class="string">(node_filesystem_avail_bytes</span> <span class="string">/</span> <span class="string">node_filesystem_size_bytes</span> <span class="string">*</span> <span class="number">100</span><span class="string">)</span> <span class="string">&gt;</span> <span class="number">50</span></span><br><span class="line">        <span class="comment"># 告警表达式检查磁盘使用率是否超过50%</span></span><br><span class="line">        <span class="attr">for:</span> <span class="string">5m</span></span><br><span class="line">        <span class="comment"># 如果条件持续5分钟，则触发告警</span></span><br><span class="line">        <span class="attr">labels:</span></span><br><span class="line">          <span class="attr">severity:</span> <span class="string">&#x27;warning&#x27;</span></span><br><span class="line">          <span class="comment"># 为告警添加标签，指定严重性为“警告”</span></span><br><span class="line">        <span class="attr">annotations:</span></span><br><span class="line">          <span class="attr">summary:</span> <span class="string">&#x27;磁盘使用率过高 <span class="template-variable">&#123;&#123; $labels.instance &#125;&#125;</span>&#x27;</span></span><br><span class="line">          <span class="comment"># 摘要注释，描述告警的内容，包括实例名称</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="规则配置符号"><a href="#规则配置符号" class="headerlink" title="规则配置符号"></a>规则配置符号</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">数学操作符:</span><br><span class="line"></span><br><span class="line">+：加法</span><br><span class="line">-：减法</span><br><span class="line">*：乘法</span><br><span class="line">/：除法</span><br><span class="line">%：取余</span><br><span class="line">比较操作符:</span><br><span class="line"></span><br><span class="line">==：等于</span><br><span class="line">!=：不等于</span><br><span class="line">&gt;：大于</span><br><span class="line">&lt;：小于</span><br><span class="line">&gt;=：大于等于</span><br><span class="line">&lt;=：小于等于</span><br><span class="line">逻辑操作符:</span><br><span class="line"></span><br><span class="line">and：逻辑与</span><br><span class="line">or：逻辑或</span><br><span class="line">unless：逻辑非</span><br><span class="line">括号:</span><br><span class="line"></span><br><span class="line">( 和 )：用于分组表达式，改变运算的优先级。</span><br><span class="line">内置函数:</span><br><span class="line"></span><br><span class="line">PromQL还支持许多内置函数，如 sum()、avg()、min()、max() 等，以进行聚合和处理时间序列数据。</span><br><span class="line">矢量选择器:</span><br><span class="line"></span><br><span class="line">PromQL允许您选择时间序列数据，例如 up&#123;job=&quot;api&quot;&#125; 选择了job标签为&quot;api&quot;的时间序列数据。</span><br><span class="line">向量操作符:</span><br><span class="line"></span><br><span class="line">PromQL提供一些用于处理时间序列向量的操作符，例如 offset, on, ignoring, group_left, group_right 等。</span><br><span class="line">时间操作符:</span><br><span class="line"></span><br><span class="line">offset：用于偏移时间序列数据。</span><br><span class="line">time()：用于获取当前时间戳。</span><br><span class="line">timestamp()：用于获取时间戳。</span><br></pre></td></tr></table></figure>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><h2 id="配置alertmanager"><a href="#配置alertmanager" class="headerlink" title="配置alertmanager"></a>配置alertmanager</h2><h3 id="邮件告警：alertmanager-yml"><a href="#邮件告警：alertmanager-yml" class="headerlink" title="邮件告警：alertmanager.yml"></a>邮件告警：alertmanager.yml</h3><h4 id="配置alertmanager服务"><a href="#配置alertmanager服务" class="headerlink" title="配置alertmanager服务"></a>配置alertmanager服务</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义邮件通知模板的路径，可以是模板文件的目录，支持通配符 *.tmpl</span></span><br><span class="line"><span class="attr">global:</span></span><br><span class="line">  <span class="attr">resolve_timeout:</span> <span class="string">5m</span></span><br><span class="line">  <span class="attr">smtp_from:</span> <span class="string">&#x27;xxxxx&#x27;</span> <span class="comment"># 发件⼈</span></span><br><span class="line">  <span class="attr">smtp_smarthost:</span> <span class="string">&#x27;smtp.163.com:465&#x27;</span> <span class="comment"># 邮箱服务器的POP3/SMTP 主机配置 smtp.qq.com </span></span><br><span class="line">  <span class="attr">smtp_auth_username:</span> <span class="string">&#x27;xxxxxxxxx&#x27;</span> <span class="comment"># ⽤⼾名 </span></span><br><span class="line">  <span class="attr">smtp_auth_password:</span> <span class="string">&#x27;xxxxxxxxxx&#x27;</span> <span class="comment"># 授权码</span></span><br><span class="line">  <span class="attr">smtp_require_tls:</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="attr">templates:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">/opt/alertmanager/tmpl/*.tmpl</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置路由规则，指定如何分组和发送警报</span></span><br><span class="line"><span class="attr">route:</span></span><br><span class="line">  <span class="attr">group_by:</span> [<span class="string">&#x27;alertname&#x27;</span>]      <span class="comment"># 根据警报名称进行分组，确保同一类型的警报被归为一组</span></span><br><span class="line">  <span class="attr">group_wait:</span> <span class="string">30s</span>             <span class="comment"># 当一个警报组内的警报发生后，等待 30 秒，以便将它们一起发送</span></span><br><span class="line">  <span class="attr">group_interval:</span> <span class="string">5m</span>          <span class="comment"># 每 5 分钟发送一次警报组</span></span><br><span class="line">  <span class="attr">repeat_interval:</span> <span class="string">1h</span>         <span class="comment"># 如果警报仍然处于活动状态，每小时重复发送一次</span></span><br><span class="line">  <span class="attr">receiver:</span> <span class="string">&#x27;email-notifications&#x27;</span>  <span class="comment"># 默认使用 &#x27;email-notifications&#x27; 接收者来发送警报通知</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义接收者配置，包括电子邮件通知设置</span></span><br><span class="line"><span class="attr">receivers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">&#x27;email-notifications&#x27;</span>  <span class="comment"># 接收者名称，用于路由规则中的指定</span></span><br><span class="line">    <span class="attr">email_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">to:</span> <span class="string">&#x27;newrain_wang@163.com&#x27;</span>   <span class="comment"># 收件人的电子邮件地址</span></span><br><span class="line">        <span class="attr">from:</span> <span class="string">&#x27;newrain_wang@163.com&#x27;</span> <span class="comment"># 发件人的电子邮件地址</span></span><br><span class="line">        <span class="attr">smarthost:</span> <span class="string">&#x27;smtp.163.com:25&#x27;</span>  <span class="comment"># SMTP 服务器地址和端口</span></span><br><span class="line">        <span class="attr">auth_username:</span> <span class="string">&#x27;newrain_wang@163.com&#x27;</span>  <span class="comment"># SMTP 服务器的用户名</span></span><br><span class="line">        <span class="attr">auth_password:</span> <span class="string">&#x27;XXXXXXXXXXXX&#x27;</span>    <span class="comment"># SMTP 服务器的密码</span></span><br><span class="line">        <span class="attr">html:</span> <span class="string">&#x27;<span class="template-variable">&#123;&#123; template &quot;email.html&quot; . &#125;&#125;</span>&#x27;</span>  <span class="comment"># 使用指定的邮件模板</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义抑制规则，用于控制警报的触发和抑制</span></span><br><span class="line"><span class="attr">inhibit_rules:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="attr">source_match:</span></span><br><span class="line">     <span class="attr">severity:</span> <span class="string">&#x27;critical&#x27;</span>  <span class="comment"># 匹配来自严重性为 &#x27;critical&#x27; 的警报</span></span><br><span class="line">   <span class="attr">target_match:</span></span><br><span class="line">     <span class="attr">severity:</span> <span class="string">&#x27;warning&#x27;</span>  <span class="comment"># 匹配目标严重性为 &#x27;warning&#x27; 的警报</span></span><br><span class="line">   <span class="attr">equal:</span> [<span class="string">&#x27;alertname&#x27;</span>, <span class="string">&#x27;dev&#x27;</span>, <span class="string">&#x27;instance&#x27;</span>]  <span class="comment"># 仅当警报名称、标签 &#x27;dev&#x27; 和 &#x27;instance&#x27; 均匹配时抑制</span></span><br></pre></td></tr></table></figure>
+<h4 id="tmpl-模板"><a href="#tmpl-模板" class="headerlink" title="tmpl 模板"></a>tmpl 模板</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; define &quot;email.html&quot; &#125;&#125;</span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="selector-tag">table</span> &#123;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">border-collapse</span>: collapse;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">width</span>: <span class="number">80%</span>;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">margin</span>: <span class="number">20px</span> auto;</span></span><br><span class="line"><span class="language-css">        &#125;</span></span><br><span class="line"><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="selector-tag">th</span>, <span class="selector-tag">td</span> &#123;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">border</span>: <span class="number">1px</span> solid <span class="number">#ddd</span>;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">padding</span>: <span class="number">8px</span>;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">text-align</span>: left;</span></span><br><span class="line"><span class="language-css">        &#125;</span></span><br><span class="line"><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="selector-tag">th</span> &#123;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">background-color</span>: <span class="number">#f2f2f2</span>;</span></span><br><span class="line"><span class="language-css">        &#125;</span></span><br><span class="line"><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="selector-tag">h1</span> &#123;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">text-align</span>: center;</span></span><br><span class="line"><span class="language-css">        &#125;</span></span><br><span class="line"><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="selector-class">.alert-details</span> &#123;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">margin-top</span>: <span class="number">20px</span>;</span></span><br><span class="line"><span class="language-css">        &#125;</span></span><br><span class="line"><span class="language-css"></span></span><br><span class="line"><span class="language-css">        <span class="selector-class">.alert-item</span> &#123;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">border</span>: <span class="number">1px</span> solid <span class="number">#ddd</span>;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">padding</span>: <span class="number">10px</span>;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">margin-bottom</span>: <span class="number">10px</span>;</span></span><br><span class="line"><span class="language-css">            <span class="attribute">background-color</span>: <span class="number">#f9f9f9</span>;</span></span><br><span class="line"><span class="language-css">        &#125;</span></span><br><span class="line"><span class="language-css">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h1</span>&gt;</span>监控报警通知<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">table</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">th</span>&gt;</span>告警状态<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">th</span>&gt;</span>告警级别<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">th</span>&gt;</span>告警类型<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">th</span>&gt;</span>告警应用<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">th</span>&gt;</span>告警主机<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">th</span>&gt;</span>告警详情<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">th</span>&gt;</span>触发阀值<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">th</span>&gt;</span>告警时间<span class="tag">&lt;/<span class="name">th</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line">        &#123;&#123; range $i, $alert := .Alerts &#125;&#125;</span><br><span class="line">        <span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span>&gt;</span>&#123;&#123; .Status &#125;&#125;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span>&gt;</span>&#123;&#123; $alert.Labels.severity &#125;&#125;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span>&gt;</span>&#123;&#123; $alert.Labels.alertname &#125;&#125;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span>&gt;</span>&#123;&#123; $alert.Annotations.summary &#125;&#125;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span>&gt;</span>&#123;&#123; $alert.Labels.instance &#125;&#125;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span>&gt;</span>&#123;&#123; $alert.Annotations.description &#125;&#125;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span>&gt;</span>&#123;&#123; $alert.Annotations.value &#125;&#125;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">td</span>&gt;</span>&#123;&#123; $alert.StartsAt.Format &quot;2006-01-02 15:04:05&quot; &#125;&#125;<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line">        &#123;&#123; end &#125;&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">table</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line">&#123;&#123; end &#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="钉钉告警：alertmanager-yml"><a href="#钉钉告警：alertmanager-yml" class="headerlink" title="钉钉告警：alertmanager.yml"></a>钉钉告警：alertmanager.yml</h3><h4 id="配置钉钉发送告警服务"><a href="#配置钉钉发送告警服务" class="headerlink" title="配置钉钉发送告警服务"></a>配置钉钉发送告警服务</h4><p><a target="_blank" rel="noopener" href="https://github.com/timonwong/prometheus-webhook-dingtalk/releases/download/v2.1.0/prometheus-webhook-dingtalk-2.1.0.linux-amd64.tar.gz">dingtalk 告警服务</a></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">root@localhost</span> <span class="string">~</span>]<span class="comment"># tar xf prometheus-webhook-dingtalk-2.1.0.linux-amd64.tar.gz</span></span><br><span class="line">[<span class="string">root@localhost</span> <span class="string">~</span>]<span class="comment"># cd prometheus-webhook-dingtalk-2.1.0.linux-amd64/</span></span><br><span class="line">[<span class="string">root@localhost</span> <span class="string">~</span>]<span class="comment"># cp config.example.yml config.yml</span></span><br><span class="line">[<span class="string">root@localhost</span> <span class="string">~</span>]<span class="comment"># vim config.yml</span></span><br><span class="line"><span class="attr">targets:</span></span><br><span class="line">  <span class="attr">webhook1:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">钉钉机器人接口地址</span></span><br><span class="line">    <span class="comment"># secret for signature</span></span><br><span class="line">    <span class="attr">secret:</span> <span class="string">钉钉加签</span></span><br><span class="line">    <span class="comment"># Customize template content</span></span><br><span class="line">  <span class="attr">webhook_mention_all:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">https://oapi.dingtalk.com/robot/send?access_token=26427125497568cf5ddc00dbdba819207553bd4da1e8ff19f089179007485d88</span></span><br><span class="line">    <span class="attr">mention:</span></span><br><span class="line">      <span class="attr">all:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">webhook_mention_users:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">https://oapi.dingtalk.com/robot/send?access_token=26427125497568cf5ddc00dbdba819207553bd4da1e8ff19f089179007485d88</span></span><br><span class="line">    <span class="attr">mention:</span></span><br><span class="line">      <span class="attr">mobiles:</span> [<span class="string">&#x27;17694993496&#x27;</span>]</span><br><span class="line">      </span><br><span class="line"><span class="comment"># 启动</span></span><br><span class="line">[<span class="string">root@localhost</span> <span class="string">~</span>]<span class="comment"># ./prometheus-webhook-dingtalk --config.file=&quot;config.yml&quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="配置alertmanager，接入dingding"><a href="#配置alertmanager，接入dingding" class="headerlink" title="配置alertmanager，接入dingding"></a>配置alertmanager，接入dingding</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">root@localhost</span> <span class="string">alertmanager</span>]<span class="comment"># vim alertmanager.yml</span></span><br><span class="line"><span class="attr">receivers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">&#x27;dingding&#x27;</span></span><br><span class="line">    <span class="attr">webhook_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">url:</span> <span class="string">&#x27;http://localhost:8060/dingtalk/webhook1/send&#x27;</span>   <span class="comment">##要加后面的东西</span></span><br><span class="line">        <span class="attr">send_resolved:</span> <span class="literal">true</span>		<span class="comment">#发出去的返回</span></span><br><span class="line"></span><br><span class="line"><span class="attr">route:</span></span><br><span class="line">  <span class="attr">receiver:</span> <span class="string">&#x27;dingding&#x27;</span> </span><br><span class="line">  <span class="attr">group_by:</span> [<span class="string">&#x27;alertname&#x27;</span>]</span><br><span class="line">  <span class="attr">group_wait:</span> <span class="string">30s</span></span><br><span class="line">  <span class="attr">group_interval:</span> <span class="string">1m</span></span><br><span class="line">  <span class="attr">repeat_interval:</span> <span class="string">5m</span></span><br><span class="line"><span class="attr">templates:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">/opt/alertmanager/tmpl/*.tmpl</span></span><br><span class="line"><span class="attr">inhibit_rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">source_match:</span></span><br><span class="line">      <span class="attr">severity:</span> <span class="string">&#x27;critical&#x27;</span></span><br><span class="line">    <span class="attr">target_match:</span></span><br><span class="line">      <span class="attr">severity:</span> <span class="string">&#x27;warning&#x27;</span></span><br><span class="line">    <span class="attr">equal:</span> [<span class="string">&#x27;alertname&#x27;</span>, <span class="string">&#x27;dev&#x27;</span>, <span class="string">&#x27;instance&#x27;</span>]</span><br></pre></td></tr></table></figure>
+<h4 id="tmpl模板"><a href="#tmpl模板" class="headerlink" title="tmpl模板"></a>tmpl模板</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">root@10</span> <span class="string">tmpl</span>]<span class="comment"># cat dingding.tmpl</span></span><br><span class="line">&#123;&#123; <span class="string">define</span> <span class="string">&quot;__subject&quot;</span> &#125;&#125;[<span class="string">告警</span>] &#123;&#123; <span class="string">.Status</span> <span class="string">|</span> <span class="string">toUpper</span> &#125;&#125;<span class="string">:</span> &#123;&#123; <span class="string">.CommonLabels.alertname</span> &#125;&#125;&#123;&#123; <span class="string">end</span> &#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;&#123; <span class="string">define</span> <span class="string">&quot;__description&quot;</span> &#125;&#125;</span><br><span class="line"><span class="string">告警名称:</span> &#123;&#123; <span class="string">.CommonLabels.alertname</span> &#125;&#125;</span><br><span class="line"><span class="string">主机:</span> &#123;&#123; <span class="string">.CommonLabels.instance</span> &#125;&#125;</span><br><span class="line"><span class="string">告警级别:</span> &#123;&#123; <span class="string">.CommonLabels.severity</span> &#125;&#125;</span><br><span class="line"><span class="string">开始时间:</span> &#123;&#123; <span class="string">.StartsAt</span> &#125;&#125;</span><br><span class="line"><span class="string">结束时间:</span> &#123;&#123; <span class="string">.EndsAt</span> &#125;&#125;</span><br><span class="line"><span class="string">描述:</span> &#123;&#123; <span class="string">.CommonAnnotations.description</span> &#125;&#125;</span><br><span class="line">&#123;&#123; <span class="string">end</span> &#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;&#123; <span class="string">define</span> <span class="string">&quot;__message&quot;</span> &#125;&#125;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;msgtype&quot;:</span> <span class="string">&quot;markdown&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;markdown&quot;:</span> &#123;</span><br><span class="line">    <span class="attr">&quot;title&quot;:</span> <span class="string">&quot;<span class="template-variable">&#123;&#123; template &quot;__subject&quot; . &#125;&#125;</span>&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;text&quot;:</span> <span class="string">&quot;## <span class="template-variable">&#123;&#123; template &quot;__subject&quot; . &#125;&#125;</span>\n\n<span class="template-variable">&#123;&#123; template &quot;__description&quot; . &#125;&#125;</span>&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#123;&#123; <span class="string">end</span> &#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;&#123; <span class="string">define</span> <span class="string">&quot;dingtalk.default.message&quot;</span> &#125;&#125;&#123;&#123; <span class="string">template</span> <span class="string">&quot;__message&quot;</span> <span class="string">.</span> &#125;&#125;&#123;&#123; <span class="string">end</span> &#125;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="配置node-exporter"><a href="#配置node-exporter" class="headerlink" title="配置node_exporter"></a>配置node_exporter</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/u28646059/docs/lx27ogm4k9z5nfew?view=doc_embed">node_exporter 指标详解</a></p>
+<h2 id="配置mysql-exporter"><a href="#配置mysql-exporter" class="headerlink" title="配置mysql_exporter"></a>配置mysql_exporter</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/u28646059/docs/elaqu8sg6r65knw9">mysql_exporter</a></p>
+<h2 id="PQL-详解"><a href="#PQL-详解" class="headerlink" title="PQL 详解"></a>PQL 详解</h2><p><a target="_blank" rel="noopener" href="https://www.yuque.com/u28646059/docs/fei525592n6u1phr">PromQL 讲解</a></p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/09/01/prometheus 监控/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#prometheus-%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">prometheus 介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#prometheus-%E5%AF%B9%E6%AF%94-zabbix"><span class="toc-number">2.</span> <span class="toc-text">prometheus 对比 zabbix</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#prometheus-%E7%9B%91%E6%8E%A7%E6%8F%92%E4%BB%B6"><span class="toc-number">3.</span> <span class="toc-text">prometheus 监控插件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#prometheus-%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE%E8%A7%A3%E6%9E%90"><span class="toc-number">4.</span> <span class="toc-text">prometheus 服务配置解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">4.1.</span> <span class="toc-text">主配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#scrape-configs-%E9%85%8D%E7%BD%AE%E5%9D%97"><span class="toc-number">4.2.</span> <span class="toc-text">scrape_configs 配置块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#static-configs-%E9%85%8D%E7%BD%AE%E5%9D%97"><span class="toc-number">4.3.</span> <span class="toc-text">static_configs 配置块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%8A%E8%AD%A6%E8%A7%84%E5%88%99%E9%85%8D%E7%BD%AE"><span class="toc-number">4.4.</span> <span class="toc-text">告警规则配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%84%E5%88%99%E9%85%8D%E7%BD%AE%E7%AC%A6%E5%8F%B7"><span class="toc-number">4.5.</span> <span class="toc-text">规则配置符号</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">5.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEalertmanager"><span class="toc-number">6.</span> <span class="toc-text">配置alertmanager</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%82%AE%E4%BB%B6%E5%91%8A%E8%AD%A6%EF%BC%9Aalertmanager-yml"><span class="toc-number">6.1.</span> <span class="toc-text">邮件告警：alertmanager.yml</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEalertmanager%E6%9C%8D%E5%8A%A1"><span class="toc-number">6.1.1.</span> <span class="toc-text">配置alertmanager服务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#tmpl-%E6%A8%A1%E6%9D%BF"><span class="toc-number">6.1.2.</span> <span class="toc-text">tmpl 模板</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%92%89%E9%92%89%E5%91%8A%E8%AD%A6%EF%BC%9Aalertmanager-yml"><span class="toc-number">6.2.</span> <span class="toc-text">钉钉告警：alertmanager.yml</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E9%92%89%E9%92%89%E5%8F%91%E9%80%81%E5%91%8A%E8%AD%A6%E6%9C%8D%E5%8A%A1"><span class="toc-number">6.2.1.</span> <span class="toc-text">配置钉钉发送告警服务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEalertmanager%EF%BC%8C%E6%8E%A5%E5%85%A5dingding"><span class="toc-number">6.2.2.</span> <span class="toc-text">配置alertmanager，接入dingding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#tmpl%E6%A8%A1%E6%9D%BF"><span class="toc-number">6.2.3.</span> <span class="toc-text">tmpl模板</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEnode-exporter"><span class="toc-number">7.</span> <span class="toc-text">配置node_exporter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEmysql-exporter"><span class="toc-number">8.</span> <span class="toc-text">配置mysql_exporter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PQL-%E8%AF%A6%E8%A7%A3"><span class="toc-number">9.</span> <span class="toc-text">PQL 详解</span></a></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/09/01/PromQL 讲解/"></a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2024/09/01/node_exporter/"></a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/09/01/prometheus 监控/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系小曹宅，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">2262690094</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"不找了","artist":"隔壁老樊","url":"music/隔壁老樊 - 不找了.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"于是天气刚好","artist":"泪桥","url":"music/于是天气刚好 - 泪桥.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"安和桥","artist":"林芬宇","url":"music/林芬宇 - 安和桥.mp3","cover":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0SWQx6YrNA8lElaG4OOKLkNkNzLO1PflKg&usqp=CAU"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
