@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——Kubernetes扩展 | Mr.Long</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——Kubernetes扩展`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"docker命令","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/Docker命令大全/"},{"title":"Kubernetes扩展","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/2e0af7de62ed4210b634c867367c10ae2e0af7de62ed4210b634c867367c10ae","path":"2024/06/01/Kubernetes容器编排技术[扩展]/"},{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/28/LVM逻辑卷管理/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/14/LV逻辑卷扩展/"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"python一","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/20/Python1/"},{"title":"python三","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/25/Python3/"},{"title":"PQL","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/30/PromQL 讲解/"},{"title":"python二","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/21/Python2/"},{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/23/TCP协议/"},{"title":"python四","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/03/01/Python4/"},{"title":"Kubernetes组件学习","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/2e0af7de62ed4210b634c867367c10ae2e0af7de62ed4210b634c867367c10ae","path":"2024/06/02/Kubernetes组件/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/11/docker容器/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"Galera集群","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/galera/"},{"title":"redis操作","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a13d778b5db38e4b127b71bdf122f695","path":"2023/09/26/Redis操作/"},{"title":"ansible模块","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1","path":"2023/08/17/ansible 模块扩展/"},{"title":"Kubernetes数据库","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/2e0af7de62ed4210b634c867367c10ae2e0af7de62ed4210b634c867367c10ae","path":"2024/06/14/k8s集群数据库/"},{"title":"nginx2","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/19/nginx2/"},{"title":"nginx3","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/22/nginx3/"},{"title":"nginx1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/17/nginx1/"},{"title":"nginx5","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/31/nnginx5/"},{"title":"nginx4","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/30/nginx4/"},{"title":"redis集群安装","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a13d778b5db38e4b127b71bdf122f695","path":"2023/09/21/redis集群/"},{"title":"shell脚本","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2024/08/10/shell脚本/"},{"title":"prometheus","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/16/prometheus 监控/"},{"title":"shell编程","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2023/07/21/shell_newrain/"},{"title":"prometheus-exporter","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/16/node_exporter/"},{"title":"docker镜像容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/14/容器技术-docker2/"},{"title":"Kubernetes集群部署","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/2e0af7de62ed4210b634c867367c10ae2e0af7de62ed4210b634c867367c10ae","path":"2024/06/10/二进制方式部署k8s集群/"},{"title":"docker-Compose","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/容器技术-docker5/"},{"title":"docker资源限制","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/15/容器技术docker4/"},{"title":"docker安装","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/06/容器技术-Docker1/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/13/容器技术-docker3/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/01/文件权限/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"微服务项目","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务项目-mall-swarm/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/25/磁盘存储管理1/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/09/磁盘阵列RAID/"},{"title":"prometheus自定义监控","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/26/自定义监控/"},{"title":"微服务","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务概念/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/11/网络管理基础/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"Kubernetes蓝鲸智云平台部署","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/2e0af7de62ed4210b634c867367c10ae2e0af7de62ed4210b634c867367c10ae","path":"2024/09/01/蓝鲸智云平台部署/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/16/走进网络世界/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Mr.Long</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">唱跳rap篮球</span>
+          <span class="main-left--tag">宅但不肥</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/MyRong99/MyRong99.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>0</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>8</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>11 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>46 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>439天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">Kubernetes扩展</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            <a class="tag-link" href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" rel="tag">-云原生</a>
+          </div>
+          
+          <p class="article-info--date">日期：2024-06-01 16:30:26</p>
+        </div>
+        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/2e0af7de62ed4210b634c867367c10ae2e0af7de62ed4210b634c867367c10ae" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h2 id="一、HPA（Horizontal-Pod-Autoscaler）"><a href="#一、HPA（Horizontal-Pod-Autoscaler）" class="headerlink" title="一、HPA（Horizontal Pod Autoscaler）"></a>一、HPA（Horizontal Pod Autoscaler）</h2><blockquote>
+<p> Kubernetes 中的 HPA（Horizontal Pod Autoscaler）是一个自动缩放机制，它可以根据 CPU 使用率或其他选择的度量自动调整 Pod 的数量。这样，当应用程序的负载增加时，HPA 能够增加 Pod 的副本数，以应对增加的需求；而当负载减少时，它会减少 Pod 的数量，以节省资源。</p>
+</blockquote>
+<h3 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件:"></a>前提条件:</h3><ul>
+<li>已经有一个运行在 Kubernetes 集群上的 Deployment 或 ReplicaSet。</li>
+<li>对于基于 CPU 使用率的自动缩放，确保你的 Pod 有资源请求（resource requests）。</li>
+</ul>
+<h3 id="配置metrics-server"><a href="#配置metrics-server" class="headerlink" title="配置metrics-server"></a>配置metrics-server</h3><blockquote>
+<p>hpa组件需要通过metrics-server来检查pod的资源使用情况</p>
+</blockquote>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">root@kub-k8s-master1</span> <span class="string">~</span>]<span class="comment"># wget  https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.6.0/components.yaml</span></span><br><span class="line">[<span class="string">root@kub-k8s-master1</span> <span class="string">~</span>]<span class="comment"># vim components.yaml</span></span><br><span class="line"><span class="attr">containers:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">metrics-server</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">k8s.gcr.io/metrics-server/metrics-server:v0.6.0</span></span><br><span class="line">  <span class="attr">args:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--kubelet-insecure-tls</span> <span class="comment"># 添加此行</span></span><br><span class="line"><span class="comment"># 如果证书没有问题，是不需要下载修改的，可以直接执行</span></span><br><span class="line">[<span class="string">root@kub-k8s-master1</span> <span class="string">~</span>]<span class="comment"># kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.6.0/components.yaml</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 镜像和yaml文件可能需要翻墙</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证</span></span><br><span class="line">[<span class="string">root@kub-k8s-master3</span> <span class="string">~</span>]<span class="comment"># kubectl get pod -n kube-system </span></span><br><span class="line"><span class="string">NAME</span>                                       <span class="string">READY</span>   <span class="string">STATUS</span>    <span class="string">RESTARTS</span>        <span class="string">AGE</span></span><br><span class="line"><span class="string">metrics-server-7884d548c8-x8jt2</span>            <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>               <span class="string">9m39s</span></span><br><span class="line"></span><br><span class="line">[<span class="string">root@kub-k8s-master1</span> <span class="string">~</span>]<span class="comment"># kubectl top pod -A</span></span><br><span class="line"><span class="string">NAMESPACE</span>     <span class="string">NAME</span>                                       <span class="string">CPU(cores)</span>   <span class="string">MEMORY(bytes)</span>   </span><br><span class="line"><span class="string">default</span>       <span class="string">my-app-7bbb547d5b-p6bcl</span>                    <span class="string">0m</span>           <span class="string">2Mi</span>             </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">calico-kube-controllers-7c87c5f9b8-q2vth</span>   <span class="string">1m</span>           <span class="string">17Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">calico-node-5th7f</span>                          <span class="string">11m</span>          <span class="string">84Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">calico-node-g996t</span>                          <span class="string">10m</span>          <span class="string">144Mi</span>           </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">calico-node-n94v5</span>                          <span class="string">10m</span>          <span class="string">83Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">calico-node-qjmth</span>                          <span class="string">11m</span>          <span class="string">84Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">calico-node-rfzf7</span>                          <span class="string">8m</span>           <span class="string">85Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">coredns-78fcd69978-5sg7p</span>                   <span class="string">1m</span>           <span class="string">10Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">coredns-78fcd69978-btws4</span>                   <span class="string">1m</span>           <span class="string">10Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">etcd-kub-k8s-master1</span>                       <span class="string">14m</span>          <span class="string">98Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">etcd-kub-k8s-master2</span>                       <span class="string">17m</span>          <span class="string">80Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">etcd-kub-k8s-master3</span>                       <span class="string">16m</span>          <span class="string">88Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-apiserver-kub-k8s-master1</span>             <span class="string">37m</span>          <span class="string">335Mi</span>           </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-apiserver-kub-k8s-master2</span>             <span class="string">36m</span>          <span class="string">268Mi</span>           </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-apiserver-kub-k8s-master3</span>             <span class="string">38m</span>          <span class="string">379Mi</span>           </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-controller-manager-kub-k8s-master1</span>    <span class="string">17m</span>          <span class="string">58Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-controller-manager-kub-k8s-master2</span>    <span class="string">1m</span>           <span class="string">26Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-controller-manager-kub-k8s-master3</span>    <span class="string">1m</span>           <span class="string">16Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-proxy-4bsm2</span>                           <span class="string">1m</span>           <span class="string">9Mi</span>             </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-proxy-bb5rd</span>                           <span class="string">1m</span>           <span class="string">8Mi</span>             </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-proxy-bnxj5</span>                           <span class="string">1m</span>           <span class="string">8Mi</span>             </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-proxy-cfm5m</span>                           <span class="string">1m</span>           <span class="string">18Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-proxy-smhd6</span>                           <span class="string">1m</span>           <span class="string">8Mi</span>             </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-scheduler-kub-k8s-master1</span>             <span class="string">1m</span>           <span class="string">19Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-scheduler-kub-k8s-master2</span>             <span class="string">2m</span>           <span class="string">23Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">kube-scheduler-kub-k8s-master3</span>             <span class="string">2m</span>           <span class="string">18Mi</span>            </span><br><span class="line"><span class="string">kube-system</span>   <span class="string">metrics-server-7884d548c8-x8jt2</span>            <span class="string">2m</span>           <span class="string">15Mi</span>  </span><br></pre></td></tr></table></figure>
+<h3 id="Deployment-示例"><a href="#Deployment-示例" class="headerlink" title="Deployment 示例:"></a>Deployment 示例:</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">root@kub-k8s-master1</span> <span class="string">~</span>]<span class="comment"># vim deploy.yml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">my-app</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-app</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">my-app</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">my-app</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">resources:</span></span><br><span class="line">          <span class="attr">requests:</span></span><br><span class="line">            <span class="attr">memory:</span> <span class="string">&quot;128Mi&quot;</span></span><br><span class="line">            <span class="attr">cpu:</span> <span class="string">&quot;250m&quot;</span></span><br><span class="line">          <span class="attr">limits:</span></span><br><span class="line">            <span class="attr">memory:</span> <span class="string">&quot;256Mi&quot;</span></span><br><span class="line">            <span class="attr">cpu:</span> <span class="string">&quot;500m&quot;</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-service</span>  <span class="comment"># 服务的名称</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">my-app</span>  <span class="comment"># 选择与此标签匹配的 Pod</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span>  <span class="comment"># 通信协议</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span>       <span class="comment"># 服务将对外暴露的端口</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span>  <span class="comment"># Pod 上的端口，服务请求将转发到此端口</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">ClusterIP</span>  <span class="comment"># 服务类型，ClusterIP 表示该服务只在集群内部可见</span></span><br><span class="line"></span><br><span class="line">[<span class="string">root@kub-k8s-master1</span> <span class="string">~</span>]<span class="comment"># kubectl apply -f deploy.yml </span></span><br><span class="line">[<span class="string">root@kub-k8s-master1</span> <span class="string">~</span>]<span class="comment"># kubectl get pod -w -o wide</span></span><br><span class="line"><span class="string">NAME</span>                      <span class="string">READY</span>   <span class="string">STATUS</span>    <span class="string">RESTARTS</span>   <span class="string">AGE</span>    <span class="string">IP</span>             <span class="string">NODE</span>            <span class="string">NOMINATED</span> <span class="string">NODE</span>   <span class="string">READINESS</span> <span class="string">GATES</span></span><br><span class="line"><span class="string">my-app-58cbb9b58d-97mrm</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">110s</span>   <span class="number">10.244</span><span class="number">.176</span><span class="number">.2</span>   <span class="string">kub-k8s-node1</span>   <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">my-app-58cbb9b58d-rcxpx</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">110s</span>   <span class="number">10.244</span><span class="number">.176</span><span class="number">.4</span>   <span class="string">kub-k8s-node1</span>   <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">my-app-58cbb9b58d-zczg2</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">110s</span>   <span class="number">10.244</span><span class="number">.176</span><span class="number">.3</span>   <span class="string">kub-k8s-node1</span>   <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br><span class="line"><span class="string">my-app-58cbb9b58d-zd6pr</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">110s</span>   <span class="number">10.244</span><span class="number">.176</span><span class="number">.1</span>   <span class="string">kub-k8s-node1</span>   <span class="string">&lt;none&gt;</span>           <span class="string">&lt;none&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="HPA-示例"><a href="#HPA-示例" class="headerlink" title="HPA 示例:"></a>HPA 示例:</h3><h4 id="1、hpa定义"><a href="#1、hpa定义" class="headerlink" title="1、hpa定义"></a>1、hpa定义</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">首先，你需要创建一个</span> <span class="string">HPA</span> <span class="string">资源定义。在这个定义中，你会指定要自动缩放的</span> <span class="string">Deployment</span> <span class="string">或</span> <span class="string">ReplicaSet，以及缩放的条件（如</span> <span class="string">CPU</span> <span class="string">使用率的阈值）。</span></span><br><span class="line"><span class="string">例如，假设有一个名为</span> <span class="string">my-app</span> <span class="string">的</span> <span class="string">Deployment，你想要在</span> <span class="string">CPU</span> <span class="string">使用率超过</span> <span class="number">50</span><span class="string">%</span> <span class="string">时增加</span> <span class="string">Pod</span> <span class="string">的副本数。你的</span> <span class="string">HPA</span> <span class="string">定义可能看起来像这样：</span></span><br><span class="line"></span><br><span class="line">[<span class="string">root@kub-k8s-master1</span> <span class="string">~</span>]<span class="comment"># vim hpa.yml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">autoscaling/v1</span>  <span class="comment"># 指定 Kubernetes API 版本，这里是 autoscaling/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">HorizontalPodAutoscaler</span>  <span class="comment"># 指定资源类型为 HorizontalPodAutoscaler</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-app-hpa</span>  <span class="comment"># HPA 资源的名称，这里命名为 my-app-hpa</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">scaleTargetRef:</span></span><br><span class="line">    <span class="attr">apiVersion:</span> <span class="string">apps/v1</span>  <span class="comment"># 指定目标资源的 API 版本，这里是针对 apps/v1</span></span><br><span class="line">    <span class="attr">kind:</span> <span class="string">Deployment</span>      <span class="comment"># 目标资源的类型，这里是 Deployment</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">my-app</span>          <span class="comment"># 目标资源的名称，这里是一个名为 my-app 的 Deployment</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">minReplicas:</span> <span class="number">1</span>         <span class="comment"># HPA 缩放的最小副本数，这里设置为 1</span></span><br><span class="line">  <span class="attr">maxReplicas:</span> <span class="number">10</span>        <span class="comment"># HPA 缩放的最大副本数，这里设置为 10</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">targetCPUUtilizationPercentage:</span> <span class="number">10</span>  <span class="comment"># CPU 利用率的目标阈值，当超过 10% 时，HPA 会增加副本数</span></span><br><span class="line"></span><br><span class="line">[<span class="string">root@kub-k8s-master1</span> <span class="string">~</span>]<span class="comment"># kubectl apply -f hpa.yml </span></span><br><span class="line"><span class="string">horizontalpodautoscaler.autoscaling/my-app-hpa</span> <span class="string">created</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2、查看结果"><a href="#2、查看结果" class="headerlink" title="2、查看结果"></a>2、查看结果</h4><blockquote>
+<p>注意，hpa检查评估需要时间，评估周期默认15秒，耐心等待</p>
+</blockquote>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试脚本</span></span><br><span class="line">[<span class="string">root@kub-k8s-master2</span> <span class="string">~</span>]<span class="comment"># vim requests.sh</span></span><br><span class="line"><span class="comment">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># URL of your deployed service</span></span><br><span class="line"><span class="string">SERVICE_URL=&quot;http://10.105.180.227&quot;</span></span><br><span class="line"><span class="comment"># Loop indefinitely to generate load</span></span><br><span class="line"><span class="string">while</span> <span class="literal">true</span></span><br><span class="line"><span class="string">do</span></span><br><span class="line">    <span class="string">curl</span> <span class="string">-s</span> <span class="string">$SERVICE_URL</span> <span class="string">&gt;</span> <span class="string">/dev/null</span></span><br><span class="line">    <span class="string">echo</span> <span class="string">&quot;Sent request to $SERVICE_URL&quot;</span></span><br><span class="line"><span class="string">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以看到，现在已经开始新增副本了</span></span><br><span class="line">[<span class="string">root@kub-k8s-master2</span> <span class="string">~</span>]<span class="comment"># kubectl get pod -w</span></span><br><span class="line"><span class="string">NAME</span>                      <span class="string">READY</span>   <span class="string">STATUS</span>    <span class="string">RESTARTS</span>   <span class="string">AGE</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-gjt9m</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">19m</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-mv6gv</span>   <span class="number">0</span><span class="string">/1</span>     <span class="string">Pending</span>   <span class="number">0</span>          <span class="string">0s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-2xptc</span>   <span class="number">0</span><span class="string">/1</span>     <span class="string">Pending</span>   <span class="number">0</span>          <span class="string">0s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-ghxm2</span>   <span class="number">0</span><span class="string">/1</span>     <span class="string">Pending</span>   <span class="number">0</span>          <span class="string">0s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-mv6gv</span>   <span class="number">0</span><span class="string">/1</span>     <span class="string">Pending</span>   <span class="number">0</span>          <span class="string">0s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-2xptc</span>   <span class="number">0</span><span class="string">/1</span>     <span class="string">Pending</span>   <span class="number">0</span>          <span class="string">0s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-ghxm2</span>   <span class="number">0</span><span class="string">/1</span>     <span class="string">Pending</span>   <span class="number">0</span>          <span class="string">0s</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 当我们结束脚本，可以清晰观察到副本开始减少</span></span><br><span class="line">[<span class="string">root@kub-k8s-master2</span> <span class="string">~</span>]<span class="comment"># kubectl get pod -w</span></span><br><span class="line"><span class="string">NAME</span>                      <span class="string">READY</span>   <span class="string">STATUS</span>    <span class="string">RESTARTS</span>   <span class="string">AGE</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-2xptc</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">4m10s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-7zthl</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">3m55s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-8h48p</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">3m55s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-ccp6s</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">3m55s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-ghxm2</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">4m10s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-gjt9m</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">23m</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-mv6gv</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">4m10s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-p6bcl</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">3m40s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-tfpj8</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">3m40s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-wh8zv</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Running</span>   <span class="number">0</span>          <span class="string">3m55s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-ghxm2</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Terminating</span>   <span class="number">0</span>          <span class="string">7m46s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-tfpj8</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Terminating</span>   <span class="number">0</span>          <span class="string">7m16s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-2xptc</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Terminating</span>   <span class="number">0</span>          <span class="string">7m46s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-mv6gv</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Terminating</span>   <span class="number">0</span>          <span class="string">7m46s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-7zthl</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Terminating</span>   <span class="number">0</span>          <span class="string">7m31s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-wh8zv</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Terminating</span>   <span class="number">0</span>          <span class="string">7m31s</span></span><br><span class="line"><span class="string">my-app-7bbb547d5b-ccp6s</span>   <span class="number">1</span><span class="string">/1</span>     <span class="string">Terminating</span>   <span class="number">0</span>          <span class="string">7m31s</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3、修改hpa默认评估周期"><a href="#3、修改hpa默认评估周期" class="headerlink" title="3、修改hpa默认评估周期"></a>3、修改hpa默认评估周期</h4><ol>
+<li><p><strong>编辑 kube-controller-manager 的配置</strong>: HPA 评估周期是通过在 kube-controller-manager 中设置 <strong>–horizontal-pod-autoscaler-sync-period</strong> 标志来控制的。你需要编辑运行 kube-controller-manager 组件的 Pod 的配置。这通常涉及编辑 kube-controller-manager 的部署或者 manifest 文件。这个文件可能位于主节点的 <strong>&#x2F;etc&#x2F;kubernetes&#x2F;manifests&#x2F;</strong> 目录中，或者作为一个 Pod 在 <strong>kube-system</strong> 命名空间中运行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit deployment kube-controller-manager -n kube-system</span><br></pre></td></tr></table></figure>
+<p>或者编辑文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/kubernetes/manifests/kube-controller-manager.yaml</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>添加或修改 –horizontal-pod-autoscaler-sync-period 标志</strong>: 在 kube-controller-manager 的启动参数中添加或修改 <strong>–horizontal-pod-autoscaler-sync-period</strong> 标志。例如，要将评估周期设置为 30 秒，添加：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--horizontal-pod-autoscaler-sync-period=30s</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>重启 kube-controller-manager</strong>: 如果你直接编辑的是 manifest 文件，kube-controller-manager 将自动重启。如果你是通过 kubectl 编辑的，它也应该自动更新。</p>
+</li>
+<li><p><strong>验证更改</strong>: 确认更改已生效，可以通过检查 kube-controller-manager 的日志或者使用 <strong>kubectl describe</strong> 查看 HPA 的状态。</p>
+</li>
+</ol>
+<h2 id="二、SideCar"><a href="#二、SideCar" class="headerlink" title="二、SideCar"></a>二、SideCar</h2><p>在 Kubernetes 中，Sidecar 是一种常见的设计模式，它指的是将辅助的服务或功能部署为同一个 Pod 中的另一个容器。Sidecar 容器和主容器共享相同的生命周期（例如启动和终止），网络空间（IP 地址和端口空间），以及存储（卷）。这种模式允许将主应用程序与辅助功能（如日志记录、监控、配置同步等）分离，使应用架构更加模块化和可维护。</p>
+<h3 id="Sidecar-的常见用途"><a href="#Sidecar-的常见用途" class="headerlink" title="Sidecar 的常见用途"></a>Sidecar 的常见用途</h3><ol>
+<li><strong>日志收集</strong>：使用 Sidecar 容器收集、聚合和转发日志。</li>
+<li><strong>监控</strong>：运行一个监控代理作为 Sidecar，收集关于主容器的性能指标。</li>
+<li><strong>配置同步</strong>：定期从远程源同步文件，如配置文件，到共享卷中，供主容器使用。</li>
+<li><strong>代理和网络功能</strong>：例如，运行一个代理服务器（如 Envoy）来处理 Pod 的入口和出口网络流量。</li>
+</ol>
+<h3 id="示例：日志收集-Sidecar"><a href="#示例：日志收集-Sidecar" class="headerlink" title="示例：日志收集 Sidecar"></a>示例：日志收集 Sidecar</h3><p>下面是一个简单的示例，展示了如何在 Kubernetes Pod 中使用 Sidecar 容器来收集日志。<br>假设您有一个简单的应用程序，它定期写日志到一个文件。您可以添加一个 Sidecar 容器来收集这些日志并将它们转发到一个中央日志服务器或文件中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@kub-k8s-master1 ~]# vim sidecar.yml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: myapp-pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">    - name: myapp-container</span><br><span class="line">      image: nginx</span><br><span class="line">      volumeMounts:</span><br><span class="line">      - name: log-volume</span><br><span class="line">        mountPath: /var/log/nginx</span><br><span class="line">    - name: sidecar-container</span><br><span class="line">      image: busybox</span><br><span class="line">      args: [/bin/sh, -c, &#x27;tail -n+1 -F /var/log/nginx/access.log&#x27;]</span><br><span class="line">      volumeMounts:</span><br><span class="line">      - name: log-volume</span><br><span class="line">        mountPath: /var/log/nginx</span><br><span class="line">  volumes:</span><br><span class="line">    - name: log-volume</span><br><span class="line">      emptyDir: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>在这个示例中：</p>
+<ul>
+<li><strong>myapp-container</strong> 是主容器，运行您的应用程序。</li>
+<li><strong>sidecar-container</strong> 是 Sidecar 容器，它使用 <strong>busybox</strong> 镜像，运行一个简单的命令 <strong>tail -n+1 -f &#x2F;var&#x2F;log&#x2F;myapp.log</strong> 来跟踪日志文件并输出到其自己的标准输出。</li>
+<li>两个容器共享一个卷 <strong>log-volume</strong>，主容器在这里写入日志，Sidecar 容器则从中读取日志。</li>
+</ul>
+<p>这个示例演示了 Sidecar 模式的基本原理：主容器负责核心业务逻辑，而 Sidecar 容器扩展或增强了 Pod 的功能，这里是通过日志收集。这种模式提高了应用程序的灵活性和可维护性。</p>
+<h2 id="三、CRD（Custom-Resource-Definitions）"><a href="#三、CRD（Custom-Resource-Definitions）" class="headerlink" title="三、CRD（Custom Resource Definitions）"></a>三、CRD（Custom Resource Definitions）</h2><blockquote>
+<p>CRD，即 Custom Resource Definitions，是 Kubernetes 中的一个功能，允许你定义自定义资源。它是 Kubernetes API 的扩展，使你能够创建特定于应用或组织的资源。通过 CRD，你可以定义新的资源类型，Kubernetes API 会像处理内置资源（如 Pods, Services 等）一样处理这些自定义资源。</p>
+</blockquote>
+<h3 id="用途和优势"><a href="#用途和优势" class="headerlink" title="用途和优势"></a>用途和优势</h3><ol>
+<li><strong>扩展 Kubernetes 功能</strong>：CRD 允许扩展 Kubernetes 原生功能，添加新的资源类型。</li>
+<li><strong>与 Kubernetes API 无缝集成</strong>：自定义资源可以使用 <strong>kubectl</strong> 和其他 Kubernetes 工具进行管理。</li>
+<li><strong>用于 Operators</strong>：CRD 常常被用于创建 Operators，这是一种封装了特定应用管理逻辑的软件。</li>
+<li><strong>提高灵活性</strong>：能够根据特定的需求创建和管理资源，使得 Kubernetes 更加灵活。</li>
+</ol>
+<h3 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h3><ul>
+<li><strong>资源类型</strong>：CRD 定义了一个新的资源类型。例如，你可以创建一个名为 <strong>MyCustomResource</strong> 的资源类型。</li>
+<li><strong>版本控制</strong>：CRD 支持版本定义，使得资源定义可以随时间变化而演进。</li>
+<li><strong>作用域</strong>：CRD 可以是集群级别（Cluster Scope）的，也可以是命名空间级别（Namespaced）的。</li>
+</ul>
+<h3 id="1、定义-CRD"><a href="#1、定义-CRD" class="headerlink" title="1、定义 CRD"></a>1、定义 CRD</h3><p>将以下内容保存到一个文件中，例如命名为 <strong>example-resource-crd.yaml</strong>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apiextensions.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">CustomResourceDefinition</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">exampleresources.sample.k8s.io</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">group:</span> <span class="string">sample.k8s.io</span></span><br><span class="line">  <span class="attr">versions:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">v1</span></span><br><span class="line">      <span class="attr">served:</span> <span class="literal">true</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="literal">true</span></span><br><span class="line">      <span class="attr">schema:</span></span><br><span class="line">        <span class="attr">openAPIV3Schema:</span></span><br><span class="line">          <span class="attr">type:</span> <span class="string">object</span></span><br><span class="line">          <span class="attr">properties:</span></span><br><span class="line">            <span class="attr">spec:</span></span><br><span class="line">              <span class="attr">type:</span> <span class="string">object</span></span><br><span class="line">              <span class="attr">properties:</span></span><br><span class="line">                <span class="attr">message:</span></span><br><span class="line">                  <span class="attr">type:</span> <span class="string">string</span></span><br><span class="line">  <span class="attr">scope:</span> <span class="string">Namespaced</span></span><br><span class="line">  <span class="attr">names:</span></span><br><span class="line">    <span class="attr">plural:</span> <span class="string">exampleresources</span></span><br><span class="line">    <span class="attr">singular:</span> <span class="string">exampleresource</span></span><br><span class="line">    <span class="attr">kind:</span> <span class="string">ExampleResource</span></span><br><span class="line">    <span class="attr">shortNames:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">exr</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>apiVersion: apiextensions.k8s.io&#x2F;v1</strong>：指定了 CRD 使用的 API 版本。</li>
+<li><strong>kind: CustomResourceDefinition</strong>：表示这是一个 CRD。</li>
+<li><strong>metadata.name</strong>：CRD 的名称，必须是全局唯一的。</li>
+<li><strong>spec.group</strong>：自定义资源的 API 组。</li>
+<li><strong>spec.versions</strong>：定义 CRD 的版本，这里是 <strong>v1</strong>。</li>
+<li><strong>spec.scope</strong>：指定资源是集群级别（Cluster）还是命名空间级别（Namespaced）。</li>
+<li><strong>spec.names</strong>：定义资源的名称，包括单数、复数和简称。</li>
+<li><strong>spec.schema</strong>：定义资源的结构。</li>
+</ul>
+<h3 id="2、部署-CRD"><a href="#2、部署-CRD" class="headerlink" title="2、部署 CRD"></a>2、部署 CRD</h3><p>使用以下命令将 CRD 部署到 Kubernetes 集群：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f example-resource-crd.yaml</span><br></pre></td></tr></table></figure>
+<p>这个命令会告诉 Kubernetes 创建我们在 YAML 文件中定义的 CRD。</p>
+<h3 id="3、创建-Custom-Resource-CR-示例"><a href="#3、创建-Custom-Resource-CR-示例" class="headerlink" title="3、创建 Custom Resource (CR) 示例"></a>3、创建 Custom Resource (CR) 示例</h3><p>将以下内容保存到另一个文件中，例如命名为 <strong>example-resource-instance.yaml</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: sample.k8s.io/v1</span><br><span class="line">kind: ExampleResource</span><br><span class="line">metadata:</span><br><span class="line">  name: myexample</span><br><span class="line">spec:</span><br><span class="line">  message: &quot;Hello, this is a sample message&quot;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>apiVersion: sample.k8s.io&#x2F;v1</strong>：指定使用我们自定义的 API 组和版本。</li>
+<li><strong>kind: ExampleResource</strong>：指定资源类型，与我们在 CRD 中定义的一致。</li>
+<li><strong>metadata.name</strong>：资源的名称。</li>
+<li><strong>spec.message</strong>：根据我们在 CRD 中定义的 schema，添加了一个自定义的消息字段。</li>
+</ul>
+<h3 id="4、部署-Custom-Resource"><a href="#4、部署-Custom-Resource" class="headerlink" title="4、部署 Custom Resource"></a>4、部署 Custom Resource</h3><p>使用以下命令部署这个 CR 到你的集群：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f example-resource-instance.yaml</span><br></pre></td></tr></table></figure>
+<p>这个命令创建了一个 <strong>ExampleResource</strong> 类型的实例，名称为 <strong>myexample</strong>。</p>
+<h3 id="5、验证"><a href="#5、验证" class="headerlink" title="5、验证"></a>5、验证</h3><p>使用以下命令检查和获取资源的信息：</p>
+<ol>
+<li><p><strong>检查 CRD 是否已创建</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get crd</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>查看 ExampleResource 实例列表</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get exampleresources</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>查看特定 ExampleResource 实例的详细信息</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get exampleresource myexample -o yaml</span><br></pre></td></tr></table></figure>
+<p>通过这些步骤，你可以在 Kubernetes 集群中创建和管理自定义资源。这只是 CRD 功能的一个基本示例，实际应用中，CRD 通常与自定义控制器一起使用，以实现更复杂的逻辑。</p>
+</li>
+</ol>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/06/01/Kubernetes容器编排技术[扩展]/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81HPA%EF%BC%88Horizontal-Pod-Autoscaler%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">一、HPA（Horizontal Pod Autoscaler）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E6%8F%90%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.1.</span> <span class="toc-text">前提条件:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEmetrics-server"><span class="toc-number">1.2.</span> <span class="toc-text">配置metrics-server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deployment-%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.3.</span> <span class="toc-text">Deployment 示例:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HPA-%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.4.</span> <span class="toc-text">HPA 示例:</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81hpa%E5%AE%9A%E4%B9%89"><span class="toc-number">1.4.1.</span> <span class="toc-text">1、hpa定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E6%9F%A5%E7%9C%8B%E7%BB%93%E6%9E%9C"><span class="toc-number">1.4.2.</span> <span class="toc-text">2、查看结果</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E4%BF%AE%E6%94%B9hpa%E9%BB%98%E8%AE%A4%E8%AF%84%E4%BC%B0%E5%91%A8%E6%9C%9F"><span class="toc-number">1.4.3.</span> <span class="toc-text">3、修改hpa默认评估周期</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81SideCar"><span class="toc-number">2.</span> <span class="toc-text">二、SideCar</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Sidecar-%E7%9A%84%E5%B8%B8%E8%A7%81%E7%94%A8%E9%80%94"><span class="toc-number">2.1.</span> <span class="toc-text">Sidecar 的常见用途</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9A%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86-Sidecar"><span class="toc-number">2.2.</span> <span class="toc-text">示例：日志收集 Sidecar</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81CRD%EF%BC%88Custom-Resource-Definitions%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">三、CRD（Custom Resource Definitions）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E9%80%94%E5%92%8C%E4%BC%98%E5%8A%BF"><span class="toc-number">3.1.</span> <span class="toc-text">用途和优势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="toc-number">3.2.</span> <span class="toc-text">核心概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%AE%9A%E4%B9%89-CRD"><span class="toc-number">3.3.</span> <span class="toc-text">1、定义 CRD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81%E9%83%A8%E7%BD%B2-CRD"><span class="toc-number">3.4.</span> <span class="toc-text">2、部署 CRD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E5%88%9B%E5%BB%BA-Custom-Resource-CR-%E7%A4%BA%E4%BE%8B"><span class="toc-number">3.5.</span> <span class="toc-text">3、创建 Custom Resource (CR) 示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81%E9%83%A8%E7%BD%B2-Custom-Resource"><span class="toc-number">3.6.</span> <span class="toc-text">4、部署 Custom Resource</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%E3%80%81%E9%AA%8C%E8%AF%81"><span class="toc-number">3.7.</span> <span class="toc-text">5、验证</span></a></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/06/02/Kubernetes组件/">Kubernetes组件学习</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2024/03/21/Docker命令大全/">docker命令</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/06/01/Kubernetes容器编排技术[扩展]/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系小曹宅，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">2262690094</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"不找了","artist":"隔壁老樊","url":"music/隔壁老樊 - 不找了.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"于是天气刚好","artist":"泪桥","url":"music/于是天气刚好 - 泪桥.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"安和桥","artist":"林芬宇","url":"music/林芬宇 - 安和桥.mp3","cover":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0SWQx6YrNA8lElaG4OOKLkNkNzLO1PflKg&usqp=CAU"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
