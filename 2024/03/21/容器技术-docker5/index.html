@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——docker-Compose | Mr.Long</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——docker-Compose`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"docker命令","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/Docker命令大全/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/14/LV逻辑卷扩展/"},{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/28/LVM逻辑卷管理 /"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"PQL","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/30/PromQL 讲解/"},{"title":"python一","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/20/Python 1 /"},{"title":"python三","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/25/Python 3/"},{"title":"python四","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/03/01/Python 4/"},{"title":"python二","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/21/Python 2/"},{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/23/TCP协议/"},{"title":"ansible模块","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1","path":"2023/08/17/ansible 模块扩展/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/11/docker容器/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"Galera集群","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/galera/"},{"title":"nginx1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/17/nginx1/"},{"title":"nginx2","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/19/nginx2/"},{"title":"nginx5","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/31/nnginx5/"},{"title":"","path":"2024/09/01/prometheus 监控/"},{"title":"","path":"2024/09/01/redis集群/"},{"title":"","path":"2024/09/01/shell脚本/"},{"title":"docker安装","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/06/容器技术-Docker1/"},{"title":"docker镜像容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/14/容器技术-docker2/"},{"title":"docker-Compose","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/容器技术-docker5/"},{"title":"prometheus-exporter","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/16/node_exporter/"},{"title":"shell编程","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2023/07/21/shell_newrain/"},{"title":"docker资源限制","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/15/容器技术docker4/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/01/文件权限/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/09/磁盘阵列RAID/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/25/磁盘存储管理1/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"prometheus自定义监控","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/26/自定义监控/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/11/网络管理基础/"},{"title":"微服务","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务概念/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/16/走进网络世界/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/13/容器技术-docker3/"},{"title":"nginx4","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/30/nginx4/"},{"title":"nginx3","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/22/nginx3/"},{"title":"微服务项目","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务项目-mall-swarm/"},{"title":"redis操作","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a13d778b5db38e4b127b71bdf122f695","path":"2023/09/26/Redis操作/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Mr.Long</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">唱跳rap篮球</span>
+          <span class="main-left--tag">宅但不肥</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/MyRong99/MyRong99.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>6</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>7</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>10 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>41 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>439天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">docker-Compose</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/Docker/">-Docker</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            <a class="tag-link" href="/tags/Docker/" rel="tag">-Docker</a>
+          </div>
+          
+          <p class="article-info--date">日期：2024-03-21 11:34:46</p>
+        </div>
+        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h3 id="一、docker-compose-常用命令和指令"><a href="#一、docker-compose-常用命令和指令" class="headerlink" title="一、docker-compose 常用命令和指令"></a>一、docker-compose 常用命令和指令</h3><h4 id="1-概要"><a href="#1-概要" class="headerlink" title="1. 概要"></a>1. 概要</h4><p>默认的模板文件是 <code>docker-compose.yml</code>，其中定义的每个服务可以通过 <code>image</code> 指令指定镜像或 <code>build</code> 指令（需要 Dockerfile）来自动构建。</p>
+<p><strong>注意</strong>如果使用 <code>build</code> 指令，在 <code>Dockerfile</code> 中设置的选项(例如：<code>CMD</code>, <code>EXPOSE</code>, <code>VOLUME</code>, <code>ENV</code> 等) 将会自动被获取，无需在 <code>docker-compose.yml</code> 中再次设置。如果设置了会被YML覆盖</p>
+<h4 id="2-常用的docker-compose命令"><a href="#2-常用的docker-compose命令" class="headerlink" title="2. 常用的docker-compose命令"></a>2. 常用的docker-compose命令</h4><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>docker-compose up -d</td>
+<td>构建建启动容器    -d(放后台运行)</td>
+</tr>
+<tr>
+<td>docker-compose exec  bash</td>
+<td>登录到容器中</td>
+</tr>
+<tr>
+<td>docker-compose down</td>
+<td>删除所有容器,镜像</td>
+</tr>
+<tr>
+<td>docker-compose ps</td>
+<td>显示所有容器</td>
+</tr>
+<tr>
+<td>docker-compose restart</td>
+<td>重新启动容器</td>
+</tr>
+<tr>
+<td>docker-compose run –no-deps –rm php-fpm php -v</td>
+<td>在php-fpm中不启动关联容器，并容器执行php -v 执行完成后删除容器</td>
+</tr>
+<tr>
+<td>docker-compose build</td>
+<td>构建镜像</td>
+</tr>
+<tr>
+<td>docker-compose build –no-cache</td>
+<td>不带缓存的构建</td>
+</tr>
+<tr>
+<td>docker-compose logs</td>
+<td>查看的日志</td>
+</tr>
+<tr>
+<td>docker-compose logs -f</td>
+<td>验证（docker-compose.yml）文件配置，当配置正确时，不输出任何内容，当文件配置错误，输出错误信息</td>
+</tr>
+<tr>
+<td>docker-compose pause</td>
+<td>暂停容器</td>
+</tr>
+<tr>
+<td>docker-compose unpause</td>
+<td>恢复容器</td>
+</tr>
+<tr>
+<td>docker-compose rm</td>
+<td>删除容器（删除前必须关闭容器）</td>
+</tr>
+<tr>
+<td>docker-compose stop</td>
+<td>停止容器</td>
+</tr>
+<tr>
+<td>docker-compose start</td>
+<td>启动容器</td>
+</tr>
+</tbody></table>
+<h4 id="2-1、image"><a href="#2-1、image" class="headerlink" title="2.1、image"></a>2.1、image</h4><p>说明</p>
+<p>指定为镜像名称或镜像 ID。如果镜像在本地不存在，<code>Compose</code> 将会尝试拉去这个镜像。</p>
+<p>栗子</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">image: ubuntu</span><br><span class="line">image: mysql:5.7.22</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2、build"><a href="#2-2、build" class="headerlink" title="2.2、build"></a>2.2、build</h4><p>说明</p>
+<p>指定 <code>Dockerfile</code> 所在文件夹的路径。 <code>Compose</code> 将会利用它自动构建这个镜像，然后使用这个镜像。</p>
+<p>栗子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">build: ./</span><br><span class="line">build: ./web/</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3、command"><a href="#2-3、command" class="headerlink" title="2.3、command"></a>2.3、command</h4><p>说明</p>
+<p>覆盖容器启动后默认执行的命令。</p>
+<p>栗子</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">command:</span><br><span class="line">      --default-authentication-plugin=mysql_native_password</span><br><span class="line">      --character-set-server=utf8mb4</span><br><span class="line">      --collation-server=utf8mb4_general_ci</span><br><span class="line">      --explicit_defaults_for_timestamp=true</span><br><span class="line">      --lower_case_table_names=1</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-4、links"><a href="#2-4、links" class="headerlink" title="2.4、links"></a>2.4、links</h4><p>说明</p>
+<p>链接到其它服务中的容器。使用服务名称（同时作为别名）或服务名称：服务别名 <code>（SERVICE:ALIAS）</code> 格式都可以。</p>
+<p>栗子</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">links:</span><br><span class="line"> - mysql</span><br><span class="line"> - db:database</span><br><span class="line"> - redis</span><br></pre></td></tr></table></figure>
+
+<p>使用的别名将会自动在服务容器中的 <code>/etc/hosts</code> 里创建。例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">172.17.2.111  db</span><br><span class="line">172.17.2.112  database</span><br><span class="line">172.17.2.113  redis</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-5、external-links"><a href="#2-5、external-links" class="headerlink" title="2.5、external_links"></a>2.5、external_links</h4><p>说明</p>
+<p>链接到 docker-compose.yml 外部的容器，甚至 并非 <code>Compose</code> 管理的容器。参数格式跟 <code>links</code> 类似。</p>
+<p>栗子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">external_links:</span><br><span class="line"> - redis</span><br><span class="line"> - web_db_mysql:mysql</span><br><span class="line"> - web_db_oracle:oracle</span><br><span class="line"> - web_db_oracle:postgre</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-6、ports"><a href="#2-6、ports" class="headerlink" title="2.6、ports"></a>2.6、ports</h4><p>说明</p>
+<p>暴露端口信息。使用宿主：容器 <code>（HOST:CONTAINER）</code>格式或者仅仅指定容器的端口（宿主将会随机选择端口）都可以。</p>
+<p>栗子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ports:</span><br><span class="line"> - &quot;6379&quot;</span><br><span class="line"> - &quot;8000:8000&quot;</span><br><span class="line"> - &quot;46200:22&quot;</span><br><span class="line"> - &quot;127.0.0.1:8080:8080&quot;</span><br></pre></td></tr></table></figure>
+
+<p><em>注：当使用 HOST:CONTAINER 格式来映射端口时，如果你使用的容器端口小于 60 你可能会得到错误得结果，因为 YAML 将会解析 xx:yy 这种数字格式为 60 进制。所以建议采用字符串格式。</em></p>
+<h4 id="1-7、expose"><a href="#1-7、expose" class="headerlink" title="1.7、expose"></a>1.7、expose</h4><p>说明</p>
+<p>暴露端口，但不映射到宿主机，只被连接的服务访问。可以指定内部端口为参数</p>
+<p>栗子</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">expose:</span><br><span class="line"> - &quot;3307&quot;</span><br><span class="line"> - &quot;6380&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-8、volumes"><a href="#1-8、volumes" class="headerlink" title="1.8、volumes"></a>1.8、volumes</h4><p>说明</p>
+<p>卷挂载路径设置。可以设置宿主机路径 （<code>HOST:CONTAINER</code>） 或加上访问模式 （<code>HOST:CONTAINER:ro 或者rw</code>）。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">volumes:</span><br><span class="line"> - ./mysql/data:/var/lib/mysql </span><br><span class="line"> - ./configs:/etc/configs/:ro</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-9、volumes-from"><a href="#1-9、volumes-from" class="headerlink" title="1.9、volumes_from"></a>1.9、volumes_from</h4><p>说明</p>
+<p>从另一个服务或容器挂载它的所有卷。</p>
+<p>栗子</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">volumes_from:</span><br><span class="line"> - service_name</span><br><span class="line"> - container_name</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-10、environment"><a href="#1-10、environment" class="headerlink" title="1.10、environment"></a>1.10、environment</h4><p>说明</p>
+<p>设置环境变量。只给定名称的变量会自动获取它在 Compose 主机上的值，可以用来防止泄露不必要的数据。</p>
+<p>栗子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">environment:</span><br><span class="line">	  MYSQL_ROOT_PASSWORD: root</span><br><span class="line">	  TZ: Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-11、networks"><a href="#1-11、networks" class="headerlink" title="1.11、networks"></a>1.11、networks</h4><p>说明</p>
+<p>用于设置指定网络,子标签aliases用于设置服务别名，相同的别名可以在不同的网络中拥有不同的识别别名。</p>
+<p>可以在service中使用,也可以在顶级标签中使用</p>
+<p>栗子</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">services:</span><br><span class="line">  some-service:</span><br><span class="line">    networks:</span><br><span class="line">      some-network:</span><br><span class="line">        aliases:</span><br><span class="line">         - alias1</span><br><span class="line">         - alias3</span><br><span class="line">      other-network:</span><br><span class="line">        aliases:</span><br><span class="line">         - alias2</span><br><span class="line"># 定义网络         </span><br><span class="line">networks:</span><br><span class="line">   default:</span><br><span class="line">    external:</span><br><span class="line">      name: app</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-12、depends-on"><a href="#1-12、depends-on" class="headerlink" title="1.12、depends_on"></a>1.12、depends_on</h4><p>说明</p>
+<ul>
+<li><strong>字段名称</strong>：depends_on</li>
+<li><strong>数据类型</strong>：字典（对象）</li>
+<li><strong>作用</strong>：定义当前服务依赖的其他服务</li>
+<li><strong>语法</strong>：depends_on:</li>
+<li>service_name: 依赖的服务名称，可以是单个服务或服务列表。</li>
+</ul>
+<p>栗子</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">services</span>:<span class="string"></span></span><br><span class="line">  <span class="attr">web</span>:<span class="string"></span></span><br><span class="line">    <span class="attr">image</span>: <span class="string">nginx</span></span><br><span class="line">    <span class="attr">depends_on</span>:<span class="string"></span></span><br><span class="line">      <span class="attr">-</span> <span class="string">db</span></span><br><span class="line">      <span class="attr">-</span> <span class="string">redis</span></span><br><span class="line">  <span class="attr">db</span>:<span class="string"></span></span><br><span class="line">    <span class="attr">image</span>: <span class="string">mysql</span></span><br><span class="line">  <span class="attr">redis</span>:<span class="string"></span></span><br><span class="line">    <span class="attr">image</span>: <span class="string">redis</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="二、Docker-Compose-网络设置"><a href="#二、Docker-Compose-网络设置" class="headerlink" title="二、Docker Compose-网络设置"></a>二、Docker Compose-网络设置</h3><h4 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h4><p>随着微服务的事件，应用的越来越多， 经常会碰到需要多个容器共同协作， 这样就需要多个容器之间能够互相访问。Docker提供了映射容器端口到宿主机和容器互联机制来为容器提供网络服务。随着 docker 的快速发展，其网络架构也在不断的演进。</p>
+<h4 id="二、容器网络模型-了解"><a href="#二、容器网络模型-了解" class="headerlink" title="二、容器网络模型(了解)"></a>二、容器网络模型(了解)</h4><p>Docker在 1.9 版本中引入了一整套的 docker network 子命令和跨主机网络支持。允许用户可以根据他们应用的拓扑架构创建虚拟网络并将容器接入其所对应的网络。网络部分代码就已经被抽离并单独成为了 docker 的网络库(libnetwork)。在此之后，容器的网络模式也被抽象变成了统一接口的驱动。<br>为了标准化网络驱动的开发步骤和支持多种网络驱动，docker 公司在 libnetwork 中使用了 CNM(Container Network Model)。<strong>CNM 定义了构建容器虚拟化网络的模型，同时还提供了可以用于开发多种网络驱动的标准化接口和组件</strong></p>
+<p>CNM的理念是提供可以<strong>跨不同网络基础架构可实现移植的应用</strong>。这个模型平衡了应用的可移植性同时不会损失基础架构原有的各种特性和功能。</p>
+<p><img src="https://img.beyourself.org.cn/abc/20201215001802.png#id=Y4vAz&originHeight=1096&originWidth=1878&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h4 id="CNM主要有三部分组成"><a href="#CNM主要有三部分组成" class="headerlink" title="CNM主要有三部分组成"></a>CNM主要有三部分组成</h4><ul>
+<li>沙箱(SandBox)–一个沙箱包含了容器的网络配置。这里包括了容器接口的管理，路由表，和DNS设定。一个沙箱可以包含多个来自不同网络的端点，可以同时连接多个网络。</li>
+<li>端点(Endpoint)–沙箱通过端点来连接网络。端点结构的存在使到应用与网络的连接实现虚拟化。这样有助于维护应用的可移值性，因此一个服务可以在无须知道如何去连接网络的情况下使用不同类型的网络驱动。</li>
+<li>网络(Network)–CNM并不是OSI模型中说的网络层。而是由Linux桥接，VLan等来实现。网络收集了所有连接在其上的端点，并实现了这些端点的互连。端点如果不连接到其中一个网络，那么将无法与外界连接。</li>
+</ul>
+<h4 id="CNM驱动接口"><a href="#CNM驱动接口" class="headerlink" title="CNM驱动接口"></a>CNM驱动接口</h4><p>容器连网模型提供了两个可拔插且开放的接口供用户使用，这些接口是用于通讯，利用供应商提供的附加功能，网络可见性，或网络控制等方面。目前存在以下网络驱动：</p>
+<ul>
+<li>网络驱动(Network Drivers)–Docker网络驱动提供了使网络可以工作的具体实现。他们是可拔插的，所以很易于支持不同的用户使用场景。多个网络驱动可同时用于指定的Docker引擎和群集。有以下两个广泛使用的CNM网络驱动： <ul>
+<li>内置网络驱动(Native Network Drivers)–内置网络驱动是内置于Docker引擎，并随Docker提供的驱动。有多个驱动可供选择，以支持不同的功能，如overlay网络和local bridge网络。</li>
+<li>远程网络驱动(Remote Network Drivers)–远程网络驱动是由社区或其它供应商建立的网络驱动。这些驱动可用于与现有的软件或硬件环境进行集成。用户也可以建立自己的网络驱动以达成各种特殊需求。</li>
+</ul>
+</li>
+<li>IPAM（IP地址管理）驱动–Docker有一个内置的IP地址管理驱动，在没有特别指定IP的情况下，它会为网络和端点提供了默认的子网或IP地址。IP地址通过网络(docker network create)，容器(docker container create)和服务(docker service create)创建指令来人工分配。远程IPAM驱动也存在和提供了集成到现有IPAM的工具。</li>
+</ul>
+<h4 id="Docker内置网络驱动"><a href="#Docker内置网络驱动" class="headerlink" title="Docker内置网络驱动"></a>Docker内置网络驱动</h4><p>Docker内置网络驱动是Docker引擎的一部份不需要任何额外模块。他们可以被docker network命令所调用。以下是现存的内置网络驱动：</p>
+<table>
+<thead>
+<tr>
+<th>驱动</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Host</strong></td>
+<td>没有命名空间隔离，主机上的所有接口都可以直接被容器使用。</td>
+</tr>
+<tr>
+<td><strong>Bridge</strong></td>
+<td>受Docker管理的Linux桥接网络。默认在同一个bridge网络的容器都可以相互通迅。 容器的外部访问也可以使用bridge驱动来设置。</td>
+</tr>
+<tr>
+<td><strong>Overlay</strong></td>
+<td>提供多主机的容器网络互连。同时使用了本地Linux桥接网络和VXLAN技术实现容器之间跨物理网络架构的连接。</td>
+</tr>
+<tr>
+<td><strong>MACVLAN</strong></td>
+<td>使用MACVLAN桥接模式建立容器接口和主机接口之间的连接。实现为容器提供在物理网络中可路由的IP地址。 此外VLAN可以被中继至macvlan驱动以强制实现容器的2层分段。</td>
+</tr>
+<tr>
+<td><strong>None</strong></td>
+<td>容器具有属于自己的网络栈和网络命名空间，但并在容器内添加网络接口。如没有其它的设置，则容器将完全独立于其它网络。</td>
+</tr>
+</tbody></table>
+<p>参考文章</p>
+<p><a target="_blank" rel="noopener" href="https://success.docker.com/article/networking">https://success.docker.com/article/networking</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/docerce/article/details/79278568">https://blog.csdn.net/docerce/article/details/79278568</a></p>
+<h3 id="三、Docker-Compose-网络设置二"><a href="#三、Docker-Compose-网络设置二" class="headerlink" title="三、Docker Compose-网络设置二"></a>三、Docker Compose-网络设置二</h3><h4 id="一、概述-1"><a href="#一、概述-1" class="headerlink" title="一、概述"></a>一、概述</h4><p>默认情况下，Compose 会为我们的应用创建一个网络，服务的每个容器都会加入该网络中。这样，容器就可被该网络中的其他容器访问，不仅如此，<strong>该容器还能以服务名称作为 Hostname 被其他容器访问</strong>。</p>
+<p>默认情况下，应用程序的网络名称基于 Compose 的工程名称，而项目名称基于 <code>docker-compose.yml</code> 所在目录的名称。如需修改工程名称，可使用 <code>--project-name</code> 标识或 <code>COMPOSE_PORJECT_NAME</code> 环境变量。</p>
+<p>假如一个应用程序在名为 myapp 的目录中，并且 <code>docker-compose.yml</code> 如下所示：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">web:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">.</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8000:8000&quot;</span></span><br><span class="line">  <span class="attr">db:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mysql</span></span><br></pre></td></tr></table></figure>
+
+<p>当我们运行 <code>docker-compose up</code> 时，将会执行以下几步：</p>
+<ul>
+<li>创建一个名为 <strong>myapp_default</strong> 的网络</li>
+<li>使用 web 服务的配置创建容器，它以 <strong>web</strong> 这个名称加入网络 myapp_default</li>
+<li>使用 db 服务的配置创建容器，它以 <strong>db</strong> 这个名称加入网络 myapp_default</li>
+</ul>
+<p>容器间可使用服务名称（web 或 db）作为 Hostname 相互访问。例如，web 这个服务可使用 <code>postgres://db:5432</code> 访问 db 容器。</p>
+<p>当服务的配置发生更改时，可使用 <code>docker-compose up</code> 命令更新配置。此时，Compose 会删除旧容器并创建新容器。新容器会以不同的 IP 地址加入网络，名称保持不变。任何指向旧容器的连接都会被关闭，容器会重新找到新容器并连接上去。</p>
+<h4 id="二、使用-links"><a href="#二、使用-links" class="headerlink" title="二、使用 links"></a>二、使用 links</h4><p>默认情况下，服务之间可使用服务名称相互访问。links 允许我们定义一个别名，从而使用该别名访问其他服务。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;2&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">web:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">.</span></span><br><span class="line">    <span class="attr">links:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;db:database&quot;</span></span><br><span class="line">  <span class="attr">db:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">postgres</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="三、自定义网络"><a href="#三、自定义网络" class="headerlink" title="三、自定义网络"></a>三、自定义网络</h4><p>一些场景下，默认的网络配置满足不了我们的需求，此时我们可使用 networks 命令自定义网络。networks 命令允许我们创建更加复杂的网络拓扑并指定自定义网络驱动和选项。不仅如此，我们还可使用 networks 将服务连接到不是由 Compose 管理的、外部创建的网络。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">proxy:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">front</span></span><br><span class="line">  <span class="attr">app:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">./app</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">front</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">back</span></span><br><span class="line">  <span class="attr">db:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">postgres</span></span><br><span class="line">    <span class="attr">networks:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">back</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">front:</span></span><br><span class="line">    <span class="comment"># Use a custom driver</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">custom-driver-1</span></span><br><span class="line">  <span class="attr">back:</span></span><br><span class="line">    <span class="comment"># Use a custom driver which takes special options</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">custom-driver-2</span></span><br><span class="line">    <span class="attr">driver_opts:</span></span><br><span class="line">      <span class="attr">foo:</span> <span class="string">&quot;1&quot;</span></span><br><span class="line">      <span class="attr">bar:</span> <span class="string">&quot;2&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>其中，proxy 服务与 db 服务隔离，两者分别使用自己的网络；app 服务可与两者通信。使用 networks 命令，即可方便实现服务间的网络隔离与连接。</p>
+<h4 id="四、配置默认网络"><a href="#四、配置默认网络" class="headerlink" title="四、配置默认网络"></a>四、配置默认网络</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">web:</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">.</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;8000:8000&quot;</span></span><br><span class="line">  <span class="attr">db:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">postgres</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">default:</span></span><br><span class="line">    <span class="attr">driver:</span> <span class="string">custom-driver-1</span></span><br></pre></td></tr></table></figure>
+
+<p>这样，就可为该应用指定自定义的网络驱动</p>
+<h4 id="五、已存在的网络"><a href="#五、已存在的网络" class="headerlink" title="五、已存在的网络"></a>五、已存在的网络</h4><p>我们可以预先创建一个名为 myapp 的网络，让 Compose  加入这个新创建的网络，使所有 Compose  可以通信，此时使用 external 选项。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建网络</span></span><br><span class="line">docker network create &lt;Network Name&gt;</span><br><span class="line"><span class="comment"># 查看已存在的网络</span></span><br><span class="line">docker network list</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">networks:</span></span><br><span class="line">  <span class="attr">default:</span></span><br><span class="line">    <span class="attr">external:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">web</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="四、Docker-可视化"><a href="#四、Docker-可视化" class="headerlink" title="四、Docker 可视化"></a>四、Docker 可视化</h3><h4 id="一、Docker常见的几款web工具："><a href="#一、Docker常见的几款web工具：" class="headerlink" title="一、Docker常见的几款web工具："></a>一、Docker常见的几款web工具：</h4><ul>
+<li>portainer(常用)</li>
+<li>docker UI</li>
+<li>shipyard</li>
+</ul>
+<h4 id="二、什么是Portainer？"><a href="#二、什么是Portainer？" class="headerlink" title="二、什么是Portainer？"></a>二、什么是Portainer？</h4><p>Portainer是Docker的图形化管理工具，提供状态显示面板、应用模板快速部署、容器镜像网络数据卷的基本操作（包括上传下载镜像，创建容器等操作）、事件日志显示、容器控制台操作、Swarm集群和服务等集中管理和操作、登录用户管理和控制等功能。功能十分全面，基本能满足中小型单位对容器管理的全部需求</p>
+<h4 id="三、安装"><a href="#三、安装" class="headerlink" title="三、安装"></a>三、安装</h4><h5 id="下载镜像"><a href="#下载镜像" class="headerlink" title="下载镜像"></a>下载镜像</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull portainer/portainer-ce</span><br></pre></td></tr></table></figure>
+
+<h5 id="运行Portainer-单机版"><a href="#运行Portainer-单机版" class="headerlink" title="运行Portainer(单机版)"></a>运行Portainer(单机版)</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker  run -d \</span><br><span class="line"> -p 9000:9000 \</span><br><span class="line"> -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line"> portainer/portainer-ce</span><br></pre></td></tr></table></figure>
+
+<h5 id="访问-http-localhost-9000"><a href="#访问-http-localhost-9000" class="headerlink" title="访问 http://localhost:9000/"></a>访问 <a target="_blank" rel="noopener" href="http://localhost:9000/">http://localhost:9000/</a></h5><p><img src="https://img.beyourself.org.cn/abc/20201215003654.png#id=lDiU0&originHeight=456&originWidth=753&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h5 id="设置管理员密码"><a href="#设置管理员密码" class="headerlink" title="设置管理员密码"></a>设置管理员密码</h5><p><img src="https://img.beyourself.org.cn/abc/20201215003651.png#id=xeRG0&originHeight=447&originWidth=747&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h5 id="汉化"><a href="#汉化" class="headerlink" title="汉化"></a>汉化</h5>
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/03/21/容器技术-docker5/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81docker-compose-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E5%92%8C%E6%8C%87%E4%BB%A4"><span class="toc-number">1.</span> <span class="toc-text">一、docker-compose 常用命令和指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%A6%82%E8%A6%81"><span class="toc-number">1.1.</span> <span class="toc-text">1. 概要</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%B8%B8%E7%94%A8%E7%9A%84docker-compose%E5%91%BD%E4%BB%A4"><span class="toc-number">1.2.</span> <span class="toc-text">2. 常用的docker-compose命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1%E3%80%81image"><span class="toc-number">1.3.</span> <span class="toc-text">2.1、image</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2%E3%80%81build"><span class="toc-number">1.4.</span> <span class="toc-text">2.2、build</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3%E3%80%81command"><span class="toc-number">1.5.</span> <span class="toc-text">2.3、command</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4%E3%80%81links"><span class="toc-number">1.6.</span> <span class="toc-text">2.4、links</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5%E3%80%81external-links"><span class="toc-number">1.7.</span> <span class="toc-text">2.5、external_links</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6%E3%80%81ports"><span class="toc-number">1.8.</span> <span class="toc-text">2.6、ports</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-7%E3%80%81expose"><span class="toc-number">1.9.</span> <span class="toc-text">1.7、expose</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-8%E3%80%81volumes"><span class="toc-number">1.10.</span> <span class="toc-text">1.8、volumes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-9%E3%80%81volumes-from"><span class="toc-number">1.11.</span> <span class="toc-text">1.9、volumes_from</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-10%E3%80%81environment"><span class="toc-number">1.12.</span> <span class="toc-text">1.10、environment</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-11%E3%80%81networks"><span class="toc-number">1.13.</span> <span class="toc-text">1.11、networks</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-12%E3%80%81depends-on"><span class="toc-number">1.14.</span> <span class="toc-text">1.12、depends_on</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Docker-Compose-%E7%BD%91%E7%BB%9C%E8%AE%BE%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">二、Docker Compose-网络设置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%A6%82%E8%BF%B0"><span class="toc-number">2.1.</span> <span class="toc-text">一、概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B-%E4%BA%86%E8%A7%A3"><span class="toc-number">2.2.</span> <span class="toc-text">二、容器网络模型(了解)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CNM%E4%B8%BB%E8%A6%81%E6%9C%89%E4%B8%89%E9%83%A8%E5%88%86%E7%BB%84%E6%88%90"><span class="toc-number">2.3.</span> <span class="toc-text">CNM主要有三部分组成</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CNM%E9%A9%B1%E5%8A%A8%E6%8E%A5%E5%8F%A3"><span class="toc-number">2.4.</span> <span class="toc-text">CNM驱动接口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Docker%E5%86%85%E7%BD%AE%E7%BD%91%E7%BB%9C%E9%A9%B1%E5%8A%A8"><span class="toc-number">2.5.</span> <span class="toc-text">Docker内置网络驱动</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81Docker-Compose-%E7%BD%91%E7%BB%9C%E8%AE%BE%E7%BD%AE%E4%BA%8C"><span class="toc-number">3.</span> <span class="toc-text">三、Docker Compose-网络设置二</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%A6%82%E8%BF%B0-1"><span class="toc-number">3.1.</span> <span class="toc-text">一、概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%BD%BF%E7%94%A8-links"><span class="toc-number">3.2.</span> <span class="toc-text">二、使用 links</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BD%91%E7%BB%9C"><span class="toc-number">3.3.</span> <span class="toc-text">三、自定义网络</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E9%85%8D%E7%BD%AE%E9%BB%98%E8%AE%A4%E7%BD%91%E7%BB%9C"><span class="toc-number">3.4.</span> <span class="toc-text">四、配置默认网络</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%B7%B2%E5%AD%98%E5%9C%A8%E7%9A%84%E7%BD%91%E7%BB%9C"><span class="toc-number">3.5.</span> <span class="toc-text">五、已存在的网络</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81Docker-%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="toc-number">4.</span> <span class="toc-text">四、Docker 可视化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81Docker%E5%B8%B8%E8%A7%81%E7%9A%84%E5%87%A0%E6%AC%BEweb%E5%B7%A5%E5%85%B7%EF%BC%9A"><span class="toc-number">4.1.</span> <span class="toc-text">一、Docker常见的几款web工具：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AFPortainer%EF%BC%9F"><span class="toc-number">4.2.</span> <span class="toc-text">二、什么是Portainer？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%AE%89%E8%A3%85"><span class="toc-number">4.3.</span> <span class="toc-text">三、安装</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F"><span class="toc-number">4.3.1.</span> <span class="toc-text">下载镜像</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%90%E8%A1%8CPortainer-%E5%8D%95%E6%9C%BA%E7%89%88"><span class="toc-number">4.3.2.</span> <span class="toc-text">运行Portainer(单机版)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE-http-localhost-9000"><span class="toc-number">4.3.3.</span> <span class="toc-text">访问 http:&#x2F;&#x2F;localhost:9000&#x2F;</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E7%AE%A1%E7%90%86%E5%91%98%E5%AF%86%E7%A0%81"><span class="toc-number">4.3.4.</span> <span class="toc-text">设置管理员密码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B1%89%E5%8C%96"><span class="toc-number">4.3.5.</span> <span class="toc-text">汉化</span></a></li></ol></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/03/21/Docker命令大全/">docker命令</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2024/03/15/容器技术docker4/">docker资源限制</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/03/21/容器技术-docker5/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系小曹宅，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">2262690094</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"不找了","artist":"隔壁老樊","url":"music/隔壁老樊 - 不找了.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"于是天气刚好","artist":"泪桥","url":"music/于是天气刚好 - 泪桥.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"安和桥","artist":"林芬宇","url":"music/林芬宇 - 安和桥.mp3","cover":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0SWQx6YrNA8lElaG4OOKLkNkNzLO1PflKg&usqp=CAU"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>

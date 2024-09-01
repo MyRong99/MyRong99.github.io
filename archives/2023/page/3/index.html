@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——小站首页 | Mr.Long</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——小站首页`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"docker命令","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/Docker命令大全/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/14/LV逻辑卷扩展/"},{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/28/LVM逻辑卷管理 /"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"PQL","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/30/PromQL 讲解/"},{"title":"python一","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/20/Python 1 /"},{"title":"python三","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/25/Python 3/"},{"title":"python四","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/03/01/Python 4/"},{"title":"python二","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/21/Python 2/"},{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/23/TCP协议/"},{"title":"ansible模块","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1","path":"2023/08/17/ansible 模块扩展/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/11/docker容器/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"Galera集群","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/galera/"},{"title":"nginx1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/17/nginx1/"},{"title":"nginx2","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/19/nginx2/"},{"title":"nginx5","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/31/nnginx5/"},{"title":"","path":"2024/09/01/prometheus 监控/"},{"title":"","path":"2024/09/01/redis集群/"},{"title":"","path":"2024/09/01/shell脚本/"},{"title":"docker安装","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/06/容器技术-Docker1/"},{"title":"docker镜像容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/14/容器技术-docker2/"},{"title":"docker-Compose","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/容器技术-docker5/"},{"title":"prometheus-exporter","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/16/node_exporter/"},{"title":"shell编程","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2023/07/21/shell_newrain/"},{"title":"docker资源限制","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/15/容器技术docker4/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/01/文件权限/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/09/磁盘阵列RAID/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/25/磁盘存储管理1/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"prometheus自定义监控","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/26/自定义监控/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/11/网络管理基础/"},{"title":"微服务","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务概念/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/16/走进网络世界/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/13/容器技术-docker3/"},{"title":"nginx4","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/30/nginx4/"},{"title":"nginx3","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/22/nginx3/"},{"title":"微服务项目","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务项目-mall-swarm/"},{"title":"redis操作","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a13d778b5db38e4b127b71bdf122f695","path":"2023/09/26/Redis操作/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Mr.Long</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">唱跳rap篮球</span>
+          <span class="main-left--tag">宅但不肥</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/MyRong99/MyRong99.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>6</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>7</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>10 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>41 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>439天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container"><link rel="stylesheet" href="/css/partial/archive.css" />
+
+
+
+    <link rel="stylesheet" href="/css/partial/index.css" />
+
+
+
+<div class="index">
+  <div class="index-left">
+    
+      <div class="index-article">
+        <!-- <img class="index-article--cover" src="https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34" alt=""> -->
+        <div class="index-article--box">
+          <img class="index-article--cover" data-cover="https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34" alt="用户文件权限" />
+        </div>
+        <div class="index-article--content">
+          <a href="/2023/06/01/%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90/">用户文件权限 </a>
+          <div>
+            
+              <p>
+                <a class="post-category-link" href="/categories/Linux/">-Linux</a>
+              </p>
+            
+            
+              <p>
+                <a class="-link" href="/tags/Linux/" rel="tag">-Linux</a>
+              </p>
+            
+          </div>
+          <div class="bg"></div>
+        </div>
+      </div>
+    
+  </div>
+  <div class="index-center">
+    
+  </div>
+  <div class="index-right">
+    <div class="index-right-wrapper">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Docker/">-Docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">-Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Prometheus/">-Prometheus</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SHELL/">-SHELL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/">-中间件</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">-微服务</a></li></ul>
+      <ul class="tags" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">-微服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" rel="tag">-中间件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SHELL/" rel="tag">-SHELL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">-Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prometheus/" rel="tag">-Prometheus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">-Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">-Docker</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">2024年09月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">2024年07月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">2024年06月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">2024年03月</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">2024年02月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">2023年12月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">2023年09月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">2023年08月</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">2023年07月</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">2023年06月</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+</div>
+
+  <div class="page">
+    <a class="extend prev" rel="prev" href="/archives/2023/page/2/">&lt;</a><a class="page-number" href="/archives/2023/">1</a><a class="page-number" href="/archives/2023/page/2/">2</a><span class="page-number current">3</span>
+  </div>
+
+
+<script>
+  var allImgBoxs = document.querySelectorAll('.index-article--box');
+  var windowHeight = window.innerHeight;
+  var boxs = Array.from(allImgBoxs);
+  var timer = null;
+  boxs.forEach((box, idx) => {
+    if (!window.loadImageSet || !window.loadImageSet.includes(idx)) {
+      box.classList.add('img-loading');
+    } else {
+      const imgDom = box.querySelector('img');
+      imgDom.src = imgDom.dataset.cover;
+    }
+  });
+
+  function scrollFn() {
+    if (timer) {
+      return;
+    }
+    timer = setTimeout(() => {
+      loadImage();
+      timer = null;
+    }, 100)
+  }
+
+  setTimeout(() => {
+    loadImage();
+  }, 100);
+  if (!window.loadedImage) {
+    document.addEventListener('scroll', scrollFn);
+  }
+
+  function loadImage() {
+    const doc = document.documentElement;
+    const scrollTop = doc.scrollTop;
+    if (boxs.every(box => box.loadedImage)) {
+      document.removeEventListener('scroll', scrollFn);
+      window.loadedImage = 1;
+      return;
+    }
+    boxs.forEach((box, idx) => {
+      if (box.loadedImage) {
+        return;
+      }
+      if (box.getBoundingClientRect().top < windowHeight) {
+        const imgDom = box.querySelector('img');
+        imgDom.src = imgDom.dataset.cover;
+        // 图片成功加载
+        imgDom.onload = () => {
+          box.classList.remove('img-loading');
+          box.loadedImage = true;
+          if (!window.loadImageSet) {
+            window.loadImageSet = [];
+          }
+          window.loadImageSet.push(idx);
+        }
+        // 图片加载失败
+        imgDom.onerror = () => {
+          box.classList.remove('img-loading');
+          box.classList.add('img-error');
+          imgDom.src = '/imgs/404.png';
+        }
+      }
+    });
+  }
+</script> 
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系小曹宅，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">2262690094</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"不找了","artist":"隔壁老樊","url":"music/隔壁老樊 - 不找了.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"于是天气刚好","artist":"泪桥","url":"music/于是天气刚好 - 泪桥.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"安和桥","artist":"林芬宇","url":"music/林芬宇 - 安和桥.mp3","cover":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0SWQx6YrNA8lElaG4OOKLkNkNzLO1PflKg&usqp=CAU"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>

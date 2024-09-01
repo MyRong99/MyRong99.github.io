@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——微服务项目 | Mr.Long</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——微服务项目`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"docker命令","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/Docker命令大全/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/14/LV逻辑卷扩展/"},{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/28/LVM逻辑卷管理 /"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"PQL","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/30/PromQL 讲解/"},{"title":"python一","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/20/Python 1 /"},{"title":"python三","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/25/Python 3/"},{"title":"python四","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/03/01/Python 4/"},{"title":"python二","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/21/Python 2/"},{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/23/TCP协议/"},{"title":"ansible模块","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1","path":"2023/08/17/ansible 模块扩展/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/11/docker容器/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"Galera集群","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/galera/"},{"title":"nginx1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/17/nginx1/"},{"title":"nginx2","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/19/nginx2/"},{"title":"nginx5","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/31/nnginx5/"},{"title":"","path":"2024/09/01/prometheus 监控/"},{"title":"","path":"2024/09/01/redis集群/"},{"title":"","path":"2024/09/01/shell脚本/"},{"title":"docker安装","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/06/容器技术-Docker1/"},{"title":"docker镜像容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/14/容器技术-docker2/"},{"title":"docker-Compose","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/容器技术-docker5/"},{"title":"prometheus-exporter","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/16/node_exporter/"},{"title":"shell编程","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2023/07/21/shell_newrain/"},{"title":"docker资源限制","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/15/容器技术docker4/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/01/文件权限/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/09/磁盘阵列RAID/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/25/磁盘存储管理1/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"prometheus自定义监控","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/26/自定义监控/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/11/网络管理基础/"},{"title":"微服务","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务概念/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/16/走进网络世界/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/13/容器技术-docker3/"},{"title":"nginx4","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/30/nginx4/"},{"title":"nginx3","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/22/nginx3/"},{"title":"微服务项目","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务项目-mall-swarm/"},{"title":"redis操作","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a13d778b5db38e4b127b71bdf122f695","path":"2023/09/26/Redis操作/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Mr.Long</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">唱跳rap篮球</span>
+          <span class="main-left--tag">宅但不肥</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/MyRong99/MyRong99.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>6</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>7</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>10 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>41 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>439天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">微服务项目</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">-微服务</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            <a class="tag-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">-微服务</a>
+          </div>
+          
+          <p class="article-info--date">日期：2024-07-26 20:34:37</p>
+        </div>
+        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h1 id="一、架构图"><a href="#一、架构图" class="headerlink" title="一、架构图"></a>一、架构图</h1><h2 id="完整架构"><a href="#完整架构" class="headerlink" title="完整架构"></a>完整架构</h2><p><img src="http://img.beyourself.org.cn/1711761338798-bc98a861-54ee-44de-9d34-25357c2259ab.png" alt="微服务mall-swarm 架构.png"></p>
+<h2 id="业务架构"><a href="#业务架构" class="headerlink" title="业务架构"></a>业务架构</h2><p><img src="http://img.beyourself.org.cn/1711761381306-4e9f1c7e-06ee-41c3-aed1-cb444d58acbe.png" alt="业务架构.png"></p>
+<h2 id="业务流程架构-登录"><a href="#业务流程架构-登录" class="headerlink" title="业务流程架构-登录"></a>业务流程架构-登录</h2><p><img src="http://img.beyourself.org.cn/1711761395352-400243b3-26ba-450c-a764-ba341739d510.png" alt="业务流程图之登录.png"></p>
+<h1 id="二、服务部署上线"><a href="#二、服务部署上线" class="headerlink" title="二、服务部署上线"></a>二、服务部署上线</h1><h2 id="开发技术选型"><a href="#开发技术选型" class="headerlink" title="开发技术选型"></a>开发技术选型</h2><h3 id="1-1-后端技术"><a href="#1-1-后端技术" class="headerlink" title="1.1 后端技术"></a>1.1 后端技术</h3><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>说明</th>
+<th>官网</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Spring Cloud</td>
+<td>微服务框架</td>
+<td><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-cloud">https://spring.io/projects/spring-cloud</a></td>
+</tr>
+<tr>
+<td>Spring Cloud Alibaba</td>
+<td>微服务框架</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/spring-cloud-alibaba">https://github.com/alibaba/spring-cloud-alibaba</a></td>
+</tr>
+<tr>
+<td>Spring Boot</td>
+<td>容器+MVC框架</td>
+<td><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-boot">https://spring.io/projects/spring-boot</a></td>
+</tr>
+<tr>
+<td>Spring Security Oauth2</td>
+<td>认证和授权框架</td>
+<td><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-security-oauth">https://spring.io/projects/spring-security-oauth</a></td>
+</tr>
+<tr>
+<td>MyBatis</td>
+<td>ORM框架</td>
+<td><a target="_blank" rel="noopener" href="http://www.mybatis.org/mybatis-3/zh/index.html">http://www.mybatis.org/mybatis-3/zh/index.html</a></td>
+</tr>
+<tr>
+<td>MyBatisGenerator</td>
+<td>数据层代码生成</td>
+<td><a target="_blank" rel="noopener" href="http://www.mybatis.org/generator/index.html">http://www.mybatis.org/generator/index.html</a></td>
+</tr>
+<tr>
+<td>PageHelper</td>
+<td>MyBatis物理分页插件</td>
+<td><a target="_blank" rel="noopener" href="http://git.oschina.net/free/Mybatis_PageHelper">http://git.oschina.net/free/Mybatis_PageHelper</a></td>
+</tr>
+<tr>
+<td>Knife4j</td>
+<td>文档生产工具</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/xiaoymin/swagger-bootstrap-ui">https://github.com/xiaoymin/swagger-bootstrap-ui</a></td>
+</tr>
+<tr>
+<td>Elasticsearch</td>
+<td>搜索引擎</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/elastic/elasticsearch">https://github.com/elastic/elasticsearch</a></td>
+</tr>
+<tr>
+<td>RabbitMq</td>
+<td>消息队列</td>
+<td><a target="_blank" rel="noopener" href="https://www.rabbitmq.com/">https://www.rabbitmq.com/</a></td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>分布式缓存</td>
+<td><a target="_blank" rel="noopener" href="https://redis.io/">https://redis.io/</a></td>
+</tr>
+<tr>
+<td>MongoDb</td>
+<td>NoSql数据库</td>
+<td><a target="_blank" rel="noopener" href="https://www.mongodb.com/">https://www.mongodb.com/</a></td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>应用容器引擎</td>
+<td><a target="_blank" rel="noopener" href="https://www.docker.com/">https://www.docker.com/</a></td>
+</tr>
+<tr>
+<td>Druid</td>
+<td>数据库连接池</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/alibaba/druid">https://github.com/alibaba/druid</a></td>
+</tr>
+<tr>
+<td>OSS</td>
+<td>对象存储</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/aliyun/aliyun-oss-java-sdk">https://github.com/aliyun/aliyun-oss-java-sdk</a></td>
+</tr>
+<tr>
+<td>MinIO</td>
+<td>对象存储</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/minio/minio">https://github.com/minio/minio</a></td>
+</tr>
+<tr>
+<td>JWT</td>
+<td>JWT登录支持</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/jwtk/jjwt">https://github.com/jwtk/jjwt</a></td>
+</tr>
+<tr>
+<td>LogStash</td>
+<td>日志收集</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/logstash/logstash-logback-encoder">https://github.com/logstash/logstash-logback-encoder</a></td>
+</tr>
+<tr>
+<td>Lombok</td>
+<td>简化对象封装工具</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/rzwitserloot/lombok">https://github.com/rzwitserloot/lombok</a></td>
+</tr>
+<tr>
+<td>Seata</td>
+<td>全局事务管理框架</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/seata/seata">https://github.com/seata/seata</a></td>
+</tr>
+<tr>
+<td>Portainer</td>
+<td>可视化Docker容器管理</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/portainer/portainer">https://github.com/portainer/portainer</a></td>
+</tr>
+<tr>
+<td>Jenkins</td>
+<td>自动化部署工具</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/jenkinsci/jenkins">https://github.com/jenkinsci/jenkins</a></td>
+</tr>
+</tbody></table>
+<h3 id="1-2-前端技术"><a href="#1-2-前端技术" class="headerlink" title="1.2 前端技术"></a>1.2 前端技术</h3><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>说明</th>
+<th>官网</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Vue</td>
+<td>前端框架</td>
+<td><a target="_blank" rel="noopener" href="https://vuejs.org/">https://vuejs.org/</a></td>
+</tr>
+<tr>
+<td>Vue-router</td>
+<td>路由框架</td>
+<td><a target="_blank" rel="noopener" href="https://router.vuejs.org/">https://router.vuejs.org/</a></td>
+</tr>
+<tr>
+<td>Vuex</td>
+<td>全局状态管理框架</td>
+<td><a target="_blank" rel="noopener" href="https://vuex.vuejs.org/">https://vuex.vuejs.org/</a></td>
+</tr>
+<tr>
+<td>Element</td>
+<td>前端UI框架</td>
+<td><a target="_blank" rel="noopener" href="https://element.eleme.io/">https://element.eleme.io/</a></td>
+</tr>
+<tr>
+<td>Axios</td>
+<td>前端HTTP框架</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/axios/axios">https://github.com/axios/axios</a></td>
+</tr>
+<tr>
+<td>v-charts</td>
+<td>基于Echarts的图表框架</td>
+<td><a target="_blank" rel="noopener" href="https://v-charts.js.org/">https://v-charts.js.org/</a></td>
+</tr>
+</tbody></table>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><h3 id="2-1-开发环境"><a href="#2-1-开发环境" class="headerlink" title="2.1 开发环境"></a>2.1 开发环境</h3><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>版本号</th>
+<th>下载</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JDK</td>
+<td>1.8</td>
+<td><a target="_blank" rel="noopener" href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html</a></td>
+</tr>
+<tr>
+<td>Mysql</td>
+<td>5.7</td>
+<td><a target="_blank" rel="noopener" href="https://www.mysql.com/">https://www.mysql.com/</a></td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>6.0</td>
+<td><a target="_blank" rel="noopener" href="https://redis.io/download">https://redis.io/download</a></td>
+</tr>
+<tr>
+<td>Elasticsearch</td>
+<td>7.6.2</td>
+<td><a target="_blank" rel="noopener" href="https://www.elastic.co/cn/downloads/elasticsearch">https://www.elastic.co/cn/downloads/elasticsearch</a></td>
+</tr>
+<tr>
+<td>Kibana</td>
+<td>7.6.2</td>
+<td><a target="_blank" rel="noopener" href="https://www.elastic.co/cn/downloads/kibana">https://www.elastic.co/cn/downloads/kibana</a></td>
+</tr>
+<tr>
+<td>Logstash</td>
+<td>7.6.2</td>
+<td><a target="_blank" rel="noopener" href="https://www.elastic.co/cn/downloads/logstash">https://www.elastic.co/cn/downloads/logstash</a></td>
+</tr>
+<tr>
+<td>MongoDb</td>
+<td>4.2.5</td>
+<td><a target="_blank" rel="noopener" href="https://www.mongodb.com/download-center">https://www.mongodb.com/download-center</a></td>
+</tr>
+<tr>
+<td>RabbitMq</td>
+<td>3.7.14</td>
+<td><a target="_blank" rel="noopener" href="http://www.rabbitmq.com/download.html">http://www.rabbitmq.com/download.html</a></td>
+</tr>
+<tr>
+<td>nginx</td>
+<td>1.10</td>
+<td><a target="_blank" rel="noopener" href="http://nginx.org/en/download.html">http://nginx.org/en/download.html</a></td>
+</tr>
+<tr>
+<td>maven</td>
+<td>3.5</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="2-2-mysql部署"><a href="#2-2-mysql部署" class="headerlink" title="2.2 mysql部署"></a>2.2 mysql部署</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">下载并安装mysql5.7版本，下载地址：https://dev.mysql.com/downloads/installer/</span><br><span class="line">设置数据库帐号密码：root root</span><br><span class="line">下载并安装客户端连接工具Navicat,下载地址：http://www.formysql.com/xiazai.html</span><br><span class="line"></span><br><span class="line">mysql yum源下载地址</span><br><span class="line">https://dev.mysql.com/downloads/repo/yum/</span><br><span class="line"></span><br><span class="line">打开5.7的安装源 关闭8.0的源</span><br><span class="line">vim /etc/yum.repos.d/mysql-community.repo</span><br><span class="line"># Enable to use MySQL 5.7</span><br><span class="line">[mysql57-community]</span><br><span class="line">name=MySQL 5.7 Community Server</span><br><span class="line">baseurl=http://repo.mysql.com/yum/mysql-5.7-community/el/7/$basearch/  [替换]</span><br><span class="line">enabled=1   [修改]</span><br><span class="line">gpgcheck=1</span><br><span class="line">gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql</span><br><span class="line"></span><br><span class="line">[mysql-cluster-8.0-community]</span><br><span class="line">name=MySQL Cluster 8.0 Community</span><br><span class="line">baseurl=http://repo.mysql.com/yum/mysql-cluster-8.0-community/el/6/$basearch/</span><br><span class="line">enabled=0   [修改]</span><br><span class="line">gpgcheck=1</span><br><span class="line">gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mysql</span><br><span class="line"></span><br><span class="line">重新加载缓存</span><br><span class="line">yum clean all &amp;&amp; yum makecache fast</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">yum -y install mysql-community-server</span><br><span class="line">systemctl start mysqld &amp;&amp; systemctl enable mysqld</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">使用弱密码并且改密码</span><br><span class="line">mysql&gt; set global validate_password_policy=0;  </span><br><span class="line">mysql&gt; set global validate_password_length=4; </span><br><span class="line">mysql&gt; alter user user() identified by &quot;root&quot;; 【密码自己定】</span><br><span class="line">mysql&gt; GRANT ALL PRIVILEGES ON *.* TO &#x27;root&#x27;@&#x27;%&#x27; IDENTIFIED BY &#x27;root&#x27; WITH GRANT OPTION;</span><br><span class="line"></span><br><span class="line">mysql&gt; create database mall;</span><br><span class="line"></span><br><span class="line">创建数据库mall    </span><br><span class="line">导入mall-swarm/document/sql下的mall.sql文件</span><br><span class="line"></span><br><span class="line">mysql -uroot -proot mall &lt; document/sql/mall.sql</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-Redis"><a href="#2-3-Redis" class="headerlink" title="2.3 Redis"></a>2.3 Redis</h3><ul>
+<li>下载Redis,下载地址：<a target="_blank" rel="noopener" href="https://download.redis.io/releases/redis-6.0.9.tar.gz">https://download.redis.io/releases/redis-6.0.9.tar.gz</a><br>bind: 0.0.0.0  [修改redis.conf 允许远程访问]<br>启动 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># yum install -y make gcc</span><br><span class="line"># make</span><br><span class="line"></span><br><span class="line">vim /etc/redis.conf</span><br><span class="line">bind 0.0.0.0</span><br><span class="line"></span><br><span class="line">systemctl restart redis</span><br></pre></td></tr></table></figure></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">编译报错注意gcc版本问题</span><br><span class="line"># yum -y install centos-release-scl  # 升级到9.1版本</span><br><span class="line"># yum -y install devtoolset-9-gcc devtoolset-9-gcc-c++ devtoolset-9-binutils</span><br><span class="line"># scl enable devtoolset-9 bash</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="2-4-JDK-maven部署"><a href="#2-4-JDK-maven部署" class="headerlink" title="2.4 JDK &amp; maven部署"></a>2.4 JDK &amp; maven部署</h3><p>所有部署微服务的机器都要部署</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">tar xvzf jdk-8u271-linux-x64.tar.gz  -C /usr/local/</span><br><span class="line">ls /usr/local/jdk1.8.0_271/</span><br><span class="line">vim /etc/profile.d/java.sh</span><br><span class="line">JAVA_HOME=/usr/local/jdk1.8.0_271</span><br><span class="line">PATH=$PATH:$JAVA_HOME/bin</span><br><span class="line">export JAVA_HOME PATH</span><br><span class="line"></span><br><span class="line">source /etc/profile.d/java.sh</span><br><span class="line">java -version</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">maven下载地址:</span><br><span class="line">https://maven.apache.org/download.cgi</span><br><span class="line"></span><br><span class="line">下载bin包地址:</span><br><span class="line">wget https://mirrors.bfsu.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip</span><br><span class="line"></span><br><span class="line">解压压缩包:</span><br><span class="line">unzip -d /usr/local/ apache-maven-3.6.3-bin.zip</span><br><span class="line"></span><br><span class="line">配置环境变量:</span><br><span class="line">vim /etc/profile.d/mvn.sh </span><br><span class="line">MVN_HOME=/usr/local/apache-maven-3.6.3</span><br><span class="line">PATH=$PATH:$MVN_HOME/bin</span><br><span class="line">export PATH MVN_HOME</span><br><span class="line"></span><br><span class="line">source /etc/profile</span><br><span class="line"></span><br><span class="line">mvn -version</span><br><span class="line">Apache Maven 3.6.3 (cecedd343002696d0abb50b32b541b8a6ba2883f)</span><br><span class="line">Maven home: /usr/local/apache-maven-3.6.3</span><br><span class="line">Java version: 1.8.0_271, vendor: Oracle Corporation, runtime: /usr/local/java8/jre</span><br><span class="line">Default locale: en_US, platform encoding: UTF-8</span><br><span class="line">OS name: &quot;linux&quot;, version: &quot;3.10.0-957.el7.x86_64&quot;, arch: &quot;amd64&quot;, family: &quot;unix&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">配置mvn加速</span><br><span class="line"></span><br><span class="line">vim /usr/local/apache-maven-3.6.3/conf/settings.xml</span><br><span class="line"></span><br><span class="line">在 &lt;mirrors&gt;  &lt;/mirrors&gt;模块中添加下列配置</span><br><span class="line">&lt;mirror&gt;</span><br><span class="line">        &lt;id&gt;nexus-aliyun&lt;/id&gt;</span><br><span class="line">        &lt;mirrorOf&gt;*&lt;/mirrorOf&gt;</span><br><span class="line">        &lt;name&gt;Nexus aliyun&lt;/name&gt;</span><br><span class="line">        &lt;url&gt;http://maven.aliyun.com/nexus/content/groups/public&lt;/url&gt;</span><br><span class="line">    &lt;/mirror&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-5-Elasticsearch"><a href="#2-5-Elasticsearch" class="headerlink" title="2.5 Elasticsearch"></a>2.5 Elasticsearch</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line">[改机器需要先部署JDK]</span><br><span class="line"></span><br><span class="line">下载Elasticsearch7.6.2的zip包，并解压到指定目录，  [https://elasticsearch.cn/download/]</span><br><span class="line">https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.2-linux-x86_64.tar.gz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">安装中文分词插件，在elasticsearch-7.6.2\bin目录下执行以下命令： [分词器因依赖jdk版本不同，暂不安装]</span><br><span class="line">elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.6.2/elasticsearch-analysis-ik-7.6.2.zip</span><br><span class="line"></span><br><span class="line">运行bin目录下的elasticsearch.sh启动Elasticsearch服务。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">--------</span><br><span class="line"></span><br><span class="line">具体部署过程:</span><br><span class="line">tar xvzf elasticsearch-7.6.2-linux-x86_64.tar.gz -C /usr/local</span><br><span class="line">useradd ela</span><br><span class="line">passwd ela</span><br><span class="line"></span><br><span class="line">chown -R ela.ela /usr/local/elasticsearch-7.6.2/</span><br><span class="line"></span><br><span class="line">su - ela</span><br><span class="line"></span><br><span class="line">vim /usr/local/elasticsearch-7.6.2/config/elasticsearch.yml </span><br><span class="line">cluster.name: tiger</span><br><span class="line">node.name: elk01</span><br><span class="line">cluster.initial_master_nodes: [&quot;elk01&quot;]  #单节点增加该项目</span><br><span class="line">node.master: true</span><br><span class="line">node.data: true</span><br><span class="line">path.data: /data/elasticsearch/data</span><br><span class="line">path.logs: /data/elasticsearch/logs</span><br><span class="line">bootstrap.memory_lock: false</span><br><span class="line">bootstrap.system_call_filter: false</span><br><span class="line">network.host: 0.0.0.0</span><br><span class="line">http.port: 9200</span><br><span class="line">#discovery.zen.ping.unicast.hosts: [&quot;172.16.244.26&quot;, &quot;172.16.244.27&quot;]</span><br><span class="line">#discovery.zen.minimum_master_nodes: 2</span><br><span class="line">#discovery.zen.ping_timeout: 150s</span><br><span class="line">#discovery.zen.fd.ping_retries: 10</span><br><span class="line">#client.transport.ping_timeout: 60s</span><br><span class="line">http.cors.enabled: true</span><br><span class="line">http.cors.allow-origin: &quot;*&quot;</span><br><span class="line"></span><br><span class="line">sed -i &#x27;s/-Xms1g/-Xms4g/&#x27; /usr/local/elasticsearch-7.6.2/config/jvm.options</span><br><span class="line">sed -i &#x27;s/-Xmx1g/-Xmx4g/&#x27; /usr/local/elasticsearch-7.6.2/config/jvm.options</span><br><span class="line"></span><br><span class="line">创建ES数据及日志存储目录并授权</span><br><span class="line">mkdir -p /data/elasticsearch/data</span><br><span class="line">mkdir -p /data/elasticsearch/logs</span><br><span class="line">chown -R ela.ela /data/elasticsearch/</span><br><span class="line">chown -R ela.ela /usr/local/elasticsearch-7.6.2/</span><br><span class="line"></span><br><span class="line">增加最大文件打开数</span><br><span class="line">vim /etc/security/limits.conf</span><br><span class="line">* soft nofile 65536</span><br><span class="line">* hard nofile 131072</span><br><span class="line">* soft nproc 2048</span><br><span class="line">* hard nproc 4096</span><br><span class="line">* soft memlock unlimited </span><br><span class="line">* hard memlock unlimited</span><br><span class="line"></span><br><span class="line">增加最大内存映射数【root身份执行】</span><br><span class="line">echo &quot;vm.max_map_count=262144&quot; &gt;&gt; /etc/sysctl.conf</span><br><span class="line">sysctl -p</span><br><span class="line"></span><br><span class="line">启动</span><br><span class="line">cd /usr/local/elasticsearch-7.6.2/</span><br><span class="line">$ nohup bin/elasticsearch &amp;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">--------------</span><br><span class="line">docker 部署 es+kibana</span><br><span class="line">mkdir -p /data/elasticsearch</span><br><span class="line"></span><br><span class="line">docker run -dit --name elk \</span><br><span class="line">-p 5601:5601 \</span><br><span class="line">-p 9200:9200 \</span><br><span class="line">-p 5044:5044 \</span><br><span class="line">-v /data/elasticsearch:/var/lib/elasticsearch \</span><br><span class="line">-v /etc/localtime:/etc/localtime \</span><br><span class="line">sebp/elk:762</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-6-Kibana"><a href="#2-6-Kibana" class="headerlink" title="2.6 Kibana"></a>2.6 Kibana</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">下载Kibana，作为访问Elasticsearch的客户端，请下载7.6.2版本的zip包，并解压到指定目录，</span><br><span class="line">https://artifacts.elastic.co/downloads/kibana/kibana-7.6.2-linux-x86_64.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-7-logstash"><a href="#2-7-logstash" class="headerlink" title="2.7 logstash"></a>2.7 logstash</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">下载Logstash，用于收集日志，请下载7.6.2版本的zip包，并解压到指定目录，</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-8-docker-部署-ELK-不用部署"><a href="#2-8-docker-部署-ELK-不用部署" class="headerlink" title="2.8 docker 部署 ELK [不用部署]"></a>2.8 docker 部署 ELK [不用部署]</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">   84  yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">   85   yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br><span class="line">   86  yum makecache fast</span><br><span class="line">   87   yum -y install docker-ce</span><br><span class="line">   88  mkdir -p /etc/docker</span><br><span class="line">   89  vim  /etc/docker/daemon.json  [在网上自己找]</span><br><span class="line">   </span><br><span class="line">   90  systemctl restart docker</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">增加最大文件打开数</span><br><span class="line">vim /etc/security/limits.conf</span><br><span class="line">* soft nofile 65536</span><br><span class="line">* hard nofile 131072</span><br><span class="line">* soft nproc 2048</span><br><span class="line">* hard nproc 4096</span><br><span class="line">* soft memlock unlimited </span><br><span class="line">* hard memlock unlimited</span><br><span class="line"></span><br><span class="line">增加最大内存映射数【root身份执行】</span><br><span class="line">echo &quot;vm.max_map_count=262144&quot; &gt;&gt; /etc/sysctl.conf</span><br><span class="line">sysctl -p</span><br><span class="line"></span><br><span class="line">启动</span><br><span class="line">cd /usr/local/elasticsearch-7.6.2/</span><br><span class="line">$ nohup bin/elasticsearch &amp;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">docker 部署ELK</span><br><span class="line">mkdir -p /data/elasticsearch</span><br><span class="line"></span><br><span class="line">docker run -dit --name elk \</span><br><span class="line">-p 5601:5601 \</span><br><span class="line">-p 9200:9200 \</span><br><span class="line">-p 5044:5044 \</span><br><span class="line">-v /data/elasticsearch:/var/lib/elasticsearch \</span><br><span class="line">-v /etc/localtime:/etc/localtime \</span><br><span class="line">sebp/elk:762</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-9-Mongodb"><a href="#2-9-Mongodb" class="headerlink" title="2.9 Mongodb"></a>2.9 Mongodb</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">参考: https://www.runoob.com/mongodb/mongodb-linux-install.html</span><br><span class="line"></span><br><span class="line">https://www.mongodb.com/try/download/community</span><br><span class="line"></span><br><span class="line">https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.2.11.tgz</span><br><span class="line">4.2.11</span><br><span class="line"></span><br><span class="line">tar xvf mongodb-linux-x86_64-rhel70-4.2.11.tgz  -C /usr/local/</span><br><span class="line"></span><br><span class="line">cat /etc/profile.d/mongo.sh</span><br><span class="line">MONGO_HOME=/usr/local/mongodb-linux-x86_64-rhel70-4.2.11</span><br><span class="line">PATH=$PATH:$MONGO_HOME/bin</span><br><span class="line">export PATH MONGO_HOME</span><br><span class="line"></span><br><span class="line">source /etc/profile.d/mongo.sh</span><br><span class="line"></span><br><span class="line">创建数据库目录</span><br><span class="line">默认情况下 MongoDB 启动后会初始化以下两个目录：</span><br><span class="line"></span><br><span class="line">数据存储目录：/var/lib/mongo</span><br><span class="line">日志文件目录：/var/log/mongodb</span><br><span class="line">我们在启动前可以先创建这两个目录并设置当前用户有读写权限：</span><br><span class="line"></span><br><span class="line">mkdir -p /var/lib/mongo</span><br><span class="line">mkdir -p /var/log/mongodb</span><br><span class="line">chown `whoami` /var/lib/mongo     # 设置权限</span><br><span class="line">chown `whoami` /var/log/mongodb   # 设置权限</span><br><span class="line">接下来启动 Mongodb 服务：</span><br><span class="line"></span><br><span class="line">mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork</span><br><span class="line"></span><br><span class="line">！！！</span><br><span class="line">增加 --bind_ip=0.0.0.0允许远程访问</span><br><span class="line">mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log  --bind_ip=0.0.0.0 --fork</span><br><span class="line"></span><br><span class="line">打开 /var/log/mongodb/mongod.log 文件看到以下信息，说明启动成功。</span><br><span class="line"># tail -100f /var/log/mongodb/mongod.log</span><br><span class="line">2020-12-04T20:23:16.723+0800 I  STORAGE  [LogicalSessionCacheRefresh] createCollection: config.system.sessions with provided UUID: f243ffd7-156e-4b6a-bb0f-b82cee825eb6 and options: &#123; uuid: UUID(&quot;f243ffd7-156e-4b6a-bb0f-b82cee825eb6&quot;) &#125;</span><br><span class="line">2020-12-04T20:23:16.724+0800 I  NETWORK  [listener] Listening on /tmp/mongodb-27017.sock</span><br><span class="line">2020-12-04T20:23:16.724+0800 I  NETWORK  [listener] Listening on 0.0.0.0</span><br><span class="line">2020-12-04T20:23:16.724+0800 I  NETWORK  [listener] waiting for connections on port 27017</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">MongoDB 后台管理 Shell</span><br><span class="line">如果你需要进入 mongodb 后台管理，你需要先打开 mongodb 装目录的下的 bin 目录，然后执行 mongo 命令文件。</span><br><span class="line"></span><br><span class="line">MongoDB Shell 是 MongoDB 自带的交互式 Javascript shell，用来对 MongoDB 进行操作和管理的交互式环境。</span><br><span class="line"></span><br><span class="line">当你进入 mongoDB 后台后，它默认会链接到 test 文档（数据库）：</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">--------------------</span><br><span class="line">docker部署</span><br><span class="line">docker pull mongo:4.2.11</span><br><span class="line"></span><br><span class="line">docker run --name mongodb -v /data/mongo:/data/db -p 27017:27017 -d mongo:4.2.11</span><br><span class="line">docker exec -it mongodb bash</span><br><span class="line">vim /etc/mongod.conf.orig</span><br><span class="line">注释掉# bindIp: 127.0.0.1</span><br><span class="line">或者改成bindIp: 0.0.0.0</span><br><span class="line">即可开启远程连接</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/20201204202152.png#id=Ja4o2&originHeight=405&originWidth=485&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h3 id="2-10-rabbitmq部署"><a href="#2-10-rabbitmq部署" class="headerlink" title="2.10 rabbitmq部署"></a>2.10 rabbitmq部署</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">erlang和rabbitmq版本依赖说明</span><br><span class="line">https://www.rabbitmq.com/which-erlang.html</span><br><span class="line"></span><br><span class="line">[root@rabbitmq-1 ~]# yum install -y epel-release gcc-c++ unixODBC unixODBC-devel openssl-devel ncurses-devel</span><br><span class="line">yum安装erlang</span><br><span class="line">[root@rabbitmq-1 ~]# curl -s https://packagecloud.io/install/repositories/rabbitmq/erlang/script.rpm.sh | sudo bash</span><br><span class="line">[root@rabbitmq-1 ~]# yum install erlang-21.3.8.21-1.el7.x86_64</span><br><span class="line">测试；</span><br><span class="line">[root@rabbitmq-1 ~]# erl</span><br><span class="line">Erlang/OTP 20 [erts-9.3] [source] [64-bit] [smp:1:1] [ds:1:1:10] [async-threads:10] [hipe] [kernel-poll:false]</span><br><span class="line"></span><br><span class="line">Eshell V9.3  (abort with ^G)</span><br><span class="line"><span class="meta prompt_">1&gt;</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"></span></span><br><span class="line">安装rabbitmq</span><br><span class="line">https://github.com/rabbitmq/rabbitmq-server/releases/tag/v3.7.10</span><br><span class="line">[root@rabbitmq-1 ~]# yum install rabbitmq-server-3.7.10-1.el7.noarch.rpm</span><br><span class="line">[root@rabbitmq-1 ~]# cp /usr/share/doc/rabbitmq-server-3.7.10/rabbitmq.config.example /etc/rabbitmq/rabbitmq.config</span><br><span class="line">打开注释	&#123;loopback_users, []&#125;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">rabbitmq 和erlang兼容版本</span></span><br><span class="line">https://www.rabbitmq.com/which-erlang.html</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">erlang 版本选择</span></span><br><span class="line">https://packagecloud.io/rabbitmq/erlang</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">rabbitmq 版本选择</span></span><br><span class="line">https://www.rabbitmq.com/news.html</span><br><span class="line"></span><br><span class="line">3.启动</span><br><span class="line">[root@rabbitmq-1 ~]# systemctl daemon-reload</span><br><span class="line">[root@rabbitmq-1 ~]# systemctl start rabbitmq-server</span><br><span class="line">[root@rabbitmq-1 ~]# systemctl enable rabbitmq-server</span><br><span class="line">启动方式二:</span><br><span class="line">[root@rabbitmq-1 ~]# /sbin/service rabbitmq-server status  ---查看状态</span><br><span class="line">[root@rabbitmq-1 ~]# /sbin/service rabbitmq-server start   ---启动</span><br><span class="line">每台都操作开启rabbitmq的web访问界面：</span><br><span class="line">[root@rabbitmq-1 ~]# rabbitmq-plugins enable rabbitmq_management</span><br></pre></td></tr></table></figure>
+<h4 id="添加用户-mall，权限为administrator"><a href="#添加用户-mall，权限为administrator" class="headerlink" title="添加用户 mall，权限为administrator"></a>添加用户 mall，权限为administrator</h4><h3 id=""><a href="#" class="headerlink" title=""></a><img src="https://img.beyourself.org.cn/20201205235723.png#id=jeuFU&originHeight=262&originWidth=974&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></h3><h4 id="创建一个新的虚拟host为：-mall"><a href="#创建一个新的虚拟host为：-mall" class="headerlink" title="创建一个新的虚拟host为：&#x2F;mall"></a>创建一个新的虚拟host为：&#x2F;mall</h4><h3 id="-1"><a href="#-1" class="headerlink" title=""></a><img src="https://tigerfive.oss-cn-beijing.aliyuncs.com/20201205235823.png#id=aNP1d&originHeight=487&originWidth=1231&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></h3><h3 id="-2"><a href="#-2" class="headerlink" title=""></a></h3><h4 id="mall用户配置该虚拟host的权限"><a href="#mall用户配置该虚拟host的权限" class="headerlink" title="mall用户配置该虚拟host的权限"></a>mall用户配置该虚拟host的权限</h4><h3 id="-3"><a href="#-3" class="headerlink" title=""></a></h3><h3 id="-4"><a href="#-4" class="headerlink" title=""></a><img src="https://img.beyourself.org.cn/20201206000014.png#id=RDCCA&originHeight=533&originWidth=1865&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></h3><h3 id="-5"><a href="#-5" class="headerlink" title=""></a></h3><h3 id="-6"><a href="#-6" class="headerlink" title=""></a><img src="https://img.beyourself.org.cn/20201205235935.png#id=jezmZ&originHeight=303&originWidth=735&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></h3><h2 id="OSS-可以不配置"><a href="#OSS-可以不配置" class="headerlink" title="OSS[可以不配置]"></a>OSS[可以不配置]</h2><h3 id="3-1-开通OSS服务"><a href="#3-1-开通OSS服务" class="headerlink" title="3.1 开通OSS服务"></a>3.1 开通OSS服务</h3><ul>
+<li>登录阿里云官网；</li>
+<li>将鼠标移至产品标签页，单击对象存储 OSS，打开OSS 产品详情页面；</li>
+<li>在OSS产品详情页，单击立即开通。</li>
+</ul>
+<h3 id="3-2-创建存储空间"><a href="#3-2-创建存储空间" class="headerlink" title="3.2 创建存储空间"></a>3.2 创建存储空间</h3><ul>
+<li>点击网页右上角控制台按钮进入控制台；</li>
+</ul>
+<p><img src="https://img.beyourself.org.cn/20201204220857.png#id=WermK&originHeight=64&originWidth=788&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<ul>
+<li>选择我的云产品中的对象存储OSS；</li>
+</ul>
+<p><img src="https://img.beyourself.org.cn/20201204221007.png#id=KrhXl&originHeight=151&originWidth=1407&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<ul>
+<li>点击左侧存储空间的加号新建存储空间；</li>
+</ul>
+<p><img src="http://www.macrozheng.com/images/mall_windows_deploy_36.png#id=cclYM&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<ul>
+<li>新建存储空间并设置读写权限为公共读。</li>
+</ul>
+<p><img src="https://img.beyourself.org.cn/20201204220904.png#id=k4lDe&originHeight=796&originWidth=790&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h3 id="3-3-跨域资源共享（CORS）的设置"><a href="#3-3-跨域资源共享（CORS）的设置" class="headerlink" title="3.3 跨域资源共享（CORS）的设置"></a>3.3 <a target="_blank" rel="noopener" href="http://www.macrozheng.com/#/deploy/mall_deploy_windows?id=%E8%B7%A8%E5%9F%9F%E8%B5%84%E6%BA%90%E5%85%B1%E4%BA%AB%EF%BC%88cors%EF%BC%89%E7%9A%84%E8%AE%BE%E7%BD%AE">跨域资源共享（CORS）的设置</a></h3><ul>
+<li>选择一个存储空间，打开其基础设置；</li>
+</ul>
+<p><img src="https://img.beyourself.org.cn/20201204220908.png#id=O28s6&originHeight=363&originWidth=791&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<ul>
+<li>点击跨越设置的设置按钮；</li>
+</ul>
+<p><img src="https://img.beyourself.org.cn/20201204220912.png#id=z9Tji&originHeight=183&originWidth=727&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<ul>
+<li>点击创建规则；</li>
+</ul>
+<p><img src="http://www.macrozheng.com/images/mall_windows_deploy_40.png#id=QOqXF&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<ul>
+<li>进行跨域规则设置；</li>
+</ul>
+<p><img src="https://img.beyourself.org.cn/20201204220915.png#id=pXqN0&originHeight=682&originWidth=810&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Endpoint（地域节点）</th>
+<th>Bucket 域名</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>外网访问</td>
+<td>oss-cn-beijing.aliyuncs.com</td>
+<td>tigerfive-macro-oss.oss-cn-beijing.aliyuncs.com</td>
+</tr>
+<tr>
+<td>ECS 的经典网络访问（内网）</td>
+<td>oss-cn-beijing-internal.aliyuncs.com</td>
+<td>tigerfive-macro-oss.oss-cn-beijing-internal.aliyuncs.com</td>
+</tr>
+<tr>
+<td>ECS 的 VPC 网络访问（内网）</td>
+<td>oss-cn-beijing-internal.aliyuncs.com</td>
+<td>tigerfive-macro-oss.oss-cn-beijing-internal.aliyuncs.com</td>
+</tr>
+</tbody></table>
+<h2 id="nacos-注册中心搭建"><a href="#nacos-注册中心搭建" class="headerlink" title="nacos 注册中心搭建"></a>nacos 注册中心搭建</h2><h3 id="4-1-部署nacos"><a href="#4-1-部署nacos" class="headerlink" title="4.1 部署nacos"></a>4.1 部署nacos</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; create database nacos;</span><br><span class="line"></span><br><span class="line">下载软件包 https://github.com/alibaba/nacos/releases   [1.4.0版本]</span><br><span class="line"></span><br><span class="line">https://github.com/alibaba/nacos/releases/download/1.4.0/nacos-server-1.4.0.tar.gz</span><br><span class="line"></span><br><span class="line">tar xzvf nacos-server-1.4.0.tar.gz  -C /usr/local</span><br><span class="line"></span><br><span class="line">cd /usr/local/nacos/conf</span><br><span class="line"></span><br><span class="line">\#nacos-mysql.sql 导入到Mysql</span><br><span class="line"></span><br><span class="line">mysql -uroot -p&#x27;root&#x27; nacos &lt; nacos-mysql.sql </span><br><span class="line"></span><br><span class="line">\#导入成功后，修改 application.properties 配置文件  [1.4前三行不用配置]</span><br><span class="line"></span><br><span class="line">server.contextPath=/nacos</span><br><span class="line">server.servlet.contextPath=/nacos</span><br><span class="line">server.port=8848</span><br><span class="line"></span><br><span class="line">spring.datasource.platform=mysql</span><br><span class="line">db.num=1</span><br><span class="line"></span><br><span class="line">db.url.0=jdbc:mysql://mysql_ip:3306/nacos? characterEncoding=utf8&amp;connectTimeout=1000&amp;socketTimeout=3000&amp;autoReconnect=true   [改IP]</span><br><span class="line"></span><br><span class="line">db.user=root </span><br><span class="line"></span><br><span class="line">db.password=root</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/20201204222147.png#id=tnXiJ&originHeight=406&originWidth=1882&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><img src="https://img.beyourself.org.cn/20201204222200.png#id=YhKpr&originHeight=545&originWidth=1909&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># cd ../bin/</span><br><span class="line"># sh startup.sh -m standalone</span><br><span class="line"># 查看日志 /usr/local/nacos/logs/start.out</span><br><span class="line"># 启动后访问</span><br><span class="line">http://192.168.190.128:8848/nacos/index.html</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/20201204222304.png#id=RCHFC&originHeight=533&originWidth=1909&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h3 id="4-2-修改配置使用配置中心"><a href="#4-2-修改配置使用配置中心" class="headerlink" title="4.2 修改配置使用配置中心"></a>4.2 修改配置使用配置中心</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">以mall-search为例</span><br><span class="line"># ls mall-search/src/main/resources/</span><br><span class="line">application.yml  bootstrap-dev.yml  bootstrap-prod.yml  bootstrap.yml  dao</span><br><span class="line"></span><br><span class="line">在配置中心添加配置</span><br><span class="line">Data ID: mall-search-dev.yaml    </span><br><span class="line">Group: DEFAULT_GROUP</span><br><span class="line">配置格式: yaml</span><br><span class="line">内容: application.yml</span><br><span class="line"></span><br><span class="line">删除application.yml  bootstrap-dev.yml  bootstrap-prod.yml</span><br><span class="line">修改 bootstrap.yml 如下</span><br><span class="line"># cat mall-search/src/main/resources/bootstrap.yml </span><br><span class="line">spring:</span><br><span class="line">  profiles:</span><br><span class="line">    active: dev</span><br><span class="line">  application:</span><br><span class="line">    name: mall-search</span><br><span class="line">  cloud:</span><br><span class="line">    nacos:</span><br><span class="line">      discovery:</span><br><span class="line">        server-addr: http://192.168.100.250:8848</span><br><span class="line">      config:</span><br><span class="line">        server-addr: http://192.168.100.250:8848</span><br><span class="line">        file-extension: yaml</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/image-20220908110310034.png#id=sk15a&originHeight=792&originWidth=1251&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h3 id="4-3-打包项目启动"><a href="#4-3-打包项目启动" class="headerlink" title="4.3 打包项目启动"></a>4.3 打包项目启动</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">修改配置文件的中的 [比如mall-portal]</span><br><span class="line">application.yml  bootstrap-dev.yml 中的对应服务IP和认证配置</span><br><span class="line">以及config目录下各个服务的ip</span><br><span class="line"></span><br><span class="line">在IDE中用 maven工具对 root目录 执行install，把私有包加载到私有库或者本地库中  [mvn install]</span><br><span class="line">[ linux上配置maven用  mvn package -Dskip.test=true打包]</span><br><span class="line"></span><br><span class="line">然后打包</span><br><span class="line"></span><br><span class="line">依次部署项目</span><br><span class="line"></span><br><span class="line">启动前台服务mall-portal</span><br><span class="line">启动网关服务mall-gateway</span><br><span class="line">启动认证中心mall-auth</span><br><span class="line">启动后台管理服务mall-admin</span><br><span class="line">启动搜索服务mall-search</span><br><span class="line">启动监控中心mall-monitor</span><br><span class="line"></span><br><span class="line">find ./ -name &#x27;*jar&#x27; |xargs -I &#123;&#125; cp &#123;&#125; /app</span><br><span class="line"></span><br><span class="line">nohup java -jar mall-portal-1.0-SNAPSHOT.jar &gt; /logs/mall-portal.log &amp;</span><br><span class="line">nohup java -jar mall-gateway-1.0-SNAPSHOT.jar &gt; /logs/mall-gateway.log &amp;</span><br><span class="line">nohup java -jar mall-auth-1.0-SNAPSHOT.jar &gt; /logs/mall-auth.log &amp;</span><br><span class="line">nohup java -jar mall-admin-1.0-SNAPSHOT.jar  &gt; /logs/mall-admin.log &amp;</span><br><span class="line">nohup java -jar mall-search-1.0-SNAPSHOT.jar &gt; /logs/mall-search.log &amp;</span><br><span class="line">nohup java -jar mall-monitor-1.0-SNAPSHOT.jar &gt; /logs/mall-monitor.log &amp;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">运行完成后可以通过监控中心查看监控信息，账号密码为 macro:123456：http://localhost:8101</span><br><span class="line"></span><br><span class="line">运行完成后可以直接通过如下地址访问API文档：http://localhost:8201/doc.html</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="http://localhost:8101/">http://localhost:8101</a></p>
+<p><img src="https://img.beyourself.org.cn/20201204232821.png#id=JK2Ct&originHeight=978&originWidth=1908&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><a target="_blank" rel="noopener" href="http://localhost:8201/doc.html">http://localhost:8201/doc.html</a></p>
+<p><img src="https://img.beyourself.org.cn/20201204233004.png#id=ITwfF&originHeight=988&originWidth=1911&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<ul>
+<li>如何访问需要登录的接口，先调用认证中心接口获取token，后台管理<code>client_id</code>和<code>client_secret</code>为<code>admin-app:123456</code>，前台系统为<code>portal-app:123456</code>；</li>
+</ul>
+<p><img src="https://img.beyourself.org.cn/20201204233543.png#id=EBIPh&originHeight=865&originWidth=1327&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<ul>
+<li>然后将token添加到请求头中，即可访问需要权限的接口了。</li>
+</ul>
+<p><img src="https://img.beyourself.org.cn/20201204233605.png#id=hVoJV&originHeight=867&originWidth=1327&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h2 id="效果展示"><a href="#效果展示" class="headerlink" title="效果展示"></a>效果展示</h2><ul>
+<li>注册中心服务信息，访问地址：<a target="_blank" rel="noopener" href="http://localhost:8848/nacos/">http://localhost:8848/nacos/</a></li>
+<li>用户名：nacos</li>
+<li>密码：nacos</li>
+</ul>
+<p><img src="https://img.beyourself.org.cn/20201204233731.png#id=v4Dje&originHeight=843&originWidth=1907&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p>监控中心服务概览信息，访问地址：<a target="_blank" rel="noopener" href="http://localhost:8101/">http://localhost:8101</a></p>
+<p><img src="https://img.beyourself.org.cn/20201204233946.png#id=DTYHj&originHeight=963&originWidth=1776&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><img src="https://img.beyourself.org.cn/20201204234149.png#id=i5N9W&originHeight=850&originWidth=1896&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<ul>
+<li>日志收集系统信息，访问地址：<a target="_blank" rel="noopener" href="http://localhost:5601/">http://localhost:5601</a></li>
+</ul>
+<p><img src="https://img.beyourself.org.cn/20201204234425.png#id=gzmIm&originHeight=817&originWidth=1351&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h2 id="前端项目打包部署"><a href="#前端项目打包部署" class="headerlink" title="前端项目打包部署"></a>前端项目打包部署</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">node环境 </span><br><span class="line"># wget https://npm.taobao.org/mirrors/node/v14.15.1/node-v14.15.1-linux-x64.tar.xz</span><br><span class="line"># tar xvf node-v14.15.1-linux-x64.tar.xz -C /usr/local/</span><br><span class="line"></span><br><span class="line"># cat /etc/profile.d/npm.sh</span><br><span class="line">NODE_HOME=/usr/local/node-v14.15.1-linux-x64</span><br><span class="line">PATH=$NODE_HOME/bin:$PATH</span><br><span class="line">export NODE_HOME PATH</span><br><span class="line"></span><br><span class="line"># source /etc/profile.d/npm.sh</span><br><span class="line">    #检查node版本号</span><br><span class="line">npm --version </span><br><span class="line">---------------------------------</span><br><span class="line"># 修改前端代码，连接后端的IP地址</span><br><span class="line">git clone https://gitee.com/macrozheng/mall-admin-web.git    XXX</span><br><span class="line">修改 mall-admin-web/config 下dev.env.js 和 prod.env.js中</span><br><span class="line">module.exports = &#123;</span><br><span class="line">  NODE_ENV: &#x27;&quot;production&quot;&#x27;,</span><br><span class="line">  BASE_API: &#x27;&quot;http://192.168.0.106:8201/mall-admin&quot;&#x27;   //修改改IP为Nginx IP</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">--------------------------</span><br><span class="line">安装webpackage</span><br><span class="line"># npm install webpack -g --registry=https://registry.npm.taobao.org</span><br><span class="line"># npm install webpack -g --registry=http://registry.npmmirror.com</span><br><span class="line">//安装指定版本cnpm，否则版本过高，会导致模块安装失败</span><br><span class="line"># npm install -g cnpm@7.1.0  --registry=https://registry.npm.taobao.org</span><br><span class="line"># npm install -g cnpm@7.1.0  --registry=http://registry.npmmirror.com</span><br><span class="line"></span><br><span class="line"># cnpm install -g @vue/cli-service</span><br><span class="line"></span><br><span class="line">-------------------</span><br><span class="line">项目打包部署</span><br><span class="line">配置node 和 npm环境打包项目</span><br><span class="line">cnpm install    //下载项目依赖</span><br><span class="line">cnpm run build    //打包dev环境的包</span><br><span class="line"></span><br><span class="line">------------</span><br><span class="line">项目发布</span><br><span class="line">cp -r ./dist/* /usr/share/nginx/html</span><br></pre></td></tr></table></figure>
+
+<h2 id="Nginx部署及解决跨域问题"><a href="#Nginx部署及解决跨域问题" class="headerlink" title="Nginx部署及解决跨域问题"></a>Nginx部署及解决跨域问题</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"># vim conf/nginx.conf</span><br><span class="line">user root;</span><br><span class="line">worker_processes  1;</span><br><span class="line"></span><br><span class="line">error_log  /var/log/nginx/error.log warn;</span><br><span class="line">pid        /var/run/nginx.pid;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    include       /etc/nginx/mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    log_format  main  &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span><br><span class="line">                      &#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span><br><span class="line">                      &#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;;</span><br><span class="line"></span><br><span class="line">    access_log  /var/log/nginx/access.log  main;</span><br><span class="line"></span><br><span class="line">    sendfile        on;</span><br><span class="line">    #tcp_nopush     on;</span><br><span class="line"></span><br><span class="line">    keepalive_timeout  65;</span><br><span class="line"></span><br><span class="line">    #gzip  on;</span><br><span class="line"></span><br><span class="line">   server &#123;</span><br><span class="line">      listen 80;</span><br><span class="line">      server_name 192.168.0.106;</span><br><span class="line">     </span><br><span class="line">     location /</span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">        root /usr/share/nginx/html;</span><br><span class="line">        index index.html index.htm;</span><br><span class="line">        add_header Access-Control-Allow-Origin *;</span><br><span class="line">        add_header Access-Control-Allow-Methods &#x27;GET, POST, OPTIONS&#x27;;</span><br><span class="line">        add_header Access-Control-Allow-Headers &#x27;DNT, X-Mx-ReqToken, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization&#x27;;</span><br><span class="line">        if ($request_method = &#x27;OPTIONS&#x27;) &#123;</span><br><span class="line">           return 204;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    location /mall-admin &#123;</span><br><span class="line">      proxy_pass http://192.168.0.106:8201/mall-admin;  # 网关的IP  </span><br><span class="line">      proxy_redirect off;</span><br><span class="line">      proxy_set_header Host $http_host;</span><br><span class="line">      proxy_set_header X-Forward-For $remote_addr;</span><br><span class="line">      proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">      # 跨域</span><br><span class="line">      add_header Access-Control-Allow-Methods *;</span><br><span class="line">      add_header Access-Control-Max-Age 3600;</span><br><span class="line">      add_header Access-Control-Allow-Credentials true;</span><br><span class="line">      add_header Access-Control-Allow-Origin $http_origin;</span><br><span class="line">      add_header Access-Control-Allow-Headers $http_access_control_request_headers;</span><br><span class="line">      if ($request_method = OPTIONS ) &#123;</span><br><span class="line">        return 200;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="登录web页面"><a href="#登录web页面" class="headerlink" title="登录web页面"></a>登录web页面</h3><blockquote>
+<p>用户名：admin<br>密码：macro123</p>
+</blockquote>
+<p>​	</p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/07/26/微服务项目-mall-swarm/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="toc-number">1.</span> <span class="toc-text">一、架构图</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E6%9E%B6%E6%9E%84"><span class="toc-number">1.1.</span> <span class="toc-text">完整架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">业务架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E6%B5%81%E7%A8%8B%E6%9E%B6%E6%9E%84-%E7%99%BB%E5%BD%95"><span class="toc-number">1.3.</span> <span class="toc-text">业务流程架构-登录</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2%E4%B8%8A%E7%BA%BF"><span class="toc-number">2.</span> <span class="toc-text">二、服务部署上线</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%8F%91%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B"><span class="toc-number">2.1.</span> <span class="toc-text">开发技术选型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E5%90%8E%E7%AB%AF%E6%8A%80%E6%9C%AF"><span class="toc-number">2.1.1.</span> <span class="toc-text">1.1 后端技术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF"><span class="toc-number">2.1.2.</span> <span class="toc-text">1.2 前端技术</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.2.</span> <span class="toc-text">环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="toc-number">2.2.1.</span> <span class="toc-text">2.1 开发环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-mysql%E9%83%A8%E7%BD%B2"><span class="toc-number">2.2.2.</span> <span class="toc-text">2.2 mysql部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Redis"><span class="toc-number">2.2.3.</span> <span class="toc-text">2.3 Redis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-JDK-maven%E9%83%A8%E7%BD%B2"><span class="toc-number">2.2.4.</span> <span class="toc-text">2.4 JDK &amp; maven部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-Elasticsearch"><span class="toc-number">2.2.5.</span> <span class="toc-text">2.5 Elasticsearch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-Kibana"><span class="toc-number">2.2.6.</span> <span class="toc-text">2.6 Kibana</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-7-logstash"><span class="toc-number">2.2.7.</span> <span class="toc-text">2.7 logstash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-8-docker-%E9%83%A8%E7%BD%B2-ELK-%E4%B8%8D%E7%94%A8%E9%83%A8%E7%BD%B2"><span class="toc-number">2.2.8.</span> <span class="toc-text">2.8 docker 部署 ELK [不用部署]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-9-Mongodb"><span class="toc-number">2.2.9.</span> <span class="toc-text">2.9 Mongodb</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-10-rabbitmq%E9%83%A8%E7%BD%B2"><span class="toc-number">2.2.10.</span> <span class="toc-text">2.10 rabbitmq部署</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7-mall%EF%BC%8C%E6%9D%83%E9%99%90%E4%B8%BAadministrator"><span class="toc-number">2.2.10.1.</span> <span class="toc-text">添加用户 mall，权限为administrator</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">2.2.11.</span> <span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%B0%E7%9A%84%E8%99%9A%E6%8B%9Fhost%E4%B8%BA%EF%BC%9A-mall"><span class="toc-number">2.2.11.1.</span> <span class="toc-text">创建一个新的虚拟host为：&#x2F;mall</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#-1"><span class="toc-number">2.2.12.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#-2"><span class="toc-number">2.2.13.</span> <span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#mall%E7%94%A8%E6%88%B7%E9%85%8D%E7%BD%AE%E8%AF%A5%E8%99%9A%E6%8B%9Fhost%E7%9A%84%E6%9D%83%E9%99%90"><span class="toc-number">2.2.13.1.</span> <span class="toc-text">mall用户配置该虚拟host的权限</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#-3"><span class="toc-number">2.2.14.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#-4"><span class="toc-number">2.2.15.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#-5"><span class="toc-number">2.2.16.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#-6"><span class="toc-number">2.2.17.</span> <span class="toc-text"></span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OSS-%E5%8F%AF%E4%BB%A5%E4%B8%8D%E9%85%8D%E7%BD%AE"><span class="toc-number">2.3.</span> <span class="toc-text">OSS[可以不配置]</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%BC%80%E9%80%9AOSS%E6%9C%8D%E5%8A%A1"><span class="toc-number">2.3.1.</span> <span class="toc-text">3.1 开通OSS服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%88%9B%E5%BB%BA%E5%AD%98%E5%82%A8%E7%A9%BA%E9%97%B4"><span class="toc-number">2.3.2.</span> <span class="toc-text">3.2 创建存储空间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E8%B7%A8%E5%9F%9F%E8%B5%84%E6%BA%90%E5%85%B1%E4%BA%AB%EF%BC%88CORS%EF%BC%89%E7%9A%84%E8%AE%BE%E7%BD%AE"><span class="toc-number">2.3.3.</span> <span class="toc-text">3.3 跨域资源共享（CORS）的设置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nacos-%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.4.</span> <span class="toc-text">nacos 注册中心搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E9%83%A8%E7%BD%B2nacos"><span class="toc-number">2.4.1.</span> <span class="toc-text">4.1 部署nacos</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83"><span class="toc-number">2.4.2.</span> <span class="toc-text">4.2 修改配置使用配置中心</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E6%89%93%E5%8C%85%E9%A1%B9%E7%9B%AE%E5%90%AF%E5%8A%A8"><span class="toc-number">2.4.3.</span> <span class="toc-text">4.3 打包项目启动</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%88%E6%9E%9C%E5%B1%95%E7%A4%BA"><span class="toc-number">2.5.</span> <span class="toc-text">效果展示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E6%89%93%E5%8C%85%E9%83%A8%E7%BD%B2"><span class="toc-number">2.6.</span> <span class="toc-text">前端项目打包部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx%E9%83%A8%E7%BD%B2%E5%8F%8A%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98"><span class="toc-number">2.7.</span> <span class="toc-text">Nginx部署及解决跨域问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BB%E5%BD%95web%E9%A1%B5%E9%9D%A2"><span class="toc-number">2.7.1.</span> <span class="toc-text">登录web页面</span></a></li></ol></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/07/26/微服务概念/">微服务</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2024/06/30/PromQL 讲解/">PQL</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/07/26/微服务项目-mall-swarm/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系小曹宅，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">2262690094</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"不找了","artist":"隔壁老樊","url":"music/隔壁老樊 - 不找了.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"于是天气刚好","artist":"泪桥","url":"music/于是天气刚好 - 泪桥.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"安和桥","artist":"林芬宇","url":"music/林芬宇 - 安和桥.mp3","cover":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0SWQx6YrNA8lElaG4OOKLkNkNzLO1PflKg&usqp=CAU"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>

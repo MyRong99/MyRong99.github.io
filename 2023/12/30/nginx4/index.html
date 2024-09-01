@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——nginx4 | Mr.Long</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——nginx4`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"docker命令","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/Docker命令大全/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/14/LV逻辑卷扩展/"},{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/28/LVM逻辑卷管理 /"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"PQL","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/30/PromQL 讲解/"},{"title":"python一","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/20/Python 1 /"},{"title":"python三","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/25/Python 3/"},{"title":"python四","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/03/01/Python 4/"},{"title":"python二","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/21/Python 2/"},{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/23/TCP协议/"},{"title":"ansible模块","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1","path":"2023/08/17/ansible 模块扩展/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/11/docker容器/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"Galera集群","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/galera/"},{"title":"nginx1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/17/nginx1/"},{"title":"nginx2","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/19/nginx2/"},{"title":"nginx5","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/31/nnginx5/"},{"title":"","path":"2024/09/01/prometheus 监控/"},{"title":"","path":"2024/09/01/redis集群/"},{"title":"","path":"2024/09/01/shell脚本/"},{"title":"docker安装","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/06/容器技术-Docker1/"},{"title":"docker镜像容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/14/容器技术-docker2/"},{"title":"docker-Compose","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/容器技术-docker5/"},{"title":"prometheus-exporter","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/16/node_exporter/"},{"title":"shell编程","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2023/07/21/shell_newrain/"},{"title":"docker资源限制","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/15/容器技术docker4/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/01/文件权限/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/09/磁盘阵列RAID/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/25/磁盘存储管理1/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"prometheus自定义监控","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/26/自定义监控/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/11/网络管理基础/"},{"title":"微服务","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务概念/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/16/走进网络世界/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/13/容器技术-docker3/"},{"title":"nginx4","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/30/nginx4/"},{"title":"nginx3","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/22/nginx3/"},{"title":"微服务项目","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务项目-mall-swarm/"},{"title":"redis操作","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a13d778b5db38e4b127b71bdf122f695","path":"2023/09/26/Redis操作/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Mr.Long</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">唱跳rap篮球</span>
+          <span class="main-left--tag">宅但不肥</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/MyRong99/MyRong99.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>6</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>7</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>10 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>41 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>439天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">nginx4</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/">-中间件</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            <a class="tag-link" href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" rel="tag">-中间件</a>
+          </div>
+          
+          <p class="article-info--date">日期：2023-12-30 20:16:48</p>
+        </div>
+        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h3 id="16、nginx-错误页面配置"><a href="#16、nginx-错误页面配置" class="headerlink" title="16、nginx 错误页面配置"></a>16、nginx 错误页面配置</h3><p>nginx错误页面包括404 403 500 502 503 504等页面，只需要在server中增加以下配置即可：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">error_page  404 403 500 502 503 504  /404.html;</span></span><br><span class="line">                location = /404.html &#123;</span><br><span class="line">                        root   /usr/local/nginx/html;</span><br><span class="line">                &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong></p>
+<p>&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;html&#x2F; 路径下必须有404.html这个文件！！！</p>
+<p>404.html上如果引用其他文件的png或css就会有问题，显示不出来，因为其他文件的访问也要做配置；<br>为了简单，可以将css嵌入文件中，图片用base编码嵌入；如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost html]# vim 404.html</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">        &lt;meta charset=&quot;UTF-8&quot; /&gt;</span><br><span class="line">        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, maximum-scale=1&quot; /&gt;</span><br><span class="line">        &lt;title&gt;404&lt;/title&gt;</span><br><span class="line">        &lt;style&gt;</span><br><span class="line">            .layout-table&#123;display:table;height:100%;width:100%;vertical-align: middle;margin-top:150px&#125;</span><br><span class="line">            .layout-table-cell&#123;display: table-cell;vertical-align: middle;text-align:center&#125;</span><br><span class="line">            .layout-tip&#123;font-size:28px;color:#373737;margin: 0 auto;margin-top:16px;border-bottom: 1px solid #eee;padding-bottom: 20px;width: 360px;&#125;</span><br><span class="line">            #tips&#123;font-size:18px;color:#666666;margin-top:16px;&#125;</span><br><span class="line">        &lt;/style&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body class=&quot;layui-layout-body&quot;&gt;</span><br><span class="line">        &lt;div class=&quot;layui-layout layui-layout-admin&quot;&gt;</span><br><span class="line">            </span><br><span class="line">            &lt;div class=&quot;layui-body&quot;&gt;</span><br><span class="line">                &lt;div class=&quot;layout-table&quot;&gt;</span><br><span class="line">                    &lt;div class=&quot;layout-table-cell&quot;&gt;</span><br><span class="line">                        &lt;img src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAACMCAYAAAA0qsGKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkIwRDQ0ODRFMzMyODExRThBQ0Q5Q0UyNkNCMkE4MDk0IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkIwRDQ0ODRGMzMyODExRThBQ0Q5Q0UyNkNCMkE4MDk0Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QjBENDQ4NEMzMzI4MTFFOEFDRDlDRTI2Q0IyQTgwOTQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QjBENDQ4NEQzMzI4MTFFOEFDRDlDRTI2Q0IyQTgwOTQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4Qz6opAAAU5klEQVR42uxd3XXjthKe+Oy7dCsQU4GUAnLEfc7DKhWI20CsrcDcCiynAcsVhH7I81InBaxUQagKIlXga9wML2Ga4B9ACiC/7xyeXeuHpDD4PswMBuAPLy8vBAAAAPSHGzQBAAAAhBcAAADCCwAAAEB4AQAAILwAAAAAhBcAAMBKfCh68ec/f0PLAH1j+nosXg//9fCkY1bju6fXI3k9DtK/MZoUsAl//fJ7ufACQE9CK0R2xf/ONM4142OZe33/ekR8JGhywGqPFwA6xIqPdQ/XWvJx/3ocX48dH+eK73kQaqBL2JzjFV7QS0cHwtD+vdsNi9kfPYluHnMW4ITF1yv5bMCfC2A68HdswtslILz9IWQRu9dMJ5jChIX/7xIB3vJ7j3zvPswI/kJ49XFQvC7ItkC/NpZSEKJ1x2JnI9bcF8Lc62d+7Sf+/zcmuwezgr8QXrOGWzARv7NoAO3TChGnFGYO3O+EB4dDAWnT1x7o31yx+HsDE4O/EN7mSEuP8ghqjKhAOXxu208O3vucSRsWvCfE9lf+/z0PLFOYG/xtC5urGroK6+IS0RA4Ema02yBkz9EELpTV4iYV9vD48Nnr0U1r3FFW5iZXP0T8+o4HlpjJjkEa/IXwtjScxx5PmWEBNXakX6lwoazcS0fM0kUYgWTTpkjTCqvcvRz43DGfO+a/Ib7gL1INFYgKXlvlRASohymLjo7oitDxM2UlZ7oiJr6/ZQEWk2NPLc8zk4RVxpnP/cTedUwoOwN/ByS8fgfnPFJx8XwgiQC8l/qiG2t4lQJf2VvpiiwHtq0Q4H2L7wth/aYQ1kAS30eIL/gLj7c8JC4LUyLwpRfRPbIYhjWus2IPVlyvrKg+YfuFVFydIITgC6c0muKxQnzTz6AUEfx1XniXCFOsJkBb0d1TdV7U52v8Q/+Wpd3W6A8iNSAmvcTk2HcW4pDeVh9s+dwmxXfDAwnx4ADxBX8rYevkmtdRmJIgzWBEdNuWiz1VhOQLFsdlge0its9Z4Rmnk2pLSYjvWBi3kned1uZGLQaPR76+LABnejvhFvH5zyPuI+AvhLd0NFwgzdAIopOvNYhTtvhAvHcv/X2hbOlu0tAbWvG9igEiXSARUFalkPDfMTUvP9sVeOxn6XwzykrPILzgr1Ophi46bVQyWiLNUI0Fe3xtcGGbnktIJYtuOukWUruazIhF9sfX41nygL9LNj+07GdpJUN+AcVBOveSqvPXQwb466jwmh4xnxUEXiHNUAtTTY9iVSG6a8kO6aSbiVA94Wt/5HOn6YKdJJZfWopvpBCHB/7/3Yi9XvDXUeE1PUERKUblGdIMtbCl9vsuPJC6qF0W3SPbvQsCxXzutKRsLYnvltqVmqm82pCyybYdjXNpMfjrqPDODZ7roghDgpywAGpvda3R9qqQe5MTXZ+6nZBKJ8GeJPENCvpCExR5tWfKctmzkaYcwF8Hhdd0eLZThM4rifQJ9FWZYtDp1KqUgfCI7iViBdRfFUBAb2tvfbb/g0b/mhZ42On5bmlcJWbgL4RXORoKo03g7VZio5FiuJS07TYnzn3n52TxjTQHmBkVV2uElNULj6mPgb+OCq9J72BP1VvIIb9bDI/0dhvblojeUrLPtYgTsLc04XtIqP2+Dnf0fkJJTjksaTx7PIO/8HiVSwxT4j/RuAvdq9IEpj2V/HmDK//GFWWLM3S9p53itdPIvF7w10HhNbGfaoqTwnCbCsMC/3ZunR3HVIQIpNTFE10/N5dQtopN4EBZRUJTLBWiE0opiWDg/Qb8dVR4TY6WZaFuatgYGtuJtxtVtL2Ja3SFneF2k73ecOD9Bvx1VHhN5cHKSlAm8HY79XYvCuGVQ8Q92TsTrZMzrOP1DjnXC/46KrymdjTaUvm+nWUjKpWMtOkWhEOG7sMcoxrntZk0iUa6QeXVRpRVOAz5YZngr4PCa9ITKDLKgton5XXrWV3BlPTzkHEN+9o+E23a6z1Lg82ShvmYePB35MKrMoqOxxWRuUkD28mj+ztVaYZ0Uu2Z7J+JjjW/H1SIyWagfQf8dVB4fUPnCRUjnrw8NW54vmWNTjeE1Um6gqB6NItL3q4J4V3T+9VscgojoOEB/HVQeBfUfoVUfrRMKgSlScghDFJnEYE4/3dyuyZYeKW6a+zjGqSMHWmPveb3i8Q19dQmNKxJNvDXUeE15QGoRsvUcJcGYcqiRUjjcjrChBAcKoT3RO6sq+8i3RB1EJqDvw7y92ZApFeNlm3WdS+o3dMJxk6eWNGWE8e83bJBpC7m9H4STU43DEl4wV8HhddUmBJWvH6pabgxiq6JNAMpiLNwMM1gQnhVghQNLN0A/joqvCY8rQdSb6Yhb5Z8HoLROoBv4Bz7kjY1KWZ9Iemobw8t3QD+Oiq8up3vUmO0LBtRZSOPUXRNCe9hYMJbNpg0STcUPZvtYrDdwV8H+Xtt4TURppStcqm7IYsw6uNIRdeU53WuEN6jg+1y7qhtY/53Rm6XIYK/jgqvbt1oWd6nzmiZPsTxjsYLUztKxYr2nRgM3fuGCQ/dr2grl71e8LclPjjuaW00Rst0O8AZjRumPK7zwNIMpgYLv0LQXfZ4wV8HPd5A09NS7ddZZ7QUr32H6BolfpGweoZFzEXhndH7srIheLzgr6Me78qA4anhaOnxKDknwKTwXhSvQ3izNs6f68j9cMYhs2urHsFfBz1e0YCfNL6/J3VNaNlo6UF038HEVn4HCG/jwc3ldAP466jwBprf35QYzaZHy7hAoL7OP2Zb+BWi7lq6AfwdofA+KDysac6gIXS1N+Gtmji7ONxGewPnKPJo4x4HQPAXwvu/3FDbpHhVsfUE3q62J9YGVTW8h5G384TeL6Q4Oyq84K+jwrvR/K6qbOlWMu6GAFsEByj2euXBaOnQ7wB/HRReT6OTiVngneK9be7/Z/C8V4+3yjtx2R4Hg30/j1Mu1LYd4K+jwqszkgUloc9S6shjeDaabUgqhMblVIMpEfAq2s2Fygbw10Hh1XmQYllCXjZUCG9XWwxcOPdQ2tqlvgr+Oiq8wmhtcn5VCfk00b8nux8bbiOwcu+6wiuLkW/5/YO/jgrvRsPgVQl53TAIALpONbgO8NdB4Q1aelfiUeCqp9LuaoQyQD+INd+3Gab6VdGkVJILu232dsFfR4W3TYhStsJlXiOUAdToOrSdookrkeQ8QJuFF/x1THh9aleCEpJ6O7i7XIiCcNA+LNAEgxmgwV8HhbfNaCYS7dsaIQom1ACX4Dl4z+Cvg8LbZrS8lIQ2+RAlAJcBh4XXdk8P/HVUeMOW36kTomwJ+zEAbsP2rSHBXweFt81oWTdEORIm1IBhwbZ9LcBfR4W3acOWhR5bersBMlIMAGCXtwv+WiC8bUbLQBF6iHPJhdZfCTW7AGCbtwv+WiC8TUdLsf9mUaH1NPf6HikGALDO2wV/LRDepqOl2JFIVWi9oyz3hSoGALDP2wV/LRHeXcPPi23hispqhDE/5f5OYDIA6BTgr4PCK0a0Jmu6VfkeUXpynwtldjAXAHQK8NdB4c3vrVkFVb4nnxc6EnYe6wIxmsAqnK58ffDXUeEVjVu3FvHCIUoRImnUTfNC2IsBGDquHYaDvw4Kr0dvV6VUwVcYQ4ygy1xnQOmY/ah6fDlgN8BfR4V31+CzXxTGWOWMj7yQO+HtkLeANLmU91wgYDYA/HVQeFdUv/xEGGOr6NyykZAXGkd46wJMDio2en/gr4PC2yQhrzLGlN7X+6lKVACz6KuNsSm6PbYAfwcgvCHVKz8pS7ILo81z4Rc8sX5gygPzegzXYQtzAH8dFF7RwLc1PxsoOpYwvFxk/ZmQjHfRy/Is8eC6gGfoPHsFh64F8NdB4U3DizoQyfhIYUw5Gf9ASMYPycsaCgG9nq7T50AF/joqvHVDlLJk/Db3OSTj+4epkHBRg+ho6/J26XOgAn8dFN66IcqRijfFEJ0tpiwZr/oc4I7wVgmryzneRYdtfY12AX8dFN6pIuwoMppf02g+zHBV7DsMx48DaB9TT4Y4aL5vaoAEfx0U3l2Njlh3BvRE6hUwQH8wQXhV2HquEGbbYTJFUtTPlxXvmwb466Dw5rd5KwtlDgqjfZKMi1q/4QivSlzPFcI8ljQD0fsl1NOeIwPw10HhzW/zVha2FhlNjKBryWg+oexkDMJ76Mh7dM3jPVWIetcCBv46KLx180IqCKM9wmhWC+/FwHn8Hr1H1zzeQ8VAFXc8eIC/luFDjc9EDUJFkbN6KXlf5Je+D6DdXhq8J7ydhDvrgdvTthAtrhmGNvV4xXnvHPZ4uxRe+dxJh78B/LWQv1Ue746aP20UeIsZt+Etew7/sCAFlglvF6kG1z3eaYft24fwgr+W8vemIsRYo907wZKNmJAd5TiRod9UJjgLR+3Uh/B2kWoAfy3m702Jd/KI9u1lNP0mjZ4eXaf0KiEze/MWieuppkc81DTDXhEdyLWwXdw7+Gsxf286DrGAenikrHZSeJ+HK3jCJrxeXyHqAvORCm9c0U5dTFSBv5bz9wZtZg22Eik9Hkm3PV5/15FYxRXCPHThjSqEN0bXHx9/Ibz2QISeGx41hfFE6c4t9bfj08FAusFXnNe0mPUBE4PEReHRQnhHzt+bkvDohwEeHw01ctk1/sPXEYfYn7TJXggrSaxScq5J/URX29INswJxdVF4p4ZSI0Xt6VFW3nWibioawF/L+QuP1zzO3PFjHu38Bsab5wTrs5QG6CNvZyK1kfcUE8oWaLiSajB1n0gzgL+F/IXw2gfZK9yx0UUYE/Rw7YT0dysLFB5Y6hF7IxHek0J4VxBe8BfC2z1CalYPOlV4oX2lG3S93nmBuMYK4bEVJu5Rlbb5VOMzwMD5C+HtHk091UQhWn2tQIpIf5JtVSJCtqcbFmRmN7VtRbscCbt7jZa/dZYMvwzo+HYFwzUh8aXAcNcgZ6j5/U1BZzxJHt90QEQrwp6KJ81WOW51DfDXUv7e1OiETxj0KhFLnUOXKDZgp+n1zgo828iRdIOJewsVIei65zQD+Gspf29qGg/lKHreT93RMlSEvtdAaID0qk5p64MRfQNphiMVT5qtanjEXYkv+GsZf5Hj7R4bqt7vNt3n9FxiuH3P963r9QrvzpP+PlC2L8Gc7KzpNZFmCGukX3agxbj5C+HtHgdu/KcCA1749QWp1+wHPYampoUoL0Jbi71ej/R389qTunZ3Ltkcwjty/kJ4+0HCBpjmQqcpv64KO0V4urwiWUXI/GzQ642kzpt/79oIOzxHAG8X/IXwuoGFZKwtXa/0qE6oVZWySHHOeb2hJW1twtt9puLcbv7cW3Rt8BfC279Xtavh6flM4gmHMtcUqETz+kt6O7EkOuFJ8np9C+yiK4YXUqdO5LZ7ov4m1QCL+fsBbdl76C4M9zdl+cBDzjsKKCu2fiA7cqFbKWxq6/V6POqf+Tf9IZ37mhNtgiSfDBAyqeHthqAA+AvhvY7hPBaagMXsvsB7emZBii269xWLy6TFdyfcSVPvNmJPQIjSnH/rNQaYKennXPclHvMW3i74C+G1Bweyt5ZVhTN3tLarh5YscgH/veEOLIT3lttk1/NvEtfTqdu9kHrBRd6ThrcL/v4fyPECTUf8LxrfX0vCm24YfbpSymFjIMWwIvWkp+ztPsDbBSC8gA62pLcM9TEnviv2HCcs7H2Ib1AQIjbFl5JQMqS3dbvwdgEIL2BEuHTqex+ltEJaoH6UxHfV8b3rPoH3idR53UUuDN0QdiEDILyAQQHTeTT5mrLJioSynf6F+P7RkZcYGhLdoOT9HWUTkHvCggkAwgsYRJqj1RHfJWUTFen5vvJ7d2TuMfcei/yd5nmeK0R3m0sxrNBNAAivufxhWcH9mMiWiqVO2kF4h/eULcsUXumP7C0KEfvGotlGgKd8vr9JfyP5pwrbivducxEBUgzg7+iFd0P6Eyop8o9tjnKh5mJE7ZpOkOnu+zrjNEC6wEII5k+UbULyrUHYni7XTAx4uXXSC4vcvT0QHusD/pbgh5eX93v//vznb0MzmmjMdQfnlQkpX+PCxktGRo6A9HOoeewpywWTQnyn3N4L9ownBq//pcJDmnJKZCbdr08A+JvDX7/8PhrhnTJp5x1e40jZXpyxFNLKr48tHIzIzHPLrokTkzJu0L/GanPwt6Hw3gxcAA4dG434/DF3khW93ex7jOFmWh724PBveObfANEFfzvBUIU39VT68rpk4wWUbaO4pHGUE/n0Ni+W5mk/Uv9PztD1cj9S+Yq0ItG91PgOAP4OWnhD+jfPOOn5unPKdirypdfX5N6+DE2RbggS5F6PuS0+k/4j47sWXHGPHlVvTLQo8HTF9xLoJfg7RuFNd5q6u+I9TCTifpZevyczz/OyOSyMmDBFE1E7FqfPlnnAsuDW8Wx8pBfAXwjv+9BvbcG9pMYTZJTznI807DIz0THF4od0pzFPIcBCqH7itrlc4T7T52R9bCC4qSf2TfLEniG64O+YhTct+5hbdE/pstcDva1vjQcuvkKcfmVBK9s6L31vKonwscP7OvI1fqUsjxfX/G6afpA9MXEu5HTB39YYSx2vDaP5mMJTj1MPc04tbEj9FNaicH5B2YbT0wakPHK7HpjMBz7atnXI9z6RvOWAsDgC/G3Rp8ZUx2uT8RKJwEcax+q2LWXLaJ/InZ26Vnzv8qx6uk8DvFzwtxV/x1LHaxPSPQ3SnKYYPXcj+N1pSZmYxFpT9uDMqcWCG3OYOZO83F+RWgB/TfIXwtsfDvR2ZnRN43jUd8xpg6/sMYhc6T9kz54WUx4gEhbcpSS4XylLmwDgrzH+Qnj7hSCw/OicWxp2mZkM4en+SNlkhei43ymbaPN6FtuA7SEGgfuch5sKbggvF+iCv0PK8YoGeHTUoB/JricKd41U1PLlQ0fu3LHh9phyqJgeRZN1J/ZgdhBb8LcL/g55cs1V411YEA4jI5vHNguoeHnokbLqhITqrQ7z+JB3LJuUtHvEYhsTAP52yF9UNQA2Qgjkio8uazrTbSajEQ50wBUhC+8HNAdgCdKa25D/9ql9Pe9FEtWY3tb0AsDVUejxAgAAAN0BVQ0AAAAQXgAAAAgvAAAAAOEFAABwF/8VYAAXRwSpGfHzmgAAAABJRU5ErkJggg==&quot; class=&quot;layout-img&quot;&gt;</span><br><span class="line">                        &lt;p class=&quot;layout-tip&quot;&gt;哎呀，找不到该页面啦！&lt;/p&gt;</span><br><span class="line">                        &lt;p id=&quot;tips&quot;&gt;请检查您的网络连接是否正常或者输入的网址是否正确&lt;/p&gt;</span><br><span class="line">                    &lt;/div&gt;</span><br><span class="line">                &lt;/div&gt;</span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">        </span><br><span class="line">    &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>展示效果；</p>
+<p><img src="https://img.beyourself.org.cn/2f00575e5a73f02c6181852705ebb1011cfd8070.jpg#id=HI6E1&originHeight=615&originWidth=1399&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h3 id="17、nginx-流量控制"><a href="#17、nginx-流量控制" class="headerlink" title="17、nginx 流量控制"></a>17、nginx 流量控制</h3><p><strong>流量限制</strong> (rate-limiting)，是Nginx中一个非常实用，却经常被错误理解和错误配置的功能。我们可以用来限制用户在给定时间内HTTP请求的数量。请求，可以是一个简单网站首页的GET请求，也可以是登录表单的 POST 请求。流量限制可以用作安全目的，比如可以减慢暴力密码破解的速率。通过将传入请求的速率限制为真实用户的典型值，并标识目标URL地址(通过日志)，还可以用来抵御 DDOS 攻击。更常见的情况，该功能被用来保护上游应用服务器不被同时太多用户请求所压垮。</p>
+<p>以下将会介绍Nginx的 <strong>流量限制</strong> 的基础知识和高级配置，”流量限制”在Nginx Plus中也适用。</p>
+<h4 id="1、Nginx如何限流"><a href="#1、Nginx如何限流" class="headerlink" title="1、Nginx如何限流"></a>1、Nginx如何限流</h4><p>Nginx的”流量限制”使用漏桶算法(leaky bucket algorithm)，该算法在通讯和分组交换计算机网络中广泛使用，用以处理带宽有限时的突发情况。就好比，一个桶口在倒水，桶底在漏水的水桶。如果桶口倒水的速率大于桶底的漏水速率，桶里面的水将会溢出；同样，在请求处理方面，水代表来自客户端的请求，水桶代表根据”先进先出调度算法”(FIFO)等待被处理的请求队列，桶底漏出的水代表离开缓冲区被服务器处理的请求，桶口溢出的水代表被丢弃和不被处理的请求。</p>
+<h4 id="2、配置基本的限流"><a href="#2、配置基本的限流" class="headerlink" title="2、配置基本的限流"></a>2、配置基本的限流</h4><p>“流量限制”配置两个主要的指令，<code>limit_req_zone</code>和<code>limit_req</code>，如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/s;</span><br><span class="line">        upstream myweb &#123;</span><br><span class="line">                server 10.0.105.196:80 weight=1 max_fails=1 fail_timeout=1;</span><br><span class="line">                &#125;</span><br><span class="line">        server &#123;</span><br><span class="line">                listen 80;</span><br><span class="line">                server_name localhost;</span><br><span class="line"></span><br><span class="line">                location /login &#123;</span><br><span class="line">                        limit_req zone=mylimit;</span><br><span class="line">                        proxy_pass http://myweb;</span><br><span class="line">                        proxy_set_header Host $host:$server_port;</span><br><span class="line">                        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">                        &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">10.0.105.196配置:</span><br><span class="line">server &#123;</span><br><span class="line">        listen 80;</span><br><span class="line">        server_name localhost;</span><br><span class="line">        location /login &#123;</span><br><span class="line">                root    /usr/share/nginx/html;</span><br><span class="line">                index   index.html index.html;</span><br><span class="line">                &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>limit_req_zone</code>指令定义了流量限制相关的参数，而<code>limit_req</code>指令在出现的上下文中启用流量限制(示例中，对于”&#x2F;login&#x2F;”的所有请求)。</p>
+<p><code>limit_req_zone</code>指令通常在HTTP块中定义，使其可在多个上下文中使用，它需要以下三个参数：</p>
+<ul>
+<li><strong>Key</strong> - 定义应用限制的请求特性。示例中的 Nginx 变量<code>$binary_remote_addr</code>，保存客户端IP地址的二进制形式。这意味着，我们可以将每个不同的IP地址限制到，通过第三个参数设置的请求速率。(使用该变量是因为比字符串形式的客户端IP地址<code>$remote_addr</code>，占用更少的空间)</li>
+<li><strong>Zone</strong> - 定义用于存储每个IP地址状态以及被限制请求URL访问频率的共享内存区域。保存在内存共享区域的信息，意味着可以在Nginx的worker进程之间共享。定义分为两个部分：通过<code>zone=keyword</code>标识区域的名字，以及冒号后面跟区域大小。16000个IP地址的状态信息，大约需要1MB，所以示例中区域可以存储160000个IP地址。</li>
+<li><strong>Rate</strong> - 定义最大请求速率。在示例中，速率不能超过每秒10个请求。Nginx实际上以毫秒的粒度来跟踪请求，所以速率限制相当于每100毫秒1个请求。因为不允许”突发情况”(见下一章节)，这意味着在前一个请求100毫秒内到达的请求将被拒绝。</li>
+</ul>
+<blockquote>
+<p>当Nginx需要添加新条目时存储空间不足，将会删除旧条目。如果释放的空间仍不够容纳新记录，Nginx将会返回 <strong>503状态码</strong>(Service Temporarily Unavailable)。另外，为了防止内存被耗尽，Nginx每次创建新条目时，最多删除两条60秒内未使用的条目。</p>
+</blockquote>
+<p><code>limit_req_zone</code>指令设置流量限制和共享内存区域的参数，但实际上并不限制请求速率。所以需要通过添加</p>
+<p><code>limit_req</code>指令，将流量限制应用在特定的<code>location</code>或者<code>server</code>块。在上面示例中，我们对<code>/login/</code>请求进行流量限制。</p>
+<p>现在每个IP地址被限制为每秒只能请求10次<code>/login/</code>，更准确地说，在前一个请求的100毫秒内不能请求该URL。</p>
+<h4 id="3、处理突发"><a href="#3、处理突发" class="headerlink" title="3、处理突发"></a>3、处理突发</h4><p>如果我们在100毫秒内接收到2个请求，怎么办？对于第二个请求，Nginx将给客户端返回状态码503。这可能并不是我们想要的结果，因为应用本质上趋向于突发性。相反地，我们希望缓冲任何超额的请求，然后及时地处理它们。我们更新下配置，在<code>limit_req</code>中使用<code>burst</code>参数：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/s;</span><br><span class="line">        upstream myweb &#123;</span><br><span class="line">                server 10.0.105.196:80 weight=1 max_fails=1 fail_timeout=1;</span><br><span class="line">                &#125;</span><br><span class="line">        server &#123;</span><br><span class="line">                listen 80;</span><br><span class="line">                server_name localhost;</span><br><span class="line"></span><br><span class="line">                location /login &#123;</span><br><span class="line">                        limit_req zone=mylimit burst=20;</span><br><span class="line">                        proxy_pass http://myweb;</span><br><span class="line">                        proxy_set_header Host $host:$server_port;</span><br><span class="line">                        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">                        &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>burst</code>参数定义了超出zone指定速率的情况下(示例中的<code>mylimit</code>区域，速率限制在每秒10个请求，或每100毫秒一个请求)，客户端还能发起多少请求。上一个请求100毫秒内到达的请求将会被放入队列，我们将队列大小设置为20。<br>如果你设置了每秒只允许 10 个请求，并且 burst 为 5，那么在短时间内可能会有 15 个请求被接收，但只有 10 个会立即被处理，剩下的 5 个会在“缓冲区”中等待。</p>
+<h4 id="4、无延迟的排队"><a href="#4、无延迟的排队" class="headerlink" title="4、无延迟的排队"></a>4、无延迟的排队</h4><p>配置<code>burst</code>参数将会使通讯更流畅，但是可能会不太实用，因为该配置会使站点看起来很慢。在上面的示例中，队列中的第20个包需要等待2秒才能被转发，此时返回给客户端的响应可能不再有用。要解决这个情况，可以在<code>burst</code>参数后添加<code>nodelay</code>参数：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/s;</span><br><span class="line">        upstream myweb &#123;</span><br><span class="line">                server 10.0.105.196:80 weight=1 max_fails=1 fail_timeout=1;</span><br><span class="line">                &#125;</span><br><span class="line">        server &#123;</span><br><span class="line">                listen 80;</span><br><span class="line">                server_name localhost;</span><br><span class="line"></span><br><span class="line">                location /login &#123;</span><br><span class="line">                        limit_req zone=mylimit burst=20 nodelay;</span><br><span class="line">                        proxy_pass http://myweb;</span><br><span class="line">                        proxy_set_header Host $host:$server_port;</span><br><span class="line">                        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">                        &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>nodelay</code>参数，Nginx仍将根据<code>burst</code>参数分配队列中的位置，并应用已配置的速率限制，而不是清理队列中等待转发的请求。相反地，当一个请求到达“太早”时，只要在队列中能分配位置，Nginx将立即转发这个请求。将队列中的该位置标记为”taken”(占据)，并且不会被释放以供另一个请求使用，直到一段时间后才会被释放(在这个示例中是，100毫秒后)。</p>
+<p>假设如前所述，队列中有20个空位，从给定的IP地址发出的21个请求同时到达。Nginx会立即转发这个21个请求，并且标记队列中占据的20个位置，然后每100毫秒释放一个位置。如果是25个请求同时到达，Nginx将会立即转发其中的21个请求，标记队列中占据的20个位置，并且返回503状态码来拒绝剩下的4个请求。</p>
+<p>现在假设，第一组请求被转发后101毫秒，另20个请求同时到达。队列中只会有一个位置被释放，所以Nginx转发一个请求并返回503状态码来拒绝其他19个请求。如果在20个新请求到达之前已经过去了501毫秒，5个位置被释放，所以Nginx立即转发5个请求并拒绝另外15个。</p>
+<p>效果相当于每秒10个请求的“流量限制”。如果希望不限制两个请求间允许间隔的情况下实施“流量限制”，<code>nodelay</code>参数是很实用的。</p>
+<p><strong>注意：</strong> 对于大部分部署，我们建议使用<code>burst</code>和<code>nodelay</code>参数来配置<code>limit_req</code>指令。</p>
+<h4 id="5、高级配置示例"><a href="#5、高级配置示例" class="headerlink" title="5、高级配置示例"></a>5、高级配置示例</h4><p>通过将基本的“流量限制”与其他Nginx功能配合使用，我们可以实现更细粒度的流量限制。</p>
+<h5 id="1、白名单"><a href="#1、白名单" class="headerlink" title="1、白名单"></a>1、白名单</h5><p>下面这个例子将展示，如何对任何不在白名单内的请求强制执行“流量限制”：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    include       /etc/nginx/mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    log_format  main  &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span><br><span class="line">                      &#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span><br><span class="line">                      &#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;;</span><br><span class="line"></span><br><span class="line">    access_log  /var/log/nginx/access.log  main;</span><br><span class="line">  geo $limit &#123;</span><br><span class="line">	default 		1;</span><br><span class="line">	10.0.0.0/24 		0;</span><br><span class="line">	192.168.0.0/24 		0;</span><br><span class="line">	&#125;</span><br><span class="line">  map $limit $limit_key &#123;</span><br><span class="line">	0 &quot;&quot;;</span><br><span class="line">	1 $binary_remote_addr;</span><br><span class="line">	&#125;</span><br><span class="line">    limit_req_zone $limit_key zone=req_zone:10m rate=5r/s;</span><br><span class="line"></span><br><span class="line">	server &#123;</span><br><span class="line">		listen 80;</span><br><span class="line">		server_name localhost;</span><br><span class="line">		location / &#123;</span><br><span class="line">		limit_req zone=req_zone burst=10 nodelay;</span><br><span class="line">		root /usr/share/nginx/html;</span><br><span class="line">		index index.html index.hml;</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br><span class="line">    include /etc/nginx/conf.d/*.conf;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个例子同时使用了<code>geo</code>和<code>map</code>指令。<code>geo</code>块将给在白名单中的IP地址对应的<code>$limit</code>变量分配一个值0，给其它不在白名单中的分配一个值1。然后我们使用一个映射将这些值转为key，如下：</p>
+<ul>
+<li>如果<code>$limit</code>变量的值是0，<code>$limit_key</code>变量将被赋值为空字符串</li>
+<li>如果<code>$limit</code>变量的值是1，<code>$limit_key</code>变量将被赋值为客户端二进制形式的IP地址</li>
+</ul>
+<p>两个指令配合使用，白名单内IP地址的<code>$limit_key</code>变量被赋值为空字符串，不在白名单内的被赋值为客户端的IP地址。当<code>limit_req_zone</code>后的第一个参数是空字符串时，不会应用“流量限制”，所以白名单内的IP地址(10.0.0.0&#x2F;24和192.168.0.0&#x2F;24 网段内)不会被限制。其它所有IP地址都会被限制到每秒5个请求。</p>
+<p><code>limit_req</code>指令将限制应用到**&#x2F;**的location块，允许在配置的限制上最多超过10个数据包的突发，并且不会延迟转发。</p>
+<h5 id="2、location-包含多limit-req指令"><a href="#2、location-包含多limit-req指令" class="headerlink" title="2、location 包含多limit_req指令"></a>2、location 包含多<code>limit_req</code>指令</h5><p>我们可以在一个location块中配置多个<code>limit_req</code>指令。符合给定请求的所有限制都被应用时，意味着将采用最严格的那个限制。例如，多个指令都制定了延迟，将采用最长的那个延迟。同样，请求受部分指令影响被拒绝，即使其他指令允许通过也无济于事。</p>
+<p>扩展前面将“流量限制”应用到白名单内IP地址的例子：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line"><span class="meta prompt_">	# </span><span class="language-bash">...</span></span><br><span class="line"></span><br><span class="line">	limit_req_zone $limit_key zone=req_zone:10m rate=5r/s;</span><br><span class="line">	limit_req_zone $binary_remote_addr zone=req_zone_wl:10m rate=15r/s;</span><br><span class="line"></span><br><span class="line">	server &#123;</span><br><span class="line"><span class="meta prompt_">		# </span><span class="language-bash">...</span></span><br><span class="line">		location / &#123;</span><br><span class="line">			limit_req zone=req_zone burst=10 nodelay;</span><br><span class="line">			limit_req zone=req_zone_wl burst=20 nodelay;</span><br><span class="line"><span class="meta prompt_">			# </span><span class="language-bash">...</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>白名单内的IP地址不会匹配到第一个“流量限制”，而是会匹配到第二个<code>req_zone_wl</code>，并且被限制到每秒15个请求。不在白名单内的IP地址两个限制能匹配到，所以应用限制更强的那个：每秒5个请求。</p>
+<h4 id="6、配置流量控制相关功能"><a href="#6、配置流量控制相关功能" class="headerlink" title="6、配置流量控制相关功能"></a>6、配置流量控制相关功能</h4><h5 id="1、配置日志记录"><a href="#1、配置日志记录" class="headerlink" title="1、配置日志记录"></a>1、配置日志记录</h5><p>默认情况下，Nginx会在日志中记录由于流量限制而延迟或丢弃的请求，如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2019/02/13 04:20:00 [error] 120315#0: *32086 limiting requests, excess: 1.000 by zone &quot;mylimit&quot;, client: 192.168.1.2, server: nginx.com, request: &quot;GET / HTTP/1.0&quot;, host: &quot;nginx.com&quot;</span><br></pre></td></tr></table></figure>
+
+<p>日志条目中包含的字段：</p>
+<ul>
+<li>limiting requests - 表明日志条目记录的是被“流量限制”请求</li>
+<li>excess - 每毫秒超过对应“流量限制”配置的请求数量</li>
+<li>zone - 定义实施“流量限制”的区域</li>
+<li>client - 发起请求的客户端IP地址</li>
+<li>server - 服务器IP地址或主机名</li>
+<li>request - 客户端发起的实际HTTP请求</li>
+<li>host - HTTP报头中host的值</li>
+</ul>
+<p>默认情况下，Nginx以<code>error</code>级别来记录被拒绝的请求，如上面示例中的<code>[error]</code>所示(Ngin以较低级别记录延时请求，一般是<code>info</code>级别)。如要更改Nginx的日志记录级别，需要使用<code>limit_req_log_level</code>指令。这里，我们将被拒绝请求的日志记录级别设置为<code>warn</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/s;</span><br><span class="line">        upstream myweb &#123;</span><br><span class="line">                server 10.0.105.196:80 weight=1 max_fails=1 fail_timeout=1;</span><br><span class="line">                &#125;</span><br><span class="line">        server &#123;</span><br><span class="line">                listen 80;</span><br><span class="line">                server_name localhost;</span><br><span class="line"></span><br><span class="line">                location /login &#123;</span><br><span class="line">                        limit_req zone=mylimit burst=20 nodelay;</span><br><span class="line">                        limit_req_log_level warn;</span><br><span class="line">                        proxy_pass http://myweb;</span><br><span class="line">                        proxy_set_header Host $host:$server_port;</span><br><span class="line">                        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">                        &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2、发送到客户端的错误代码"><a href="#2、发送到客户端的错误代码" class="headerlink" title="2、发送到客户端的错误代码"></a>2、发送到客户端的错误代码</h5><p>一般情况下，客户端超过配置的流量限制时，Nginx响应状态码为<strong>503(Service Temporarily Unavailable)<strong>。可以使用<code>limit_req_status</code>指令来设置为其它状态码(例如下面的</strong>444</strong>状态码):</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">limit_req_zone $binary_remote_addr zone=mylimit:10m rate=10r/s;</span><br><span class="line">	upstream myweb &#123;</span><br><span class="line">        	server 10.0.105.196:80 weight=1 max_fails=1 fail_timeout=1;</span><br><span class="line">		&#125;</span><br><span class="line">	server &#123;</span><br><span class="line">        	listen 80;</span><br><span class="line">        	server_name localhost;</span><br><span class="line">		</span><br><span class="line">        	location /login &#123;</span><br><span class="line">			limit_req zone=mylimit burst=20 nodelay;</span><br><span class="line">			limit_req_log_level warn;</span><br><span class="line">			limit_req_status 444;</span><br><span class="line">                	proxy_pass http://myweb;</span><br><span class="line">                        proxy_set_header Host $host:$server_port;</span><br><span class="line">	            	proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">            		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">                	&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>7、nginx 流量控制总结</strong></p>
+<p>以上已经涵盖了Nginx和Nginx Plus提供的“流量限制”的很多功能，包括为HTTP请求的不同loation设置请求速率，给“流量限制”配置<code>burst</code>和<code>nodelay</code>参数。还涵盖了针对客户端IP地址的白名单和黑名单应用不同“流量限制”的高级配置，阐述了如何去日志记录被拒绝和延时的请求。</p>
+<h3 id="18、nginx-访问控制"><a href="#18、nginx-访问控制" class="headerlink" title="18、nginx 访问控制"></a>18、nginx 访问控制</h3><h4 id="1、nginx-访问控制模块"><a href="#1、nginx-访问控制模块" class="headerlink" title="1、nginx 访问控制模块"></a>1、nginx 访问控制模块</h4><p>（1）基于IP的访问控制：http_access_module<br>（2）基于用户的信任登录：http_auth_basic_module</p>
+<h4 id="2、基于IP的访问控制"><a href="#2、基于IP的访问控制" class="headerlink" title="2、基于IP的访问控制"></a>2、基于IP的访问控制</h4><h5 id="1、配置语法"><a href="#1、配置语法" class="headerlink" title="1、配置语法"></a>1、配置语法</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Syntax：allow address | CIDR | unix: | all;</span><br><span class="line">default：默认无</span><br><span class="line">Context：http，server，location，limit_except</span><br><span class="line"></span><br><span class="line">Syntax：deny address | CIDR | unix: | all;</span><br><span class="line">default：默认无</span><br><span class="line">Context：http，server，location，limit_except</span><br></pre></td></tr></table></figure>
+
+<h5 id="2、配置测试"><a href="#2、配置测试" class="headerlink" title="2、配置测试"></a>2、配置测试</h5><p>修改<code>/etc/nginx/conf.d/access_mod.conf</code>内容如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen 80;</span><br><span class="line">        server_name localhost;</span><br><span class="line">        location ~ ^/admin &#123;</span><br><span class="line">        #/home/www/html/admin/index.html</span><br><span class="line">                root /home/www/html;</span><br><span class="line">                index index.html index.hml;</span><br><span class="line">                deny 192.168.1.8;</span><br><span class="line">                allow all;</span><br><span class="line">                #deny 192.168.1.8;</span><br><span class="line">                &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">需要注意:</span></span><br><span class="line">如果先允许访问，在定义拒绝访问。那么拒绝访问不生效。</span><br><span class="line">先写范围小的</span><br></pre></td></tr></table></figure>
+
+<p>虚拟机宿主机IP为<code>192.168.1.8</code>，虚拟机IP为<code>192.168.1.11</code>，故这里禁止宿主机访问，允许其他所有IP访问。<br>宿主机访问<code>http://192.168.1.11/admin</code>，显示<code>403 Forbidden</code>。<br>当然也可以反向配置，同时也可以使用IP网段的配置方式，如<code>allow 192.168.1.0/24;</code>，表示满足此网段的IP都可以访问。</p>
+<h5 id="3、指定location拒绝所有请求"><a href="#3、指定location拒绝所有请求" class="headerlink" title="3、指定location拒绝所有请求"></a>3、指定<code>location</code>拒绝所有请求</h5><p>如果你想拒绝某个指定URL地址的所有请求，而不是仅仅对其限速，只需要在<code>location</code>块中配置<code>deny</code> <strong>all</strong>指令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen 80;</span><br><span class="line">        server_name localhost;</span><br><span class="line">        location /foo.html &#123;</span><br><span class="line">                root /home/www/html;</span><br><span class="line">                deny all;</span><br><span class="line">                &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="4、局限性"><a href="#4、局限性" class="headerlink" title="4、局限性"></a>4、局限性</h5><p><code>remote_addr</code>只能记录上一层与服务器直接建立连接的IP地址，若中间有代理，则记录的是代理的IP地址。<br><code>http_x_forwarded_for</code>可以记录每一层级的IP。</p>
+<p><img src="https://img.beyourself.org.cn/2242633f862ff3492f6d04c7fcf9e8f749b7199a.jpg#id=r2tmG&originHeight=322&originWidth=749&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h5 id="5、解决方法"><a href="#5、解决方法" class="headerlink" title="5、解决方法"></a>5、解决方法</h5><p>（1）采用别的HTTP头信息控制访问，如HTTP_X_FORWARD_FOR（无法避免被改写）<br>（2）结合geo模块<br>（3）通过HTTP自定义变量传递</p>
+<h4 id="3、基于用户的信任登录"><a href="#3、基于用户的信任登录" class="headerlink" title="3、基于用户的信任登录"></a>3、基于用户的信任登录</h4><h5 id="1、配置语法-1"><a href="#1、配置语法-1" class="headerlink" title="1、配置语法"></a>1、配置语法</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Syntax：auth_basic string | off;</span><br><span class="line">default：auth_basic off;</span><br><span class="line">Context：http，server，location，limit_except</span><br><span class="line"></span><br><span class="line">Syntax：auth_basic_user_file file;</span><br><span class="line">default：默认无</span><br><span class="line">Context：http，server，location，limit_except</span><br><span class="line">file：存储用户名密码信息的文件。</span><br></pre></td></tr></table></figure>
+
+<h5 id="2、配置示例"><a href="#2、配置示例" class="headerlink" title="2、配置示例"></a>2、配置示例</h5><p>改名<code>access_mod.conf</code>为<code>auth_mod.conf</code>，内容如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name localhost;</span><br><span class="line">	location ~ ^/admin &#123;</span><br><span class="line">		root /home/www/html;</span><br><span class="line">		index index.html index.hml;</span><br><span class="line">		auth_basic &quot;Auth access test!&quot;;</span><br><span class="line">		auth_basic_user_file /etc/nginx/auth.conf;</span><br><span class="line">		&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>auth_basic</code>不为<code>off</code>，开启登录验证功能，<code>auth_basic_user_file</code>加载账号密码文件。</p>
+<h5 id="3、建立口令文件"><a href="#3、建立口令文件" class="headerlink" title="3、建立口令文件"></a>3、建立口令文件</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@192 ~]# yum install -y httpd-tools #htpasswd 是开源 http 服务器 apache httpd 的一个命令工具，用于生成 http 基本认证的密码文件</span><br><span class="line">[root@192 ~]# htpasswd -cm /etc/nginx/auth_conf user10</span><br><span class="line">[root@192 ~]# htpasswd -m /etc/nginx/auth_conf user20</span><br><span class="line">[root@192 ~]# cat /etc/nginx/auth_conf </span><br><span class="line">user10:$apr1$MOa9UVqF$RlYRMk7eprViEpNtDV0n40</span><br><span class="line">user20:$apr1$biHJhW03$xboNUJgHME6yDd17gkQNb0</span><br></pre></td></tr></table></figure>
+
+<h5 id="4、访问测试"><a href="#4、访问测试" class="headerlink" title="4、访问测试"></a>4、访问测试</h5><p><img src="https://img.beyourself.org.cn/fb8d55f09f140b9defe41257fab27dc9cadfeffe.jpg#id=cSz6E&originHeight=372&originWidth=895&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h5 id="5、局限性"><a href="#5、局限性" class="headerlink" title="5、局限性"></a>5、局限性</h5><p>（1）用户信息依赖文件方式<br>（2）操作管理机械，效率低下</p>
+<h5 id="6、解决方法"><a href="#6、解决方法" class="headerlink" title="6、解决方法"></a>6、解决方法</h5><p>（1）Nginx结合LUA实现高效验证<br>（2）Nginx和LDAP打通，利用nginx-auth-ldap模块<br>（3）Nginx只做中间代理，具体认证交给应用。</p>
+<h3 id="19、nginx-变量-了解"><a href="#19、nginx-变量-了解" class="headerlink" title="19、nginx 变量(了解)"></a>19、nginx 变量(了解)</h3><p>Nginx 同 Apache 和 Lighttpd 等其他 Web 服务器的配置方法不太相同，Nginx的配置文件使用语法的就是一门微型的编程语言。可以类似写程序一般编写配置文件，可操作性很大。既然是编程语言，一般也就少不了“变量”这种东西。</p>
+<h4 id="1、nginx变量简介"><a href="#1、nginx变量简介" class="headerlink" title="1、nginx变量简介"></a>1、nginx变量简介</h4><ul>
+<li>所有的 Nginx变量在 Nginx 配置文件中引用时都须带上 $ 前缀 </li>
+<li>在 Nginx 配置中，变量只能存放一种类型的值，有且也只存在一种类型，那就是字符串类型 </li>
+<li>nginx可以使用变量简化配置与提高配置的灵活性，所有的变量值都可以通过这种方式引用： <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">变量名</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2、nginx-变量的定义和使用"><a href="#2、nginx-变量的定义和使用" class="headerlink" title="2、nginx 变量的定义和使用"></a>2、nginx 变量的定义和使用</h4><p>nginx中的变量分为两种，自定义变量与内置预定义变量</p>
+<h5 id="1、自定义变量"><a href="#1、自定义变量" class="headerlink" title="1、自定义变量"></a>1、自定义变量</h5><p><strong>1、声明变量</strong><br>可以在sever,http,location等标签中使用set命令（非唯一）声明变量，语法如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set $变量名 变量值</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意:</strong></p>
+<ul>
+<li>nginx 中的变量必须都以$开头</li>
+<li>nginx 的配置文件中所有使用的变量都必须是声明过的，否则 nginx 会无法启动并打印相关异常日志</li>
+</ul>
+<p><strong>2、变量的可见性</strong></p>
+<p>nginx 变量的一个有趣的特性就是nginx中每一个变量都是全局可见的，而他们又不是全局变量。如下例子</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">location /a/ &#123;</span><br><span class="line">  return 200 $a;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /b/ &#123;</span><br><span class="line"> set $a &quot;hello nginx&quot;;</span><br><span class="line"> return 200 $a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于变量是全局可见的所以nginx启动不会报错，而第一个location中并不知道$a的具体值因此返回的响应结果为一个空字符串。</p>
+<p>在不同层级的标签中声明的变量性的可见性规则如下:</p>
+<ul>
+<li>location标签中声明的变量中对这个location块可见</li>
+<li>server标签中声明的变量对server块以及server块中的所有子块可见</li>
+<li>http标签中声明的变量对http块以及http块中的所有子块可见</li>
+</ul>
+<p>**3、配置 $foo&#x3D;hello **?</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 8080;</span><br><span class="line">    server_name  localhost;</span><br><span class="line">    </span><br><span class="line">    location /test &#123;</span><br><span class="line">            set $foo hello;</span><br><span class="line">            return 200 &quot;foo: $foo&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost html]# nginx -s reload</span><br><span class="line">[root@localhost html]# curl localhost/test</span><br><span class="line">hello \$</span><br></pre></td></tr></table></figure>
+
+<p>这里用到了标准模块 ngx_geo 提供的配置指令 geo 来为变量 <img src="https://www.yuque.com/api/services/graph/generate_redirect/latex?dollar%20%E8%B5%8B%E4%BA%88%E5%AD%97%E7%AC%A6%E4%B8%B2%20%22#card=math&code=dollar%20%E8%B5%8B%E4%BA%88%E5%AD%97%E7%AC%A6%E4%B8%B2%20%22&id=YMtDm">“，这样我们在下面需要使用美元符的地方，就直接引用我们的 $dollar 变量就可以了。</p>
+<p><strong>4、 使用大括号插值</strong></p>
+<p>在“变量插值”的上下文中，还有一种特殊情况，即当引用的变量名之后紧跟着变量名的构成字符时（比如后跟字母、数字以及下划线），我们就需要使用特别的记法来消除歧义，例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    ...</span><br><span class="line">    location /test-brace &#123;</span><br><span class="line">        set $first &quot;hello &quot;;</span><br><span class="line">        return 200 $&#123;foo&#125;world;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost html]# nginx -s reload</span><br><span class="line">[root@localhost html]# curl localhost/test-brace</span><br><span class="line">hello world</span><br></pre></td></tr></table></figure>
+
+<p>这里，我们在 echo 配置指令的参数值中引用变量 first 的时候，后面紧跟着 world 这个单词，所以如果直接写作 “firstworld” 则 Nginx “变量插值”计算引擎会将之识别为引用了变量 firstworld. 为了解决这个难题，Nginx 的字符串记法支持使用花括号在  之后把变量名围起来，比如这里的 ${first}。</p>
+<p><strong>5、变量作用域</strong></p>
+<p>set 指令（以及前面提到的 geo 指令）不仅有赋值的功能，它还有创建 Nginx 变量的副作用，即当作为赋值对象的变量尚不存在时，它会自动创建该变量。比如在上面这个例子中，如果 $a 这个变量尚未创建，则 set 指令会自动创建 $a 这个用户变量。如果我们不创建就直接使用它的值，则会报错。<br>例如</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    ...</span><br><span class="line">    location /bad &#123;</span><br><span class="line">        return 200 $foo;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时 Nginx 服务器会拒绝加载配置:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[emerg] unknown &quot;foo&quot; variable</span><br></pre></td></tr></table></figure>
+
+<p>Nginx 变量的创建和赋值操作发生在全然不同的时间阶段，Nginx 变量的创建只能发生在 Nginx 配置加载的时候，或者说 Nginx 启动的时候，而赋值操作则只会发生在请求实际处理的时候。<br>这意味着不创建而直接使用变量会导致启动失败，同时也意味着我们无法在请求处理时动态地创建新的 Nginx 变量。</p>
+<p>Nginx 变量一旦创建，其变量名的可见范围就是整个 Nginx 配置，甚至可以跨越不同虚拟主机的 server 配置块。我们来看一个例子：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 8080;</span><br><span class="line">    </span><br><span class="line">    location /foo &#123;</span><br><span class="line">        return 200 &quot;foo = [$foo]&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    location /bar &#123;</span><br><span class="line">        set $foo 32;</span><br><span class="line">        return 200 &quot;foo = [$foo]&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost html]# curl &#x27;http://localhost/foo&#x27;</span><br><span class="line">foo = []</span><br><span class="line"></span><br><span class="line">[root@localhost html]# curl &#x27;http://localhost/bar&#x27;</span><br><span class="line">foo = [32]</span><br><span class="line"></span><br><span class="line">[root@localhost html]# curl &#x27;http://localhost/foo&#x27;</span><br><span class="line">foo = []</span><br></pre></td></tr></table></figure>
+
+<p>这里我们在 location &#x2F;bar 中用 set 指令创建了变量 foo，于是在整个配置文件中这个变量都是可见的，因此我们可以在 location &#x2F;foo 中直接引用这个变量而不用担心 Nginx 会报错。<br>从这个例子我们可以看到，set 指令因为是在 location &#x2F;bar 中使用的，所以赋值操作只会在访问 &#x2F;bar 的请求中执行。而请求 &#x2F;foo 接口时，我们总是得到空的 foo值，因为用户变量未赋值就输出的话，得到的便是空字符串。</p>
+<p>从这个例子我们可以窥见的另一个重要特性是，Nginx 变量名的可见范围虽然是整个配置，但每个请求都有所有变量的独立副本，或者说都有各变量用来存放值的容器的独立副本，彼此互不干扰。比如前面我们请求了 &#x2F;bar 接口后，foo 变量被赋予了值 32，但它丝毫不会影响后续对 &#x2F;foo 接口的请求所对应的 foo 值（它仍然是空的！），因为各个请求都有自己独立的 $foo 变量的副本。</p>
+<p>对于 Nginx 新手来说，最常见的错误之一，就是将 Nginxee 变量理解成某种在请求之间全局共享的东西，或者说“全局变量”。而事实上，Nginx 变量的生命期是不可能跨越请求边界的。</p>
+<p>关于 Nginx 变量的另一个常见误区是认为变量容器的生命期，是与 location 配置块绑定的。其实不然。我们来看一个涉及“内部跳转”的例子：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 8080;</span><br><span class="line"></span><br><span class="line">    location /foo &#123;</span><br><span class="line">        set $a hello;</span><br><span class="line">        echo_exec /bar;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location /bar &#123;</span><br><span class="line">        echo &quot;a = [$a]&quot;;</span><br><span class="line">    &#125;xxx</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost html]# curl localhost/foo</span><br><span class="line">a = [hello]</span><br></pre></td></tr></table></figure>
+
+
+<p>这 里我们在 location &#x2F;foo 中，使用第三方模块 ngx_echo 提供的 echo_exec 配置指令，发起到 location &#x2F;bar 的“内部跳转”。所谓“内部跳转”，就是在处理请求的过程中，于服务器内部，从一个 location 跳转到另一个 location 的过程。这不同于利用 HTTP 状态码 301 和 302 所进行的“外部跳转”，因为后者是由 HTTP 客户端配合进行跳转的，而且在客户端，用户可以通过浏览器地址栏这样的界面，看到请求的 URL 地址发生了变化。内部跳转和 Bourne Shell（或 Bash）中的 exec 命令很像，都是“有去无回”。另一个相近的例子是 C 语言中的 goto 语句。</p>
+<p>既然是内部跳转，当前正在处理的请求就还是原来那个，只是当前的 location 发生了变化，所以还是原来的那一套 Nginx 变量的容器副本。对应到上例，如果我们请求的是 &#x2F;foo 这个接口，那么整个工作流程是这样的：先在 location &#x2F;foo 中通过 set 指令将 a 变量的值赋为字符串 hello，然后通过 echo_exec 指令发起内部跳转，又进入到 location &#x2F;bar 中，再输出 a 变量的值。因为 a 还是原来的 a，所以我们可以期望得到 hello 这行输出。测试证实了这一点：</p>
+<p>但如果我们从客户端直接访问 &#x2F;bar 接口，就会得到空的 a 变量的值，因为它依赖于 location &#x2F;foo 来对 a 进行初始化。</p>
+<p>从上面这个例子我们看到，一个请求在其处理过程中，即使经历多个不同的 location 配置块，它使用的还是同一套 Nginx 变量的副本。这里，我们也首次涉及到了“内部跳转”这个概念。值得一提的是，标准 ngx_rewrite 模块的 rewrite 配置指令其实也可以发起“内部跳转”，例如上面那个例子用 rewrite 配置指令可以改写成下面这样的形式：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line"></span><br><span class="line">    listen 8080;</span><br><span class="line"></span><br><span class="line">    location /foo &#123;</span><br><span class="line">        set $a hello;</span><br><span class="line">        rewrite ^ /bar;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location /bar &#123;</span><br><span class="line">        echo &quot;a = [$a]&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从上面这个例子我们看到，Nginx 变量值容器的生命期是与当前正在处理的请求绑定的，而与 location 无关。</p>
+<h5 id="2、内置预定义变量"><a href="#2、内置预定义变量" class="headerlink" title="2、内置预定义变量"></a>2、内置预定义变量</h5><p>内置预定义变量即无需声明就可以使用的变量，通常包括一个http请求或响应中一部分内容的值，以下为一些常用的内置预定义变量</p>
+<table>
+<thead>
+<tr>
+<th><strong>变量名</strong></th>
+<th><strong>定义</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$arg_PARAMETER</td>
+<td>GET请求中变量名PARAMETER参数的值。</td>
+</tr>
+<tr>
+<td>$args</td>
+<td>这个变量等于GET请求中的参数。例如，foo&#x3D;123&amp;bar&#x3D;blahblah;这个变量只可以被修改</td>
+</tr>
+<tr>
+<td>$binary_remote_addr</td>
+<td>二进制码形式的客户端地址。</td>
+</tr>
+<tr>
+<td>$body_bytes_sent</td>
+<td>传送页面的字节数</td>
+</tr>
+<tr>
+<td>$content_length</td>
+<td>请求头中的Content-length字段。</td>
+</tr>
+<tr>
+<td>$content_type</td>
+<td>请求头中的Content-Type字段。</td>
+</tr>
+<tr>
+<td>$cookie_COOKIE</td>
+<td>cookie COOKIE的值。</td>
+</tr>
+<tr>
+<td>$document_root</td>
+<td>当前请求在root指令中指定的值。</td>
+</tr>
+<tr>
+<td>$document_uri</td>
+<td>与$uri相同。</td>
+</tr>
+<tr>
+<td>$host</td>
+<td>请求中的主机头(Host)字段，如果请求中的主机头不可用或者空，则为处理请求的server名称(处理请求的server的server_name指令的值)。值为小写，不包含端口。</td>
+</tr>
+<tr>
+<td>$hostname</td>
+<td>机器名使用 gethostname系统调用的值</td>
+</tr>
+<tr>
+<td>$http_HEADER</td>
+<td>HTTP请求头中的内容，HEADER为HTTP请求中的内容转为小写，-变为_(破折号变为下划线)，例如：$http_user_agent(Uaer-Agent的值);</td>
+</tr>
+<tr>
+<td>$sent_http_HEADER</td>
+<td>HTTP响应头中的内容，HEADER为HTTP响应中的内容转为小写，-变为_(破折号变为下划线)，例如： $sent_http_cache_control, $sent_http_content_type…;</td>
+</tr>
+<tr>
+<td>$is_args</td>
+<td>如果$args设置，值为”?”，否则为””。</td>
+</tr>
+<tr>
+<td>$limit_rate</td>
+<td>这个变量可以限制连接速率。</td>
+</tr>
+<tr>
+<td>$nginx_version</td>
+<td>当前运行的nginx版本号。</td>
+</tr>
+<tr>
+<td>$query_string</td>
+<td>与$args相同。</td>
+</tr>
+<tr>
+<td>$remote_addr</td>
+<td>客户端的IP地址。</td>
+</tr>
+<tr>
+<td>$remote_port</td>
+<td>客户端的端口。</td>
+</tr>
+<tr>
+<td>$remote_user</td>
+<td>已经经过Auth Basic Module验证的用户名。</td>
+</tr>
+<tr>
+<td>$request_filename</td>
+<td>当前连接请求的文件路径，由root或alias指令与URI请求生成。</td>
+</tr>
+<tr>
+<td>$request_body</td>
+<td>这个变量（0.7.58+）包含请求的主要信息。在使用proxy_pass或fastcgi_pass指令的location中比较有意义。</td>
+</tr>
+<tr>
+<td>$request_body_file</td>
+<td>客户端请求主体信息的临时文件名。</td>
+</tr>
+<tr>
+<td>$request_completion</td>
+<td>如果请求成功，设为”OK”；如果请求未完成或者不是一系列请求中最后一部分则设为空。</td>
+</tr>
+<tr>
+<td>$request_method</td>
+<td>这个变量是客户端请求的动作，通常为GET或POST。包括0.8.20及之前的版本中，这个变量总为main request中的动作，如果当前请求是一个子请求，并不使用这个当前请求的动作。</td>
+</tr>
+<tr>
+<td>$request_uri</td>
+<td>这个变量等于包含一些客户端请求参数的原始URI，它无法修改，请查看$uri更改或重写URI。</td>
+</tr>
+<tr>
+<td>$scheme</td>
+<td>所用的协议，比如http或者是https，比如rewrite ^(.+)$ $scheme:&#x2F;&#x2F;example.com$1 redirect;</td>
+</tr>
+<tr>
+<td>$server_addr</td>
+<td>服务器地址，在完成一次系统调用后可以确定这个值，如果要绕开系统调用，则必须在listen中指定地址并且使用bind参数。</td>
+</tr>
+<tr>
+<td>$server_name</td>
+<td>服务器名称。</td>
+</tr>
+<tr>
+<td>$server_port</td>
+<td>请求到达服务器的端口号。</td>
+</tr>
+<tr>
+<td>$server_protocol</td>
+<td>请求使用的协议，通常是HTTP&#x2F;1.0或HTTP&#x2F;1.1。</td>
+</tr>
+<tr>
+<td>$uri</td>
+<td>请求中的当前URI(不带请求参数，参数位于args)，不同于浏览器传递的args)，不同于浏览器传递的args)，不同于浏览器传递的request_uri的值，它可以通过内部重定向，或者使用index指令进行修改。不包括协议和主机名，例如&#x2F;foo&#x2F;bar.html</td>
+</tr>
+</tbody></table>
+<p>Nginx 内建变量最常见的用途就是获取关于请求或响应的各种信息。</p>
+<p><strong>1、uri  vs request_uri</strong></p>
+<p>由 ngx_http_core 模块提供的内建变量 uri，可以用来获取当前请求的 URI（经过解码，并且不含请求参数），<br>而 request_uri 则用来获取请求最原始的 URI （未经解码，并且包含请求参数）。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">location /test-uri &#123;</span><br><span class="line">    echo &quot;uri = $uri&quot;;</span><br><span class="line">    echo &quot;request_uri = $request_uri&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost html]# nginx -s reload</span><br><span class="line">[root@localhost html]# curl localhost/test-uri</span><br><span class="line">uri = /test-uri</span><br><span class="line">request_uri = /test-uri</span><br><span class="line"></span><br><span class="line">[root@localhost html]# curl &quot;localhost/test-uri?a=3&amp;b=4&quot;</span><br><span class="line">uri = /test-uri</span><br><span class="line">request_uri = /test-uri?a=3&amp;b=4</span><br><span class="line"></span><br><span class="line">[root@localhost html]# curl &quot;localhost/test-uri/hello%20world?a=3&amp;b=4&quot;</span><br><span class="line">uri = /test-uri/hello world</span><br><span class="line">request_uri = /test-uri/hello%20world?a=3&amp;b=4</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、$arg_XXX</strong></p>
+<p>另一个特别常用的内建变量其实并不是单独一个变量，而是有无限多变种的一群变量，即名字以 arg_ 开头的所有变量，我们估且称之为 arg_XXX 变量群。<br>一个例子是 arg_name，这个变量的值是当前请求中名为 name 的参数的值，而且还是未解码的原始形式的值。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /test-arg &#123;</span><br><span class="line">		return 200 &quot;name = $arg_name \n age = $arg_age&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost html]# nginx -s reload</span><br><span class="line">[root@localhost html]# curl localhost/test-arg</span><br><span class="line">name: </span><br><span class="line">class:</span><br><span class="line"></span><br><span class="line">[root@localhost html]# curl &quot;localhost/test-arg?name=Tom&amp;class=3&quot;</span><br><span class="line">name: Tom</span><br><span class="line">class: 3</span><br><span class="line"></span><br><span class="line">[root@localhost html]# curl &quot;localhost/test-arg?name=hello%20world&amp;class=9&quot;</span><br><span class="line">name: hello%20world</span><br><span class="line">class: 9</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、$arg_XXX 不区分大小写</strong></p>
+<p>其实 $arg_name 不仅可以匹配 name 参数，也可以匹配 NAME 参数，抑或是 Name，Nginx 会在匹配参数名之前，自动把原始请求中的参数名调整为全部小写的形式。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost html]# curl &quot;localhost/test-arg?NAME=Marry&quot;</span><br><span class="line">name: Marry</span><br><span class="line">class:</span><br><span class="line"></span><br><span class="line">[root@localhost html]# curl &quot;localhost/test-arg?Name=Jimmy&quot;</span><br><span class="line">name: Jimmy</span><br><span class="line">class:</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、对 uri 解码</strong></p>
+<p>如果你想对 URI 参数值中的 %XX 这样的编码序列进行解码，可以使用第三方 ngx_set_misc 模块提供的</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">location /test-unescape-uri &#123;</span><br><span class="line">    set_unescape_uri $name $arg_name;</span><br><span class="line">    set_unescape_uri $class $arg_class;</span><br><span class="line">    echo &quot;name: $name&quot;;</span><br><span class="line">    echo &quot;class: $class&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在我们再看一下效果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost html]# curl &quot;localhost/test-arg?name=hello%20world&amp;class=9&quot;</span><br><span class="line">name: hello world</span><br><span class="line">class: 9</span><br></pre></td></tr></table></figure>
+
+<p>从这个例子我们同时可以看到，这个 set_unescape_uri 指令也像 set 指令那样，拥有自动创建 Nginx 变量的功能。后面我们还会专门介绍到 ngx_set_misc 模块。</p>
+<p>像 $arg_XXX 这种类型的变量拥有无穷无尽种可能的名字，所以它们并不对应任何存放值的容器。而且这种变量在 Nginx 核心中是经过特别处理的，第三方 Nginx 模块是不能提供这样充满魔法的内建变量的。</p>
+<p>类 似 arg_XXX 的内建变量还有不少，比如用来取 cookie 值的 cookie_XXX 变量群，用来取请求头的 http_XXX 变量群，以及用来取响应头的 sent_http_XXX 变量群。这里就不一一介绍了，感兴趣的读者可以参考 ngx_http_core 模块的官方文档。</p>
+<h5 id="补充：添加echo指令"><a href="#补充：添加echo指令" class="headerlink" title="补充：添加echo指令"></a>补充：添加echo指令</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">wget http://nginx.org/download/nginx-1.16.0.tar.gz</span><br><span class="line">tar xf nginx-1.16.0.tar.gz</span><br><span class="line">cd nginx-1.16.0</span><br><span class="line">wget https://github.com/openresty/echo-nginx-module/archive/v0.61.tar.gz</span><br><span class="line">tar xf v0.61.tar.gz</span><br><span class="line">在nginx原有编译参数中添加 --add-module=解压后的目录名，然后重新编译即可</span><br></pre></td></tr></table></figure>
+
+<h3 id="20、nginx-监控-了解"><a href="#20、nginx-监控-了解" class="headerlink" title="20、nginx 监控(了解)"></a>20、nginx 监控(了解)</h3><h4 id="1、nginx的基础监控"><a href="#1、nginx的基础监控" class="headerlink" title="1、nginx的基础监控"></a>1、nginx的基础监控</h4><ul>
+<li>进程监控</li>
+<li>端口监控</li>
+</ul>
+<p>注意： 这两个是必须要加在zabbix监控，加触发器有问题及时告警。</p>
+<p>web 服务器 nginx 以其高性能与抗并发能力越来越多的被用户使用</p>
+<p>作为一款服务器产品，其运行状态是运维密切关注的，因此，对 nginx 的实时监控就必须要关注的了</p>
+<p>nginx 提供了 <code>ngx_http_stub_status_module</code>，<code>ngx_http_reqstat_module</code>模块，这个模块提供了基本的监控功能</p>
+<p>作为官方企业版的 nginx plus 通过 ngx_http_status_module 提供了更加完善的监控功能: <a target="_blank" rel="noopener" href="http://demo.nginx.com/status.html">http://demo.nginx.com/status.html</a></p>
+<h4 id="2、监控的主要指标"><a href="#2、监控的主要指标" class="headerlink" title="2、监控的主要指标"></a>2、监控的主要指标</h4><p>我们需要对以下主要的指标进行监控：</p>
+<h5 id="1、基本活跃指标"><a href="#1、基本活跃指标" class="headerlink" title="1、基本活跃指标"></a>1、基本活跃指标</h5><p>Accepts（接受）、Handled（已处理）、Requests（请求数）是一直在增加的计数器。Active（活跃）、Waiting（等待）、Reading（读）、Writing（写）随着请求量而增减。</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>描述</th>
+<th>指标类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Accepts（接受）</td>
+<td>NGINX 所接受的客户端连接数</td>
+<td>资源: 功能</td>
+</tr>
+<tr>
+<td>Handled（已处理）</td>
+<td>成功的客户端连接数</td>
+<td>资源: 功能</td>
+</tr>
+<tr>
+<td>Dropped（已丢弃，计算得出）</td>
+<td>丢弃的连接数（接受 - 已处理）</td>
+<td>工作：错误*</td>
+</tr>
+<tr>
+<td>Requests（请求数）</td>
+<td>客户端请求数</td>
+<td>工作：吞吐量</td>
+</tr>
+</tbody></table>
+<p>NGINX worker 进程接受 OS 的连接请求时 Accepts 计数器增加，而Handled 是当实际的请求得到连接时（通过建立一个新的连接或重新使用一个空闲的）。这两个计数器的值通常都是相同的，如果它们有差别则表明连接被Dropped，往往这是由于资源限制，比如已经达到 NGINX 的worker_connections的限制。</p>
+<h5 id="2、每秒请求数-–-QPS"><a href="#2、每秒请求数-–-QPS" class="headerlink" title="2、每秒请求数 – QPS"></a>2、每秒请求数 – QPS</h5><p>按照固定时间间隔采样请求数据，计算出单位时间的请求量可以看到你的 web 服务器的请求情况</p>
+<p>通过持续的 QPS 监控，可以立刻发现是否被恶意攻击或对服务的可用性进行评估</p>
+<p>虽然当问题发生时，通过 QPS 不能定位到确切问题的位置，但是他却可以在第一时间提醒你环境可能出问题了</p>
+<h5 id="3、服务器错误率"><a href="#3、服务器错误率" class="headerlink" title="3、服务器错误率"></a>3、服务器错误率</h5><p>通过监控固定时间间隔内的错误代码（4XX代码表示客户端错误，5XX代码表示服务器端错误），可以了解到客户端收到的结果是否是正确的错误率突然的飙升很可能是你的网站漏洞发出的信号</p>
+<p>如果你希望通过 access log 分析错误率，那么你需要配置 nginx 的日志模块，让 nginx 将响应码写入访问日志</p>
+<h5 id="4、请求处理时间"><a href="#4、请求处理时间" class="headerlink" title="4、请求处理时间"></a>4、请求处理时间</h5><p>请求处理时间也可以被记录在 access log 中，通过分析 access log，统计请求的平均响应时间，通过持续观察，可以发现上游服务器的问题</p>
+<h4 id="3、指标的收集"><a href="#3、指标的收集" class="headerlink" title="3、指标的收集"></a>3、指标的收集</h4><p>介绍了这么多的监控指标，事实上，上面介绍的仅仅是基本的监控指标，针对实际的情况，还有很多指标十分具有监控的必要</p>
+<p>那么，怎么去收集这些指标进行监控呢？</p>
+<p>通过在编译时加入 <code>nginx</code> 的 <code>ngx_http_stub_status_module</code> 模块我们可以实时监控以下基本的指标：</p>
+<h5 id="1、nginx-Stub-Status-监控模块安装"><a href="#1、nginx-Stub-Status-监控模块安装" class="headerlink" title="1、nginx Stub Status 监控模块安装"></a>1、nginx Stub Status 监控模块安装</h5><p>先使用命令查看是否已经安装这个模块：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-V大写会显示版本号和模块等信息、v小写仅显示版本信息</span></span><br><span class="line">[root@localhost ~]# nginx -V</span><br></pre></td></tr></table></figure>
+
+<p>如果没有此模块，需要重新安装，编译命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure –with-http_stub_status_module</span><br></pre></td></tr></table></figure>
+
+<p>具体的使用方法是在执行 .&#x2F;configure 时，指定 –with-http_stub_status_module，然后通过配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen 80;</span><br><span class="line">        server_name localhost;</span><br><span class="line">        location /nginx-status &#123;</span><br><span class="line">                stub_status     on;</span><br><span class="line">                access_log  /var/log/nginx/access.log;</span><br><span class="line">                allow   10.0.105.207; #允许本地电脑访问</span><br><span class="line">                deny    all;</span><br><span class="line">                &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此处默认只有本地访问，如果远程查看需要加相关的IP或者干脆去掉Deny all即可。加密文件可以使用#htpasswd -c &#x2F;usr&#x2F;nginx&#x2F;conf hxb 命令来创建。配置完成后需要重启Nginx服务。状态配置只能是针对某个Nginx服务。目前Nginx还无法做到针对单个站点进行监控。</p>
+<h5 id="2、nginx-状态查看"><a href="#2、nginx-状态查看" class="headerlink" title="2、nginx 状态查看"></a>2、nginx 状态查看</h5><p>配置完成后在浏览器中输入<a target="_blank" rel="noopener" href="http://10.0.105.207/nginx-status">http://10.0.105.207/nginx-status</a> 查看（或者用 <code>curl localhost/nginx_status</code>），显示信息如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Active connections: 2 </span><br><span class="line">server accepts handled requests</span><br><span class="line"> 26 26 48 </span><br><span class="line">Reading: 0 Writing: 1 Waiting: 1</span><br></pre></td></tr></table></figure>
+
+<p>Accepts（接受）、Handled（已处理）、Requests（请求数）是一直在增加的计数器。Active（活跃）、Waiting（等待）、Reading（读）、Writing（写）随着请求量而增减</p>
+<p><img src="https://img.beyourself.org.cn/6aeb30e4d65bee11bd486514eacc32a4128e2359.jpg#id=lR5LM&originHeight=253&originWidth=1009&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h5 id="3、Stub-Status-参数说明"><a href="#3、Stub-Status-参数说明" class="headerlink" title="3、Stub Status 参数说明"></a>3、Stub Status 参数说明</h5><p>active connections – 活跃的连接数量</p>
+<p>server accepts handled requests — 总共处理了1075个连接 , 成功创建1064次握手, 总共处理了6253个请求</p>
+<p>每个连接有三种状态waiting、reading、writing</p>
+<p>reading —读取客户端的Header信息数.这个操作只是读取头部信息，读取完后马上进入writing状态，因此时间很短。</p>
+<p>writing — 响应数据到客户端的Header信息数.这个操作不仅读取头部，还要等待服务响应，因此时间比较长。</p>
+<p>waiting — 开启keep-alive后等候下一次请求指令的驻留连接.</p>
+<p>正常情况下waiting数量是比较多的，并不能说明性能差。反而如果reading+writing数量比较多说明服务并发有问题。</p>
+<p><img src="https://img.beyourself.org.cn/a4036cc02e5c470b8191f2c62d59ec9290e53559.jpg#id=iy3bY&originHeight=516&originWidth=816&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><img src="https://img.beyourself.org.cn/a74670f946006637e1e62cb11ab0eb8b4f53fc02.jpg#id=XJAIk&originHeight=627&originWidth=850&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p>当用户请求连接Nginx服务器时，accepts计数器会加一。且当服务器处理该连接请求时，handled计数器同样会加一。一般而言，两者的值是相等的，除非达到了某些资源极限（如worker_connection的限制）。</p>
+<p>用户连接请求被处理，就会进入 active 状态。如果该连接没有其他 request，则进入 waiting 的子状态；如果有 request，nginx 会读取 request 的 header，计数器 request 加一，进入 reading 的子状态。 reading 状态持续时间非常短，header 被读取后就会进入 writing 状态。事实上，直到服务器将响应结果返回给用户之前，该连接会一直保持 writing 状态。所以说，writing 状态一般会被长时间占用。</p>
+<p>一旦 NGINX 成功处理一个连接时，连接会移动到Active状态，在这里对客户端请求进行处理：</p>
+<p><strong>Active状态</strong></p>
+<blockquote>
+<p><strong>Waiting</strong>: 活跃的连接也可以处于 Waiting 子状态，如果有在此刻没有活跃请求的话。新连接可以绕过这个状态并直接变为到 Reading 状态，最常见的是在使用“accept filter（接受过滤器）” 和 “deferred accept（延迟接受）”时，在这种情况下，NGINX 不会接收 worker 进程的通知，直到它具有足够的数据才开始响应。如果连接设置为 keep-alive ，那么它在发送响应后将处于等待状态。<br><strong>Reading</strong>: 当接收到请求时，连接离开 Waiting 状态，并且该请求本身使 Reading 状态计数增加。在这种状态下 NGINX 会读取客户端请求首部。请求首部是比较小的，因此这通常是一个快速的操作。<br><strong>Writing</strong>: 请求被读取之后，其使 Writing 状态计数增加，并保持在该状态，直到响应返回给客户端。这意味着，该请求在 Writing 状态时， 一方面 NGINX 等待来自上游系统的结果（系统放在 NGINX “后面”），另外一方面，NGINX 也在同时响应。请求往往会在 Writing 状态花费大量的时间。</p>
+</blockquote>
+<p>通常，一个连接在同一时间只接受一个请求。在这种情况下，Active 连接的数目 &#x3D;&#x3D; Waiting 的连接 + Reading 请求 + Writing 。</p>
+<p><strong>怎么利用这些参数？</strong></p>
+<p>开源的 Nginx 提供的原始参数中，实时性的会比较有用，如 Active connections、Reading、Writing 以及 Waiting。这些数据能够反映当前 Nginx 的负载情况，方便在服务器出现问题时及时发现问题。而另一些数据由于不是状态量，Nginx 无法计算当前的量值而改做其统计数，如 accepts、handled 和 requests。</p>
+<p>对于维护网站人员，accepts、handled 和 requests 的统计值用处是不大的，值得参考的是短时间内这三者数值的增量。这个短时间可以是一秒，如 accepts_per_second、handled_per_second 和 requests_per_second。一个简单的做法就是每秒都去读取这些参数，返回一个和上一秒的差值就行。当然，handled_per_second 替换成 dropped_per_second&#x3D;accepts_per_second-handled_per_second 就更完美了。</p>
+<p>通过这七个参数，就可以从连接到请求全方位的监控起 Nginx 的运行状态。为了方便检测，对每次获取的参数保留下来，然后按时间展现出来。下图展示了 Nginx 在运行时的参考数据。</p>
+<p><img src="https://img.beyourself.org.cn/792e881fb45596a0e05c54bb17e5fd991b937736.jpg#id=kn6Lg&originHeight=420&originWidth=855&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h5 id="4、Reqstat-模块监控"><a href="#4、Reqstat-模块监控" class="headerlink" title="4、Reqstat 模块监控"></a>4、Reqstat 模块监控</h5><p><strong>描述</strong></p>
+<ul>
+<li>ngx_http_reqstat_module 模块</li>
+<li>这个模块计算定义的变量，根据变量值分别统计 nginx 的运行状况。</li>
+<li>可以监视的运行状况有：连接数、请求数、各种响应码范围的请求数、输入输出流量、rt、upstream访问等。</li>
+<li>可以指定获取所有监控结果或者一部分监控结果。</li>
+<li>利用变量添加自定义监控状态。总的监控状态最大个数为50个。</li>
+<li>回收过期的监控数据。</li>
+<li>设置输出格式</li>
+<li>跟踪请求，不受内部跳转的影响</li>
+<li>不要使用与响应相关的变量作为条件，比如”$status”</li>
+</ul>
+<p><strong>编译</strong></p>
+<p>默认编入Tengine，可通过 –without-http_reqstat_module 编译此模块，或通过–with-http_reqstat_module&#x3D;shared 编译为so模块。</p>
+<p>使用so模块加载的话，请确保其顺序在”ngx_http_lua_module”之后。可以借助”nginx -m”来确认。</p>
+<p>- </p>
+<hr>
+<blockquote>
+<p><strong>Syntax</strong>: <em>req_status zone_name1 [zone_name2 [zone_name3 […]]]</em><br><strong>Default</strong>: <em>none</em><br><strong>Context</strong>: <em>http、srv、loc</em></p>
+</blockquote>
+<p>开启统计，可以指定同时统计多个目标，每一个zone_name对应一个目标。</p>
+<hr>
+<blockquote>
+<p><strong>Syntax</strong>: <em>req_status_show [zone_name1 [zone_name2 […]]]</em><br><strong>Default</strong>: <em>所有建立的共享内存目标</em><br><strong>Context</strong>: <em>loc</em></p>
+</blockquote>
+<p>按格式返回统计结果。可指定返回部分目标的统计结果。</p>
+<hr>
+<blockquote>
+<p><strong>Syntax</strong>: <em>req_status_show_field field_name1 [field_name2 [field_name3 […]]]</em><br><strong>Default</strong>: <em>all the fields, including user defined fields</em><br><strong>Context</strong>: <em>loc</em></p>
+</blockquote>
+<p>定义输出格式。可以使用的字段：内置字段，以上面的名字来表示；自定义字段，用变量表示。<br>‘kv’总是每行的第一个字段。</p>
+<hr>
+<blockquote>
+<p><strong>Syntax</strong>: _req_status_zone_add_indecator zone_name _<img src="https://www.yuque.com/api/services/graph/generate_redirect/latex?var1%20%5B#card=math&code=var1%20%5B&id=QJcaP"><em>var2 […]]</em><br><strong>Default</strong>: <em>none</em><br><strong>Context</strong>: <em>http</em></p>
+</blockquote>
+<p>通过变量增加自定义字段，新增加的字段目前会展现在每行的末尾。</p>
+<hr>
+<blockquote>
+<p><strong>Syntax</strong>: <em>req_status_zone_key_length zone_name length</em><br><strong>Default</strong>: <em>none</em><br><strong>Context</strong>: <em>http</em></p>
+</blockquote>
+<p>定义某个共享内存块中key的最大长度，默认值104。key中超出的部分会被截断。</p>
+<hr>
+<blockquote>
+<p><strong>Syntax</strong>: <em>req_status_zone_recycle zone_name times seconds</em><br><strong>Default</strong>: <em>none</em><br><strong>Context</strong>: <em>http</em></p>
+</blockquote>
+<p>定义某个共享内存块过期数据的回收。回收在共享内存耗尽时自动开启。只会回收访问频率低于设置值的监控数据。<br>频率定义为 times &#x2F; seconds，默认值为10r&#x2F;min，即</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">req_status_zone_recycle demo_zone 10 60;</span><br></pre></td></tr></table></figure>
+
+<p>安装模块:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">tengine官方说req-statu模块默认安装。但是并没有。而且tengine的req-status模块不能分upstream监控，从github引入第三方模块解决该问题</span><br><span class="line">yum与编译安装的nginx扩展模块安装:</span><br><span class="line">[root@nginx-server ~]# yum install -y unzip</span><br><span class="line">1. 安装，先查看一下当前编译安装nginx的版本</span><br><span class="line">[root@localhost nginx-1.16.0]# nginx -V  </span><br><span class="line">下载或者上传一个和当前的nginx版本一样的nginx的tar包。</span><br><span class="line">[root@nginx-server ~]# tar xzf nginx-1.16.0.tar.gz -C /usr/local/</span><br><span class="line">2.下载ngx_req_status_module 模块， 这是第三方模块需要添加</span><br><span class="line">[root@nginx-server ~]# wget https://github.com/zls0424/ngx_req_status/archive/master.zip -O ngx_req_status.zip</span><br><span class="line">[root@nginx-server ~]# unzip ngx_req_status.zip</span><br><span class="line">[root@nginx-server ~]# cp -r ngx_req_status-master/ /usr/local/ #与解压的nginx在同一级目录下</span><br><span class="line">[root@nginx-server ~]# cd /usr/local/nginx-1.16.0/</span><br><span class="line">[root@nginx-server nginx-1.16.0]# yum -y install pcre pcre-devel openssl openssl-devel gcc gcc-c++   zlib zlib-devel</span><br><span class="line">[root@nginx-server nginx-1.16.0]# yum -y install patch.x86_64</span><br><span class="line">[root@nginx-server nginx-1.16.0]# patch -p1 &lt; ../ngx_req_status-master/write_filter-1.7.11.patch</span><br><span class="line">[root@localhost nginx-1.16.0]# ./configure 添加上原来的参数 --add-module=/usr/local/ngx_req_status-master</span><br><span class="line">[root@localhost nginx-1.16.0]# make -j2</span><br><span class="line">由于原先已有nginx，所以不能执行make install,否则会覆盖掉以前的配置文件及内容</span><br><span class="line">[root@localhost nginx-1.16.0]# mv /usr/sbin/nginx /usr/sbin/nginx_bak</span><br><span class="line">[root@localhost nginx-1.16.0]# cp objs/nginx /usr/sbin/</span><br><span class="line">[root@localhost nginx-1.16.0]# systemctl restart nginx </span><br><span class="line">[root@localhost nginx-1.16.0]# nginx -V   </span><br><span class="line">如果发现编译的配置文件有变化就成功了！</span><br><span class="line">配置如下: 需要在http里面配置。</span><br><span class="line">!!注意，添加了此配置，只有重启nginx才能生效。</span><br><span class="line">[root@localhost ~]# vim /etc/nginx/nginx.conf</span><br><span class="line">	req_status_zone server_name $server_name 256k;</span><br><span class="line">    req_status_zone server_addr $server_addr 256k;</span><br><span class="line">    req_status_zone server_url  $server_name$uri 256k;</span><br><span class="line">    req_status server_name server_addr server_url;</span><br><span class="line">    server &#123;</span><br><span class="line">        server_name localhost;</span><br><span class="line">        location /req-status &#123;</span><br><span class="line">        req_status_show on;</span><br><span class="line">        &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">指令介绍</span><br><span class="line"> req_status_zone</span><br><span class="line">语法: req_status_zone name string size</span><br><span class="line">默认值: None</span><br><span class="line">配置块: http</span><br><span class="line">定义请求状态ZONE,请求按照string分组来排列，例如：</span><br><span class="line">req_status_zone server_url  $server_name$uri 256k;</span><br><span class="line">域名+uri将会形成一条数据，可以看到所有url的带宽，流量，访问数</span><br><span class="line"></span><br><span class="line">req_status</span><br><span class="line">语法: req_status zone1[ zone2]</span><br><span class="line">默认值: None</span><br><span class="line">配置块: http, server, location</span><br><span class="line">在location中启用请求状态，你可以指定更多zones。</span><br><span class="line"></span><br><span class="line">req_status_show</span><br><span class="line">语法: req_status_show on</span><br><span class="line">默认值: None</span><br><span class="line">配置块: location</span><br><span class="line">在当前位置启用请求状态处理程序</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/406296b349ce302f11868506ff5cc012ecea771b.jpg#id=lhm3z&originHeight=179&originWidth=760&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p>请求状态信息包括以下字段：</p>
+<ul>
+<li>zone_name - 利用req_status_zone定义的分组标准。例如，按照服务器名称对请求进行分组后；</li>
+<li>key - 请求按分组标准分组后的分组标识（即组名）。例如按服务器名称分组时，组名可能是10.0.105.196；</li>
+<li>max_active - 该组的最大并发连接数；</li>
+<li>max_bw - 该组的最大带宽；</li>
+<li>traffic - 该组的总流量；</li>
+<li>requests - 该组的总请求数；</li>
+<li>active - 该组当前的并发连接数；</li>
+<li>bandwidth - 该组当前带宽。</li>
+</ul>
+<h5 id="5、补充："><a href="#5、补充：" class="headerlink" title="5、补充："></a>5、补充：</h5><p>查看Nginx并发进程数：ps -ef | grep nginx | wc -l</p>
+<p>查看Web服务器TCP连接状态：netstat -n | awk ‘&#x2F;^tcp&#x2F; {++S[$NF]} END {for(a in S) print a, S[a]}’</p>
+<p>LISTEN：侦听来自远方的TCPport的连接请求</p>
+<p>SYN-SENT：再发送连接请求后等待匹配的连接请求</p>
+<p>SYN-RECEIVED：再收到和发送一个连接请求后等待对方对连接请求的确认</p>
+<p>ESTABLISHED：代表一个打开的连接</p>
+<p>FIN-WAIT-1：等待远程TCP连接中断请求，或先前的连接中断请求的确认</p>
+<p>FIN-WAIT-2：从远程TCP等待连接中断请求</p>
+<p>CLOSE-WAIT：等待从本地用户发来的连接中断请求</p>
+<p>CLOSING：等待远程TCP对连接中断的确认</p>
+<p>LAST-ACK：等待原来的发向远程TCP的连接中断请求的确认</p>
+<p>TIME-WAIT：等待足够的时间以确保远程TCP接收到连接中断请求的确认</p>
+<p>CLOSED：没有不论什么连接状态</p>
+<p>商业版的 nginx plus 通过他的 ngx_http_status_module 提供了比 nginx 更多的监控指标，可以参看 <a target="_blank" rel="noopener" href="http://demo.nginx.com/status.html">http://demo.nginx.com/status.html</a></p>
+<h4 id="4、nginx-access-log-分析"><a href="#4、nginx-access-log-分析" class="headerlink" title="4、nginx access log 分析"></a>4、nginx access log 分析</h4><p>nginx 的 access log 中可以记录很多有价值的信息，通过分析 access log，可以收集到很多指标</p>
+<p>python 编写的 linux 工具 ngxtop 就实现了对 access log 的分析功能</p>
+<p>1.制作nginx的日志切割，每天凌晨切割并压缩。</p>
+<p>PV：PV(<a target="_blank" rel="noopener" href="https://www.baidu.com/s?wd=%E8%AE%BF%E9%97%AE%E9%87%8F&tn=SE_PcZhidaonwhc_ngpagmjz&rsv_dl=gh_pc_zhidao">访问量</a>)： 即Page View, 即页面浏览量或<a target="_blank" rel="noopener" href="https://www.baidu.com/s?wd=%E7%82%B9%E5%87%BB%E9%87%8F&tn=SE_PcZhidaonwhc_ngpagmjz&rsv_dl=gh_pc_zhidao">点击量</a>，用户每次刷新即被计算一次。</p>
+<p>UV：UV(独立访客)：即Unique Visitor,访问您网站的一台<a target="_blank" rel="noopener" href="https://www.baidu.com/s?wd=%E7%94%B5%E8%84%91%E5%AE%A2%E6%88%B7%E7%AB%AF&tn=SE_PcZhidaonwhc_ngpagmjz&rsv_dl=gh_pc_zhidao">电脑客户端</a>为一个访客。00:00-24:00内相同的客户端只被计算一次。</p>
+<p><strong>面试:</strong></p>
+<p>1.根据访问IP统计UV</p>
+<p>awk ‘{print $1}’  access.log|sort | uniq -c |wc -l</p>
+<p>2.统计访问URL统计PV</p>
+<p>awk ‘{print $7}’ access.log|wc -l</p>
+<p>3.查询访问最频繁的URL</p>
+<p>awk ‘{print $7}’ access.log|sort | uniq -c |sort -n -k 1 -r|more</p>
+<p>4.查询访问最频繁的IP</p>
+<p>awk ‘{print $1}’ access.log|sort | uniq -c |sort -n -k 1 -r|more</p>
+<p>5.查询访问最频繁的前10的IP</p>
+<p>awk ‘{print $1}’ access.log|sort | uniq -c |sort -n -k 1 -r|head -n 10</p>
+<p><img src="https://img.beyourself.org.cn/b560a391316312c4ee88c1311f380828b188d70d.jpg#id=lfOwJ&originHeight=522&originWidth=1346&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><img src="https://img.beyourself.org.cn/3f68b589074c8a502f2cc6a6b4aa3d65869cde54.jpg#id=YdYro&originHeight=247&originWidth=1321&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><img src="https://img.beyourself.org.cn/c65fe56985e8963955586767fb12162526a001fd.jpg#id=nbMhR&originHeight=487&originWidth=1336&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><img src="https://img.beyourself.org.cn/b8a8c5f04711a1ebd45e52812dc3d480e873e271.jpg#id=HIMxK&originHeight=510&originWidth=1315&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2023/12/30/nginx4/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#16%E3%80%81nginx-%E9%94%99%E8%AF%AF%E9%A1%B5%E9%9D%A2%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">16、nginx 错误页面配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#17%E3%80%81nginx-%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">17、nginx 流量控制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81Nginx%E5%A6%82%E4%BD%95%E9%99%90%E6%B5%81"><span class="toc-number">2.1.</span> <span class="toc-text">1、Nginx如何限流</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E9%85%8D%E7%BD%AE%E5%9F%BA%E6%9C%AC%E7%9A%84%E9%99%90%E6%B5%81"><span class="toc-number">2.2.</span> <span class="toc-text">2、配置基本的限流</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E5%A4%84%E7%90%86%E7%AA%81%E5%8F%91"><span class="toc-number">2.3.</span> <span class="toc-text">3、处理突发</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E6%97%A0%E5%BB%B6%E8%BF%9F%E7%9A%84%E6%8E%92%E9%98%9F"><span class="toc-number">2.4.</span> <span class="toc-text">4、无延迟的排队</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81%E9%AB%98%E7%BA%A7%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.5.</span> <span class="toc-text">5、高级配置示例</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%E3%80%81%E7%99%BD%E5%90%8D%E5%8D%95"><span class="toc-number">2.5.1.</span> <span class="toc-text">1、白名单</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%E3%80%81location-%E5%8C%85%E5%90%AB%E5%A4%9Alimit-req%E6%8C%87%E4%BB%A4"><span class="toc-number">2.5.2.</span> <span class="toc-text">2、location 包含多limit_req指令</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6%E3%80%81%E9%85%8D%E7%BD%AE%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3%E5%8A%9F%E8%83%BD"><span class="toc-number">2.6.</span> <span class="toc-text">6、配置流量控制相关功能</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95"><span class="toc-number">2.6.1.</span> <span class="toc-text">1、配置日志记录</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%E3%80%81%E5%8F%91%E9%80%81%E5%88%B0%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E9%94%99%E8%AF%AF%E4%BB%A3%E7%A0%81"><span class="toc-number">2.6.2.</span> <span class="toc-text">2、发送到客户端的错误代码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#18%E3%80%81nginx-%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">18、nginx 访问控制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81nginx-%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6%E6%A8%A1%E5%9D%97"><span class="toc-number">3.1.</span> <span class="toc-text">1、nginx 访问控制模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E5%9F%BA%E4%BA%8EIP%E7%9A%84%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="toc-number">3.2.</span> <span class="toc-text">2、基于IP的访问控制</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E8%AF%AD%E6%B3%95"><span class="toc-number">3.2.1.</span> <span class="toc-text">1、配置语法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%E3%80%81%E9%85%8D%E7%BD%AE%E6%B5%8B%E8%AF%95"><span class="toc-number">3.2.2.</span> <span class="toc-text">2、配置测试</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3%E3%80%81%E6%8C%87%E5%AE%9Alocation%E6%8B%92%E7%BB%9D%E6%89%80%E6%9C%89%E8%AF%B7%E6%B1%82"><span class="toc-number">3.2.3.</span> <span class="toc-text">3、指定location拒绝所有请求</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4%E3%80%81%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">3.2.4.</span> <span class="toc-text">4、局限性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5%E3%80%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="toc-number">3.2.5.</span> <span class="toc-text">5、解决方法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E5%9F%BA%E4%BA%8E%E7%94%A8%E6%88%B7%E7%9A%84%E4%BF%A1%E4%BB%BB%E7%99%BB%E5%BD%95"><span class="toc-number">3.3.</span> <span class="toc-text">3、基于用户的信任登录</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E8%AF%AD%E6%B3%95-1"><span class="toc-number">3.3.1.</span> <span class="toc-text">1、配置语法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%E3%80%81%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="toc-number">3.3.2.</span> <span class="toc-text">2、配置示例</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3%E3%80%81%E5%BB%BA%E7%AB%8B%E5%8F%A3%E4%BB%A4%E6%96%87%E4%BB%B6"><span class="toc-number">3.3.3.</span> <span class="toc-text">3、建立口令文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4%E3%80%81%E8%AE%BF%E9%97%AE%E6%B5%8B%E8%AF%95"><span class="toc-number">3.3.4.</span> <span class="toc-text">4、访问测试</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5%E3%80%81%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-number">3.3.5.</span> <span class="toc-text">5、局限性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6%E3%80%81%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="toc-number">3.3.6.</span> <span class="toc-text">6、解决方法</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#19%E3%80%81nginx-%E5%8F%98%E9%87%8F-%E4%BA%86%E8%A7%A3"><span class="toc-number">4.</span> <span class="toc-text">19、nginx 变量(了解)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81nginx%E5%8F%98%E9%87%8F%E7%AE%80%E4%BB%8B"><span class="toc-number">4.1.</span> <span class="toc-text">1、nginx变量简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81nginx-%E5%8F%98%E9%87%8F%E7%9A%84%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="toc-number">4.2.</span> <span class="toc-text">2、nginx 变量的定义和使用</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-number">4.2.1.</span> <span class="toc-text">1、自定义变量</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%E3%80%81%E5%86%85%E7%BD%AE%E9%A2%84%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-number">4.2.2.</span> <span class="toc-text">2、内置预定义变量</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%A1%A5%E5%85%85%EF%BC%9A%E6%B7%BB%E5%8A%A0echo%E6%8C%87%E4%BB%A4"><span class="toc-number">4.2.3.</span> <span class="toc-text">补充：添加echo指令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#20%E3%80%81nginx-%E7%9B%91%E6%8E%A7-%E4%BA%86%E8%A7%A3"><span class="toc-number">5.</span> <span class="toc-text">20、nginx 监控(了解)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81nginx%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9B%91%E6%8E%A7"><span class="toc-number">5.1.</span> <span class="toc-text">1、nginx的基础监控</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E7%9B%91%E6%8E%A7%E7%9A%84%E4%B8%BB%E8%A6%81%E6%8C%87%E6%A0%87"><span class="toc-number">5.2.</span> <span class="toc-text">2、监控的主要指标</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%E3%80%81%E5%9F%BA%E6%9C%AC%E6%B4%BB%E8%B7%83%E6%8C%87%E6%A0%87"><span class="toc-number">5.2.1.</span> <span class="toc-text">1、基本活跃指标</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%E3%80%81%E6%AF%8F%E7%A7%92%E8%AF%B7%E6%B1%82%E6%95%B0-%E2%80%93-QPS"><span class="toc-number">5.2.2.</span> <span class="toc-text">2、每秒请求数 – QPS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3%E3%80%81%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%94%99%E8%AF%AF%E7%8E%87"><span class="toc-number">5.2.3.</span> <span class="toc-text">3、服务器错误率</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4%E3%80%81%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E6%97%B6%E9%97%B4"><span class="toc-number">5.2.4.</span> <span class="toc-text">4、请求处理时间</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E6%8C%87%E6%A0%87%E7%9A%84%E6%94%B6%E9%9B%86"><span class="toc-number">5.3.</span> <span class="toc-text">3、指标的收集</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%E3%80%81nginx-Stub-Status-%E7%9B%91%E6%8E%A7%E6%A8%A1%E5%9D%97%E5%AE%89%E8%A3%85"><span class="toc-number">5.3.1.</span> <span class="toc-text">1、nginx Stub Status 监控模块安装</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%E3%80%81nginx-%E7%8A%B6%E6%80%81%E6%9F%A5%E7%9C%8B"><span class="toc-number">5.3.2.</span> <span class="toc-text">2、nginx 状态查看</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3%E3%80%81Stub-Status-%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="toc-number">5.3.3.</span> <span class="toc-text">3、Stub Status 参数说明</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4%E3%80%81Reqstat-%E6%A8%A1%E5%9D%97%E7%9B%91%E6%8E%A7"><span class="toc-number">5.3.4.</span> <span class="toc-text">4、Reqstat 模块监控</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5%E3%80%81%E8%A1%A5%E5%85%85%EF%BC%9A"><span class="toc-number">5.3.5.</span> <span class="toc-text">5、补充：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81nginx-access-log-%E5%88%86%E6%9E%90"><span class="toc-number">5.4.</span> <span class="toc-text">4、nginx access log 分析</span></a></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2023/12/31/nnginx5/">nginx5</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2023/12/22/nginx3/">nginx3</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2023/12/30/nginx4/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系小曹宅，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">2262690094</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"不找了","artist":"隔壁老樊","url":"music/隔壁老樊 - 不找了.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"于是天气刚好","artist":"泪桥","url":"music/于是天气刚好 - 泪桥.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"安和桥","artist":"林芬宇","url":"music/林芬宇 - 安和桥.mp3","cover":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0SWQx6YrNA8lElaG4OOKLkNkNzLO1PflKg&usqp=CAU"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>

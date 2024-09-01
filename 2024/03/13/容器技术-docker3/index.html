@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——docker容器 | Mr.Long</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——docker容器`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"docker命令","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/Docker命令大全/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/14/LV逻辑卷扩展/"},{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/28/LVM逻辑卷管理 /"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"PQL","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/30/PromQL 讲解/"},{"title":"python一","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/20/Python 1 /"},{"title":"python三","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/25/Python 3/"},{"title":"python四","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/03/01/Python 4/"},{"title":"python二","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/21/Python 2/"},{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/23/TCP协议/"},{"title":"ansible模块","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1","path":"2023/08/17/ansible 模块扩展/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/11/docker容器/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"Galera集群","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/galera/"},{"title":"nginx1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/17/nginx1/"},{"title":"nginx2","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/19/nginx2/"},{"title":"nginx5","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/31/nnginx5/"},{"title":"","path":"2024/09/01/prometheus 监控/"},{"title":"","path":"2024/09/01/redis集群/"},{"title":"","path":"2024/09/01/shell脚本/"},{"title":"docker安装","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/06/容器技术-Docker1/"},{"title":"docker镜像容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/14/容器技术-docker2/"},{"title":"docker-Compose","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/容器技术-docker5/"},{"title":"prometheus-exporter","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/16/node_exporter/"},{"title":"shell编程","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2023/07/21/shell_newrain/"},{"title":"docker资源限制","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/15/容器技术docker4/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/01/文件权限/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/09/磁盘阵列RAID/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/25/磁盘存储管理1/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"prometheus自定义监控","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/26/自定义监控/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/11/网络管理基础/"},{"title":"微服务","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务概念/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/16/走进网络世界/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/13/容器技术-docker3/"},{"title":"nginx4","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/30/nginx4/"},{"title":"nginx3","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/22/nginx3/"},{"title":"微服务项目","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务项目-mall-swarm/"},{"title":"redis操作","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a13d778b5db38e4b127b71bdf122f695","path":"2023/09/26/Redis操作/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Mr.Long</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">唱跳rap篮球</span>
+          <span class="main-left--tag">宅但不肥</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/MyRong99/MyRong99.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>6</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>7</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>10 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>41 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>439天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">docker容器</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/Docker/">-Docker</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            <a class="tag-link" href="/tags/Docker/" rel="tag">-Docker</a>
+          </div>
+          
+          <p class="article-info--date">日期：2024-03-13 09:25:26</p>
+        </div>
+        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h2 id="通过Dockerfile创建镜像"><a href="#通过Dockerfile创建镜像" class="headerlink" title="通过Dockerfile创建镜像"></a><strong>通过Dockerfile创建镜像</strong></h2><p>Docker 提供了一种更便捷的方式，叫作 Dockerfile</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build命令用于根据给定的Dockerfile构建Docker镜像。</span><br></pre></td></tr></table></figure>
+
+<p>docker build语法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">docker build [OPTIONS] &lt;PATH | URL | -&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">1. 常用选项说明</span><br><span class="line">--build-arg，设置构建时的变量</span><br><span class="line">--no-cache，默认false。设置该选项，将不使用Build Cache构建镜像</span><br><span class="line">--pull，默认false。设置该选项，总是尝试pull镜像的最新版本</span><br><span class="line">--compress，默认false。设置该选项，将使用gzip压缩构建的上下文</span><br><span class="line">--disable-content-trust，默认true。设置该选项，将对镜像进行验证</span><br><span class="line">--file, -f，Dockerfile的完整路径，默认值为‘PATH/Dockerfile’</span><br><span class="line">--isolation，默认--isolation=&quot;default&quot;，即Linux命名空间；其他还有process或hyperv</span><br><span class="line">--label，为生成的镜像设置metadata</span><br><span class="line">--squash，默认false。设置该选项，将新构建出的多个层压缩为一个新层，但是将无法在多个镜像之间共享新层；设置该选项，实际上是创建了新image，同时保留原有image。</span><br><span class="line">--tag, -t，镜像的名字及tag，通常name:tag或者name格式；可以在一次构建中为一个镜像设置多个tag</span><br><span class="line">--network，默认default。设置该选项，Set the networking mode for the RUN instructions during build</span><br><span class="line">--quiet, -q ，默认false。设置该选项，Suppress the build output and print image ID on success</span><br><span class="line">--force-rm，默认false。设置该选项，总是删除掉中间环节的容器</span><br><span class="line">--rm，默认--rm=true，即整个构建过程成功后删除中间环节的容器</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">示例： </span><br><span class="line">docker build -t newrain/bbauto:v2.1 .</span><br><span class="line"></span><br><span class="line">docker build  是docker创建镜像的命令 </span><br><span class="line">-t 是标识新建的镜像属于 newrain的 bbauto镜像 </span><br><span class="line">：v2 是tag </span><br><span class="line">&quot;.&quot;是用来指明 我们的使用的Dockerfile文件当前目录的</span><br></pre></td></tr></table></figure>
+
+<p>2.1、 创建镜像所在的文件夹和Dockerfile文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# mkdir sinatra</span><br><span class="line">[root@docker ~]# cd sinatra/</span><br><span class="line">[root@docker sinatra]# touch Dockerfile</span><br></pre></td></tr></table></figure>
+
+<p>2.2、 在Dockerfile文件中写入指令，每一条指令都会更新镜像的信息例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@docker sinatra]# vim Dockerfile</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">This is a comment</span> </span><br><span class="line">FROM daocloud.io/library/centos:7</span><br><span class="line">MAINTAINER newrain newrain@docker</span><br><span class="line">RUN yum install -y wget</span><br><span class="line">RUN touch a.txt</span><br><span class="line">RUN mkdir /test</span><br></pre></td></tr></table></figure>
+
+<p>格式说明：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">命令要大写，&quot;#&quot;是注解。 </span><br><span class="line">每一个指令后面需要跟空格，语法。</span><br><span class="line">FROM 命令是告诉docker 我们的镜像什么从哪里下载。 </span><br><span class="line">MAINTAINER 是描述 镜像的创建人。   maintainer</span><br><span class="line">RUN 命令是在镜像内部执行。就是说他后面的命令应该是针对镜像可以运行的命令。</span><br></pre></td></tr></table></figure>
+
+<p>2.3、创建镜像</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">命令：</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">docker build -t newrain/centso:7 .</span> </span><br><span class="line"></span><br><span class="line">docker build  是docker创建镜像的命令</span><br></pre></td></tr></table></figure>
+
+<p>详细执行过程：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[root@docker sinatra]# docker build -t newrain/centos:7 . </span><br><span class="line">Sending build context to Docker daemon  2.048kB</span><br><span class="line">Step 1/4 : FROM daocloud.io/library/centos</span><br><span class="line">latest: Pulling from library/centos</span><br><span class="line">d8d02d457314: Pull complete </span><br><span class="line">Digest: sha256:a36b9e68613d07eec4ef553da84d0012a5ca5ae4a830cf825bb68b929475c869</span><br><span class="line">Status: Downloaded newer image for daocloud.io/library/centos:latest</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">67fa590cfc1c</span></span><br><span class="line">Step 2/4 : MAINTAINER newrain newrain@docker</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Running <span class="keyword">in</span> aab3d80939d8</span></span><br><span class="line">Removing intermediate container aab3d80939d8</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">12bae7d75a23</span></span><br><span class="line">Step 3/4 : RUN yum update &amp;&amp; yum install -y epel*</span><br><span class="line"><span class="meta prompt_"> ---&gt; </span><span class="language-bash">Running <span class="keyword">in</span> ad83c387c60f</span></span><br><span class="line">Loaded plugins: fastestmirror, ovl</span><br><span class="line">Determining fastest mirrors</span><br><span class="line"> * base: mirrors.aliyun.com</span><br><span class="line"> * extras: mirrors.aliyun.com</span><br><span class="line"> * updates: mirrors.aliyun.com</span><br><span class="line">Resolving Dependencies</span><br><span class="line"><span class="meta prompt_">--&gt; </span><span class="language-bash">Running transaction check</span></span><br><span class="line"><span class="meta prompt_">---&gt; </span><span class="language-bash">Package audit-libs.x86_64 0:2.8.4-4.el7 will be updated</span></span><br><span class="line"><span class="meta prompt_">---&gt; </span><span class="language-bash">Package audit-libs.x86_64 0:2.8.5-4.el7 will be an update</span></span><br></pre></td></tr></table></figure>
+
+<p>2.4、创建完成后，从镜像创建容器</p>
+<p><img src="https://img.beyourself.org.cn/abc/a7971905aa95b64d68dbc90ac5d053b0708ea222.jpg#id=XuBtL&originHeight=178&originWidth=1194&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><img src="https://img.beyourself.org.cn/abc/2486df0a32b050b2cb1e2be4c87328cb08fc5c4d.jpg#id=Ozzl5&originHeight=117&originWidth=881&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<h3 id="Dockerfile实例：容器化python的flask应用"><a href="#Dockerfile实例：容器化python的flask应用" class="headerlink" title="Dockerfile实例：容器化python的flask应用"></a><strong>Dockerfile实例：容器化python的flask应用</strong></h3><p>目标： 用 Docker 部署一个用 Python 编写的 Web 应用。</p>
+<p>首先部署整个流程：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">基础镜像（python）--&gt;flask--&gt;部署python应用</span><br><span class="line">web框架 flask django</span><br></pre></td></tr></table></figure>
+
+<p>代码功能：</p>
+<p>    如果当前环境中有”NAME”这个环境变量，就把它打印在”Hello”后，否则就打印”Hello world”，最后再打印出当前环境的 hostname。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# mkdir python_app</span><br><span class="line">[root@docker ~]# cd python_app/</span><br><span class="line">[root@docker python_app]# vim app.py</span><br><span class="line">from flask import Flask</span><br><span class="line">import socket</span><br><span class="line">import os</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">@app.route(&#x27;/&#x27;)</span><br><span class="line">def hello():</span><br><span class="line">    html = &quot;&lt;h3&gt;Hello &#123;name&#125;!&lt;/h3&gt;&quot; \</span><br><span class="line">           &quot;&lt;b&gt;Hostname:&lt;/b&gt; &#123;hostname&#125;&lt;br/&gt;&quot;</span><br><span class="line">    return html.format(name=os.getenv(&quot;NAME&quot;, &quot;world&quot;), hostname=socket.gethostname())</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    app.run(host=&#x27;0.0.0.0&#x27;, port=80)</span><br></pre></td></tr></table></figure>
+
+<p>应用依赖：</p>
+<p>定义在同目录下的 requirements.txt 文件里，内容如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@docker python_app]# vim requirements.txt</span><br><span class="line">Flask</span><br></pre></td></tr></table></figure>
+
+<p>Dockerfile制作容器镜像:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">vim Dockerfile</span></span><br><span class="line">FROM python:2.7-slim</span><br><span class="line">WORKDIR /app</span><br><span class="line">ADD . /app</span><br><span class="line">RUN pip install --trusted-host pypi.python.org -r requirements.txt</span><br><span class="line">EXPOSE 80</span><br><span class="line">ENV NAME World</span><br><span class="line">CMD [&quot;python&quot;, &quot;app.py&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>Dockerfile文件说明：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">FROM python:2.7-slim</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用官方提供的 Python 开发镜像作为基础镜像</span> </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">指定<span class="string">&quot;python:2.7-slim&quot;</span>这个官方维护的基础镜像，从而免去安装 Python 等语言环境的操作。：</span></span><br><span class="line"></span><br><span class="line">WORKDIR /app</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将工作目录切换为 /app,意思是在这一句之后，Dockerfile 后面的操作都以这一句指定的 /app 目录作为当前目录。</span> </span><br><span class="line"></span><br><span class="line">ADD . /app</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将当前目录下的所有内容复制到 /app 下 Dockerfile 里的原语并不都是指对容器内部的操作。比如 ADD，指的是把当前目录（即 Dockerfile 所在的目录）里的文件，复制到指定容器内的目录当中。</span></span><br><span class="line"></span><br><span class="line">RUN pip install --trusted-host pypi.python.org -r requirements.txt</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用 pip 命令安装这个应用所需要的依赖</span></span><br><span class="line"></span><br><span class="line">EXPOSE 80</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">允许外界访问容器的 80 端口</span></span><br><span class="line"></span><br><span class="line">ENV NAME World</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置环境变量</span></span><br><span class="line"></span><br><span class="line">CMD [&quot;python&quot;, &quot;app.py&quot;]</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置容器进程为：python app.py，即：这个 Python 应用的启动命令,这里app.py 的实际路径是 /app/app.py。CMD [<span class="string">&quot;python&quot;</span>, <span class="string">&quot;app.py&quot;</span>] 等价于 <span class="string">&quot;docker run python app.py&quot;</span>。</span></span><br></pre></td></tr></table></figure>
+
+<p>现在目录结构：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@docker python_app]# ls</span><br><span class="line">Dockerfile  app.py   requirements.txt</span><br></pre></td></tr></table></figure>
+
+<p>构建镜像：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@docker python_app]# docker build -t testpython .</span><br><span class="line">-t  给这个镜像加一个 Tag</span><br></pre></td></tr></table></figure>
+
+<p>Dockerfile 中的每个原语执行后，都会生成一个对应的镜像层。即使原语本身并没有明显地修改文件的操作（比如，ENV 原语），它对应的层也会存在。只不过在外界看来，这个层是空的。</p>
+<p>查看结果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@docker python_app]# docker images</span><br><span class="line">REPOSITORY                              TAG                 IMAGE ID           ...</span><br><span class="line">testpython                              latest              16bc21f3eea3</span><br></pre></td></tr></table></figure>
+
+<p>启动容器：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@docker python_app]# docker run -it -p 4000:80 testpython /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>查看容器：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@docker python_app]# docker ps </span><br><span class="line">CONTAINER ID        IMAGE               COMMAND             CREATED                  </span><br><span class="line">ce02568e64ce        testpython          &quot;/bin/bash&quot;         About a minute ago</span><br></pre></td></tr></table></figure>
+
+<p>进入容器：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@docker python_app]# docker exec -it ce02568 /bin/bash </span><br><span class="line">root@ce02568e64ce:/app# python app.py &amp;        #将python运行起来</span><br></pre></td></tr></table></figure>
+
+<p>访问容器内应用：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# curl http://localhost:4000</span><br><span class="line">&lt;h3&gt;Hello World!&lt;/h3&gt;&lt;b&gt;Hostname:&lt;/b&gt; f201f6855136&lt;br/&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>实战练习</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">1.创建一个nginx的dockerfile</span><br><span class="line">[root@docker ~]# mkdir nginx  </span><br><span class="line">[root@docker ~]# cd nginx/</span><br><span class="line">[root@docker nginx]# vim Dockerfile</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">This my first nginx Dockerfile</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Version 1.0</span></span><br><span class="line">FROM daocloud.io/library/centos:7</span><br><span class="line">MAINTAINER docker</span><br><span class="line">ENV PATH /usr/local/nginx/sbin:$PATH</span><br><span class="line">ADD nginx-1.16.1.tar.gz /usr/local/</span><br><span class="line">ADD epel-release-7-11.noarch.rpm /usr/local/</span><br><span class="line">RUN rpm -ivh /usr/local/epel-release-7-11.noarch.rpm</span><br><span class="line">RUN yum install -y gcc gcc-c++ make &amp;&amp; yum -y install openssl openssl-devel &amp;&amp; yum install -y zlib zlib-devel &amp;&amp; yum clean all</span><br><span class="line">RUN useradd -s /sbin/nologin -M www</span><br><span class="line">WORKDIR /usr/local/nginx-1.16.1</span><br><span class="line">RUN ./configure --prefix=/usr/local/nginx --user=www --group=www &amp;&amp; make &amp;&amp; make install</span><br><span class="line">RUN echo &quot;daemon off;&quot; &gt;&gt; /etc/nginx.conf</span><br><span class="line">EXPOSE 80</span><br><span class="line">CMD /bin/sh -c &#x27;nginx -g &quot;daemon off;&quot;&#x27;  #放前台启动</span><br><span class="line"></span><br><span class="line">[root@docker nginx]# ls   #将nginx的tar包与epel源上传到nginx目录下面</span><br><span class="line">Dockerfile  epel-release-7-11.noarch.rpm  nginx-1.16.1.tar.gz</span><br><span class="line">[root@docker nginx]# pwd</span><br><span class="line">/root/nginx</span><br><span class="line">[root@docker nginx]# docker build -t nginx:v7.1 .</span><br><span class="line">[root@docker nginx]# docker run -itd --name nginx9 -p 8088:80 nginx:v7.1  #启动容器</span><br><span class="line">[root@docker nginx]# docker ps </span><br><span class="line">CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES</span><br><span class="line">fec1f3a37cb0        nginx:v7.1          &quot;/bin/sh -c &#x27;/bin/sh…&quot;   6 seconds ago       Up 5 seconds        0.0.0.0:8088-&gt;80/tcp</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/abc/217ff9690b796c9fe8fb77800fe6510d74868059.jpg#id=qFbjL&originHeight=273&originWidth=1039&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">2.创建一个jenkins的Dockerfile</span><br><span class="line">[root@docker ~]# mkdir tomcat </span><br><span class="line">[root@docker ~]# cd tomcat/</span><br><span class="line">[root@docker tomcat]# vim Dockerfile</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">This my first jenkins Dockerfile</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Version 1.0</span></span><br><span class="line"></span><br><span class="line">FROM daocloud.io/library/centos:7</span><br><span class="line">MAINTAINER docker</span><br><span class="line">ENV JAVA_HOME /usr/local/jdk1.8.0_211</span><br><span class="line">ENV TOMCAT_HOME /usr/local/apache-tomcat-8.5.47</span><br><span class="line">ENV PATH=$JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH</span><br><span class="line">ENV CLASSPATH=.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib:$JAVA_HOME/lib/tools.jar</span><br><span class="line">ADD apache-tomcat-8.5.47.tar.gz /usr/local/</span><br><span class="line">ADD jdk-8u211-linux-x64.tar.gz /usr/local/</span><br><span class="line">RUN rm -rf /usr/local/apache-tomcat-8.5.47/webapps/*</span><br><span class="line">ADD jenkins.war /usr/local/apache-tomcat-8.5.47/webapps</span><br><span class="line">RUN rm -rf apache-tomcat-8.5.47.tar.gz  apache-tomcat-8.5.47.tar.gz</span><br><span class="line">EXPOSE 8080</span><br><span class="line">ENTRYPOINT [&quot;/usr/local/apache-tomcat-8.5.47/bin/catalina.sh&quot;,&quot;run&quot;]  #运行的命令</span><br><span class="line"></span><br><span class="line">[root@docker tomcat]# pwd</span><br><span class="line">/root/tomcat</span><br><span class="line">[root@docker tomcat]# ls  #将jdk与tomcat还有jenkins的包上传到tomcat目录中</span><br><span class="line">apache-tomcat-8.5.47.tar.gz  Dockerfile  jdk-8u211-linux-x64.tar.gz  jenkins.war</span><br><span class="line">[root@docker tomcat]# docker build -t jenkins:v1 .</span><br><span class="line">[root@docker tomcat]# docker run -itd --name jenkins1 -p 8081:8080 jenkins:v1</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/abc/babb8653be2ea4dac5e57c4b2167e275c0739eb5.jpg#id=gccp9&originHeight=470&originWidth=1254&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<p><strong>扩展—-CMD与ENTRYPOINT区别</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">一、dockerfile中的 CMD</span><br><span class="line"></span><br><span class="line">1、每个dockerfile中只能有一个CMD如果有多个那么只执行最后一个。</span><br><span class="line">2、CMD 相当于启动docker时候后面添加的参数看，举个简单例子：</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">docker run -itd --name <span class="built_in">test</span> image(镜像) /bin/bash -c</span></span><br><span class="line">a、镜像名称后面跟了一个/bin/bash -c ，其实等价于在dockerfile中的CMD [&quot;/bin/bash&quot;,&quot;-c&quot;]。</span><br><span class="line">b、如果dockerfile中的CMD中有了CMD[&quot;/bin/bash&quot;,&quot;-c&quot;],那么就不用在执行的时候再添加了，如果添加了参数的话那么就相当于要执行你添加的参数，默认的CMD中的参数就无效了。</span><br><span class="line"></span><br><span class="line">二、dockerfile中的ENTRYPOINT</span><br><span class="line">1、一个dockerfile中ENTRYPOINT也只能存在一个，若存在多个那么只执行最后一个，你可以理解为开机启动的意思，和CMD有点像，不过还是有区别。</span><br><span class="line"></span><br><span class="line">2、举个简单例子：</span><br><span class="line">a、dockerfile中有ENTRYPOINT [&quot;tail&quot;,&quot;-f&quot;,&quot;/var/log/nginx/access.log&quot;]，那么启动的时候镜像就执行了这个里面的内容，如果你像上面带参数的话就相当于在这个执行的内容后面再加入参数。</span><br><span class="line">案例:</span><br><span class="line">如果我们的dockerfile中有a中的这句话然后我们启动我们的docker:</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">docker run -itd --name <span class="built_in">test</span> image(镜像名) /bin/bash -c</span></span><br><span class="line"></span><br><span class="line">此时就相当于我们启动docker的时候执行了：tail -f /var/log/nginx/access.log /bin/bash -c</span><br><span class="line">这个命令明显就不对.</span><br></pre></td></tr></table></figure>
+
+<h2 id="dockerfile优化"><a href="#dockerfile优化" class="headerlink" title="dockerfile优化"></a>dockerfile优化</h2><p>编译一个简单的nginx成功以后发现好几百M。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1、RUN 命令要尽量写在一条里，每次 RUN 命令都是在之前的镜像上封装，只会增大不会减小</span><br><span class="line"></span><br><span class="line">2、每次进行依赖安装后，记得yum clean all【centos】 </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">yum clean all 清除缓存中的rpm头文件和包文件</span></span><br><span class="line"></span><br><span class="line">3、选择比较小的基础镜像。alpine</span><br></pre></td></tr></table></figure>
+
+<h1 id="部署私有仓库应用"><a href="#部署私有仓库应用" class="headerlink" title="部署私有仓库应用"></a><strong>部署私有仓库应用</strong></h1><p>私有仓库镜像:</p>
+<p>registry  –官方出品， 没有图形界面.Docker hub官方已提供容器镜像registry,用于搭建私有仓库</p>
+<p>拉取镜像：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# docker pull daocloud.io/library/registry:latest</span><br></pre></td></tr></table></figure>
+
+<p>运行容器：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# docker run -d -v /home/dockerdata/registry:/var/lib/registry --name &quot;pri_registry&quot; --restart=always -p 5000:5000 daocloud.io/library/registry</span><br><span class="line"></span><br><span class="line">参数解释:</span><br><span class="line">/home/dockerdata/registry表示为宿主机的目录，如果不存在自动创建</span><br><span class="line">-v映射目录：  宿主机的目录:容器目录</span><br><span class="line">把宿主机的目录挂载到容器中，将数据目录挂载出来就是为了防止docker私有仓库这个容器被删除的时候，仓库里面的镜像也被删除。</span><br><span class="line">-p 端口映射：本地端口:容器端口</span><br></pre></td></tr></table></figure>
+
+<p>    注：如果创建容器不成功，报错防火墙，解决方案如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">systemctl stop firewalld</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">yum install iptaqbles*</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">systemctl start iptables</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">iptables -F</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">systemctl restart docker</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# docker ps </span><br><span class="line">CONTAINER ID        IMAGE                          COMMAND                  CREATED              STATUS              PORTS                    NAMES</span><br><span class="line">0823df72b160        daocloud.io/library/registry   &quot;/entrypoint.sh /etc…&quot;   About a minute ago   Up About a minute   0.0.0.0:5000-&gt;5000/tcp   pri_registry</span><br></pre></td></tr></table></figure>
+
+<p>连接容器查看端口状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# docker exec -it  0823df7  /bin/sh</span><br><span class="line">/ # netstat -lntp    #查看5000端口是否开启</span><br><span class="line">Active Internet connections (only servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    </span><br><span class="line">tcp        0      0 :::5000                 :::*                    LISTEN      1/registry</span><br><span class="line">/ #</span><br></pre></td></tr></table></figure>
+
+<p>在本机查看能否访问该私有仓库, 看看状态码是不是200</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# curl -I http://127.0.0.1:5000</span><br><span class="line">HTTP/1.1 200 OK</span><br></pre></td></tr></table></figure>
+
+<p>为了方便，下载1个比较小的镜像,buysbox</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# docker pull daocloud.io/library/busybox</span><br></pre></td></tr></table></figure>
+
+<p>上传前必须给镜像打tag  注明ip和端口：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# docker tag busybox 192.168.246.141:5000/busybox</span><br><span class="line"></span><br><span class="line">宿主机查看目录：</span><br><span class="line">[root@docker ~]# ls /home/dockerdata/registry/docker/registry/v2/repositories/</span><br></pre></td></tr></table></figure>
+
+<p>下面这个Mysql是我测试的第二个镜像，从daocloud拉取的：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# docker pull daocloud.io/library/mysql</span><br><span class="line">[root@docker ~]# docker tag daocloud.io/library/mysql 192.168.246.141:5000/daocloud.io/library/mysql</span><br><span class="line">[root@docker ~]# docker images</span><br></pre></td></tr></table></figure>
+
+<p>注：tag后面可以使用镜像名称也可以使用id,我这里使用的镜像名称，如果使用官方的镜像，不需要加前缀，但是daocloud.io的得加前缀.</p>
+<p>修改请求方式为http:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">默认为https，不改会报以下错误:</span><br><span class="line">Get https://master.up.com:5000/v1/_ping: http: server gave HTTP response to HTTPS client</span><br><span class="line"></span><br><span class="line">[root@docker ~]# vim /etc/docker/daemon.json    #不存在则创建</span><br><span class="line">&#123; &quot;insecure-registries&quot;:[&quot;192.168.246.141:5000&quot;] &#125;</span><br><span class="line"></span><br><span class="line">重启docker：</span><br><span class="line">[root@docker ~]# systemctl restart docker</span><br></pre></td></tr></table></figure>
+
+<p>上传镜像到私有仓库：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# docker push 192.168.246.141:5000/busybox</span><br><span class="line">[root@docker ~]# docker push 192.168.246.141:5000/daocloud.io/library/mysql</span><br></pre></td></tr></table></figure>
+
+<p>查看私有仓库里的所有镜像：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">语法： # curl  http://ip:port/v2/repo名字/tags/list</span><br><span class="line">[root@docker ~]# curl http://192.168.246.141:5000/v2/busybox/tags/list</span><br><span class="line">&#123;&quot;name&quot;:&quot;busybox&quot;,&quot;tags&quot;:[&quot;latest&quot;]&#125;</span><br><span class="line"></span><br><span class="line">[root@docker ~]# curl http://192.168.246.141:5000/v2/daocloud.io/library/mysql/tags/list</span><br><span class="line">&#123;&quot;name&quot;:&quot;daocloud.io/library/mysql&quot;,&quot;tags&quot;:[&quot;latest&quot;]&#125; </span><br><span class="line"></span><br><span class="line">这条命令会查看仓库下面所有的镜像：</span><br><span class="line">[root@docker ~]# curl http://192.168.246.141:5000/v2/_catalog</span><br></pre></td></tr></table></figure>
+
+<p>拉取镜像测试：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.先将刚才打了tags的镜像删掉</span><br><span class="line">[root@docker ~]# docker rmi 192.168.246.141:5000/busybox</span><br><span class="line">2.拉取镜像：</span><br><span class="line">[root@docker ~]# docker pull 192.168.246.141:5000/busybox</span><br><span class="line">[root@docker ~]# docker images</span><br></pre></td></tr></table></figure>
+
+<h1 id="部署docker-web-ui应用"><a href="#部署docker-web-ui应用" class="headerlink" title="部署docker web ui应用"></a><strong>部署docker web ui应用</strong></h1><p>下载并运行容器：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@docker ~]# docker pull uifd/ui-for-docker</span><br><span class="line">[root@docker ~]# docker run -it -d --name docker-web -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock docker.io/uifd/ui-for-docker</span><br></pre></td></tr></table></figure>
+
+<p>浏览器访问测试：</p>
+<p>    ip:9000</p>
+<p><img src="https://img.beyourself.org.cn/abc/8620f1cb43f7d0613e96979cc6de02b804bf4106.jpg#id=GKzQv&originHeight=266&originWidth=692&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2024/03/13/容器技术-docker3/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87Dockerfile%E5%88%9B%E5%BB%BA%E9%95%9C%E5%83%8F"><span class="toc-number">1.</span> <span class="toc-text">通过Dockerfile创建镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Dockerfile%E5%AE%9E%E4%BE%8B%EF%BC%9A%E5%AE%B9%E5%99%A8%E5%8C%96python%E7%9A%84flask%E5%BA%94%E7%94%A8"><span class="toc-number">1.1.</span> <span class="toc-text">Dockerfile实例：容器化python的flask应用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dockerfile%E4%BC%98%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">dockerfile优化</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E5%BA%94%E7%94%A8"><span class="toc-number"></span> <span class="toc-text">部署私有仓库应用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2docker-web-ui%E5%BA%94%E7%94%A8"><span class="toc-number"></span> <span class="toc-text">部署docker web ui应用</span></a>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2024/03/14/容器技术-docker2/">docker镜像容器</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2024/03/11/docker容器/">docker容器</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2024/03/13/容器技术-docker3/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系小曹宅，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">2262690094</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"不找了","artist":"隔壁老樊","url":"music/隔壁老樊 - 不找了.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"于是天气刚好","artist":"泪桥","url":"music/于是天气刚好 - 泪桥.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"安和桥","artist":"林芬宇","url":"music/林芬宇 - 安和桥.mp3","cover":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0SWQx6YrNA8lElaG4OOKLkNkNzLO1PflKg&usqp=CAU"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>

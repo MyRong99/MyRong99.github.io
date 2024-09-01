@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的技术与生活——nginx3 | Mr.Long</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `我的技术与生活——nginx3`
+  </script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+
+  .progress {
+    position: fixed;
+    left: 0; top: 0;
+    width: 0;
+    height: 3px;
+    background-color: green;
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) .1s;
+    z-index: 9999;
+  }
+
+  .to-up {
+    animation: toUp .5s 1;
+  }
+  .gray {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    display: none;
+    pointer-events: none;
+    background-color: #000;
+    mix-blend-mode: color;
+  }
+  @keyframes toUp {
+    from { transform: translateY(15px); opacity: 0; }
+    to { transform: translateY(0) ; opacity: 1; }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="http://example.com/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="http://example.com/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"docker命令","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/Docker命令大全/"},{"title":"LV移除、缩容","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/14/LV逻辑卷扩展/"},{"title":"LVM逻辑卷管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/28/LVM逻辑卷管理 /"},{"title":"PXE+Kickstart无人值守安装操作系统","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/82cb48f718f8acc8cb2568140eeaaec382cb48f718f8acc8cb2568140eeaaec3","path":"2023/06/26/PXE+Kickstart无人值守安装操作系统/"},{"title":"PQL","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/30/PromQL 讲解/"},{"title":"python一","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/20/Python 1 /"},{"title":"python三","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/25/Python 3/"},{"title":"python四","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/03/01/Python 4/"},{"title":"python二","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15096963228077376","path":"2024/02/21/Python 2/"},{"title":"TCP协议","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/15047394039467328","path":"2023/06/23/TCP协议/"},{"title":"ansible模块","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/1e624a7ba7e09f195b3f2f384b2b9bb1","path":"2023/08/17/ansible 模块扩展/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/11/docker容器/"},{"title":"FTP文件服务器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a9045286aa9b50dcc09302eff83b328a","path":"2023/06/23/ftp/"},{"title":"Galera集群","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/galera/"},{"title":"nginx1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/17/nginx1/"},{"title":"nginx2","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/19/nginx2/"},{"title":"nginx5","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/31/nnginx5/"},{"title":"","path":"2024/09/01/prometheus 监控/"},{"title":"","path":"2024/09/01/redis集群/"},{"title":"","path":"2024/09/01/shell脚本/"},{"title":"docker安装","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/06/容器技术-Docker1/"},{"title":"docker镜像容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/14/容器技术-docker2/"},{"title":"docker-Compose","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/21/容器技术-docker5/"},{"title":"prometheus-exporter","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/16/node_exporter/"},{"title":"shell编程","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/9217d5c6d87ce0e8ec7422ca7469db95","path":"2023/07/21/shell_newrain/"},{"title":"docker资源限制","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/15/容器技术docker4/"},{"title":"用户文件权限","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2023/06/01/文件权限/"},{"title":"单用户模式破解密码","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3f6ae566e1f093d2d9dbcc3df361fc4b3f6ae566e1f093d2d9dbcc3df361fc4b","path":"2023/07/01/破解密码/"},{"title":"磁盘阵列","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/69d9906ff9bf88dbc02184ecb8504fc5","path":"2023/07/09/磁盘阵列RAID/"},{"title":"linux文件管理","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/de0f7b079a80d192f90989d9c2c9622d","path":"2023/06/21/文件管理/"},{"title":"存储管理--1","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/d733537fd3e06784932826b5e82a855d","path":"2023/06/25/磁盘存储管理1/"},{"title":"自建YUM源","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/56260873f5720f373c20f43587eab0b8","path":"2023/06/21/自建yum源笔记/"},{"title":"prometheus自定义监控","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/240007b00ab1bcd1e3af7bb55f18a966","path":"2024/06/26/自定义监控/"},{"title":"Linux网卡","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/346f59e468f2155074d1fb3164594702","path":"2023/06/11/网络管理基础/"},{"title":"微服务","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务概念/"},{"title":"走进网络世界","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/583716b0cb306203c308cc0def55dd9e583716b0cb306203c308cc0def55dd9e","path":"2023/06/16/走进网络世界/"},{"title":"docker容器","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/71e27d1e01da8c13f3f165a1c3bcc8b571e27d1e01da8c13f3f165a1c3bcc8b5","path":"2024/03/13/容器技术-docker3/"},{"title":"nginx4","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/30/nginx4/"},{"title":"nginx3","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7","path":"2023/12/22/nginx3/"},{"title":"微服务项目","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/3719037aa1a43c4806d84ac9bd3dbc34","path":"2024/07/26/微服务项目-mall-swarm/"},{"title":"redis操作","cover":"https://haowallpaper.com/link/common/file/getCroppingImg/a13d778b5db38e4b127b71bdf122f695","path":"2023/09/26/Redis操作/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Mr.Long</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">唱跳rap篮球</span>
+          <span class="main-left--tag">宅但不肥</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“花有重开日，人无再少年”</p>
+        <p>“一个简单普通的男孩”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/MyRong99/MyRong99.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>6</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>7</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>10 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>41 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>439天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v1.0.2</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <link rel="stylesheet" href="/css/partial/article.css" />
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">nginx3</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/%E4%B8%AD%E9%97%B4%E4%BB%B6/">-中间件</a>
+          </div>
+          
+          
+          <div class="article-info--tags">
+            <span>标签：</span>
+            <a class="tag-link" href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" rel="tag">-中间件</a>
+          </div>
+          
+          <p class="article-info--date">日期：2023-12-22 21:10:50</p>
+        </div>
+        <img src="https://haowallpaper.com/link/common/file/getCroppingImg/8c29198625ff99eee0073bbbb137bbc78c29198625ff99eee0073bbbb137bbc7" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content markdown-body">
+      <h3 id="12、nginx-地址重写-rewrite"><a href="#12、nginx-地址重写-rewrite" class="headerlink" title="12、nginx 地址重写 rewrite"></a>12、nginx 地址重写 rewrite</h3><h4 id="1、什么是Rewrite"><a href="#1、什么是Rewrite" class="headerlink" title="1、什么是Rewrite"></a>1、什么是Rewrite</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Rewrite对称URL Rewrite，即URL重写，就是把传入Web的请求重定向到其他URL的过程。</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>URL Rewrite最常见的应用是URL伪静态化，是将动态页面显示为静态页面方式的一种技术。比如<br><a target="_blank" rel="noopener" href="http://www.123.com/news/index.php?id=123">http://www.123.com/news/index.php?id=123</a> 使用URLRewrite 转换后可以显示为 <a target="_blank" rel="noopener" href="http://www.123/">http://www.123</a> .com&#x2F;news&#x2F;123.html对于追求完美主义的网站设计师，就算是网页的地址也希望看起来尽量简洁明快。<br>理论上，搜索引擎更喜欢静态页面形式的网页，搜索引擎对静态页面的评分一般要高于动态页面。所以，UrlRewrite可以让我们网站的网页更容易被搜索引擎所收录。</li>
+<li>从安全角度上讲，如果在URL中暴露太多的参数，无疑会造成一定量的信息泄漏，可能会被一些黑客<br>利用，对你的系统造成一定的破坏，所以静态化的URL地址可以给我们带来更高的安全性。</li>
+<li>实现网站地址跳转，例如用户访问360buy.com，将其跳转到jd.com。例如当用户访问tianyun.com的80端口时，将其跳转到443端口。</li>
+</ul>
+<h4 id="2、Rewrite-相关指令"><a href="#2、Rewrite-相关指令" class="headerlink" title="2、Rewrite 相关指令"></a>2、Rewrite 相关指令</h4><ul>
+<li><strong>Nginx Rewrite 相关指令有 if 、rewrite、set、return</strong></li>
+</ul>
+<h5 id="2-1、if-语句"><a href="#2-1、if-语句" class="headerlink" title="2.1、if 语句"></a>2.1、if 语句</h5><ul>
+<li>应用环境 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">server，location</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>语法： </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">if (condition) &#123; … &#125;</span><br><span class="line">if 可以支持如下条件判断匹配符号</span><br><span class="line">~ 					正则匹配 (区分大小写)</span><br><span class="line">~* 				    正则匹配 (不区分大小写)</span><br><span class="line">!~                  正则不匹配 (区分大小写)</span><br><span class="line">!~*		            正则不匹配  (不区分大小写)</span><br><span class="line">-f 和!-f 		    用来判断是否存在文件</span><br><span class="line">-d 和!-d 		    用来判断是否存在目录</span><br><span class="line">-e 和!-e 		    用来判断是否存在文件或目录</span><br><span class="line">-x 和!-x 		    用来判断文件是否可执行</span><br><span class="line"></span><br><span class="line">在匹配过程中可以引用一些Nginx的全局变量</span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">args				请求中的参数;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">document_root	    针对当前请求的根路径设置值;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">host				请求信息中的<span class="string">&quot;Host&quot;</span>，如果请求中没有Host行，则等于设置的服务器名;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">limit_rate			对连接速率的限制;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">request_method		请求的方法，比如<span class="string">&quot;GET&quot;</span>、<span class="string">&quot;POST&quot;</span>等;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">remote_addr		客户端地址;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">remote_port		客户端端口号;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">remote_user		客户端用户名，认证用;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">request_filename   当前请求的文件路径名（带网站的主目录/usr/local/nginx/html/images/a.jpg）</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">request_uri		当前请求的文件路径名（不带网站的主目录/images/a.jpg）</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">query_string		与<span class="variable">$args</span>相同;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">scheme				用的协议，比如http或者是https</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">server_protocol	请求的协议版本，<span class="string">&quot;HTTP/1.0&quot;</span>或<span class="string">&quot;HTTP/1.1&quot;</span>;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">server_addr 		服务器地址，如果没有用listen指明服务器地址，使用这个变量将发起一次系统调用以取得地址(造成资源浪费);</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">server_name		请求到达的服务器名;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">document_uri 		与<span class="variable">$uri</span>一样，URI地址;</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">server_port 		请求到达的服务器端口号;</span></span><br></pre></td></tr></table></figure>
+
+
+<h5 id="2-2、Rewrite-flag"><a href="#2-2、Rewrite-flag" class="headerlink" title="2.2、Rewrite flag"></a>2.2、Rewrite flag</h5><p><strong>rewrite</strong>  指令根据表达式来重定向URI，或者修改字符串。可以应用于<strong>server,location, if</strong>环境下每行rewrite指令最后跟一个flag标记，支持的flag标记有：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">last 			    相当于Apache里的[L]标记，表示完成rewrite。默认为last。</span><br><span class="line">break 				本条规则匹配完成后，终止匹配，不再匹配后面的规则</span><br><span class="line">redirect 			返回302临时重定向，浏览器地址会显示跳转后的URL地址</span><br><span class="line">permanent 		    返回301永久重定向，浏览器地址会显示跳转后URL地址</span><br></pre></td></tr></table></figure>
+
+<p>redirect 和 permanent区别则是返回的不同方式的重定向，对于客户端来说一般状态下是没有区别的。而对于搜索引擎，相对来说301的重定向更加友好，如果我们把一个地址采用301跳转方式跳转的话，搜索引擎会把老地址的相关信息带到新地址，同时在搜索引擎索引库中彻底废弃掉原先的老地址。使用302重定向时，搜索引擎(特别是google)有时会查看跳转前后哪个网址更直观，然后决定显示哪个，如果它觉的跳转前的URL更好的话，也许地址栏不会更改，那么很有可能出现URL劫持的现像。在做URI重写时，有时会发现URI中含有相关参数，如果需要将这些参数保存下来，并且在重写过程中重新引用，可以用到 () 和 $N 的方式来解决。</p>
+<h5 id="2-3、Rewrite匹配参考示例"><a href="#2-3、Rewrite匹配参考示例" class="headerlink" title="2.3、Rewrite匹配参考示例"></a>2.3、Rewrite匹配参考示例</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">本地解析host文件</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">http://www.testpm.com/a/1.html ==&gt; http://www.testpm.com/b/2.html</span></span><br><span class="line">		</span><br><span class="line">    location /a &#123;</span><br><span class="line">        root    /html;</span><br><span class="line">        index   1.html index.htm;</span><br><span class="line">        rewrite .* /b/2.html permanent;</span><br><span class="line">        &#125;</span><br><span class="line">    location /b &#123;</span><br><span class="line">        root    /html;</span><br><span class="line">        index   2.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line">例2：</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">http://www.testpm.com/2019/a/1.html ==&gt; http://www.testpm.com/2018/a/1.html</span></span><br><span class="line"></span><br><span class="line">     location /2019/a &#123;</span><br><span class="line">        root    /var/www/html;</span><br><span class="line">        index   1.html index.hml;</span><br><span class="line">        rewrite ^/2019/(.*)$ /2018/$1 permanent;</span><br><span class="line">        &#125;</span><br><span class="line">     location /2018/a &#123;</span><br><span class="line">        root    /var/www/html;</span><br><span class="line">        index   1.html index.htl;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">例3：</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">http://www.qf.com/a/1.html ==&gt; http://jd.com</span></span><br><span class="line"></span><br><span class="line">location /a &#123;</span><br><span class="line">        root    /html;</span><br><span class="line">        if ($host ~* www.qf.com ) &#123;</span><br><span class="line">        rewrite .* http://jd.com permanent;</span><br><span class="line">        &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">例4：</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">http://www.qf.com/a/1.html ==&gt; http://jd.com/a/1.html</span></span><br><span class="line">location /a &#123;</span><br><span class="line">        root /html;</span><br><span class="line">        if ( $host ~* testpm.com )&#123;</span><br><span class="line">        rewrite .* http://jd.com$request_uri permanent;</span><br><span class="line">        &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">例5: 在访问目录后添加/  (如果目录后已有/，则不加/)</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">http://www.tianyun.com/a/b/c  ==&gt; http://www.tianyun.com/a/b/c/</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="variable">$1</span>: /a/b</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="variable">$2</span>: c</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">http://$host$1$2<span class="variable">$3</span>/</span></span><br><span class="line">location /a/b/c &#123;</span><br><span class="line">        root    /usr/share/nginx/html;	</span><br><span class="line">        index   index.html index.hml;</span><br><span class="line">        if (-d $request_filename) &#123;</span><br><span class="line">        rewrite ^(.*)([^/])$ http://$host$1$2/ permanent;</span><br><span class="line">        &#125;</span><br><span class="line">        &#125;</span><br><span class="line">	</span><br><span class="line">例6：</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">http://www.tianyun.com/login/tianyun.html ==&gt;  http://www.tianyun.com/reg/login.html?user=tianyun</span></span><br><span class="line"></span><br><span class="line">	location /login &#123;</span><br><span class="line">        root   /usr/share/nginx/html;</span><br><span class="line">        rewrite ^/login/(.*)\.html$ http://$host/reg/login.html?user=$1;</span><br><span class="line">        &#125;</span><br><span class="line">    location /reg &#123;</span><br><span class="line">        root /usr/share/nginx/html;</span><br><span class="line">        index login.html;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">例7：</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">http://www.tianyun.com/qf/11-22-33/1.html  ==&gt;  http://www.tianyun.com/qf/11/22/33/1.html</span></span><br><span class="line">location /qf &#123;</span><br><span class="line">            rewrite ^/qf/([0-9]+)-([0-9]+)-([0-9]+)(.*)$ /qf/$1/$2/$3$4 permanent;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        location /qf/11/22/33 &#123;</span><br><span class="line">                root /html;</span><br><span class="line">                index   1.html;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>等</p>
+<h5 id="2-4、set-指令"><a href="#2-4、set-指令" class="headerlink" title="2.4、set 指令"></a>2.4、set 指令</h5><p>set 指令是用于定义一个变量，并且赋值</p>
+<p>应用环境:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">server,location,if</span><br></pre></td></tr></table></figure>
+
+<p>应用示例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">例8：</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">http://alice.testpm.com ==&gt; http://www.testpm.com/alice</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">http://jack.testpm.com ==&gt; http://www.testpm.com/jack</span></span><br><span class="line"></span><br><span class="line">[root@nginx-server conf.d]# cd /usr/share/nginx/html/</span><br><span class="line">[root@nginx-server html]# mkdir jack alice</span><br><span class="line">[root@nginx-server html]# echo &quot;jack..&quot; &gt;&gt; jack/index.html</span><br><span class="line">[root@nginx-server html]# echo &quot;alice..&quot; &gt;&gt; alice/index.html</span><br><span class="line"></span><br><span class="line">a. DNS实现泛解析</span><br><span class="line">*   		IN      A			    网站IP</span><br><span class="line">或者本地解析域名host文件</span><br><span class="line">10.0.105.202 www.testpm.com</span><br><span class="line">10.0.105.202 alice.testpm.com</span><br><span class="line">10.0.105.202 jack.testpm.com</span><br><span class="line">编辑配置文件:</span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  www.testpm.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">         root   /usr/share/nginx/html;</span><br><span class="line">         index  index.html index.htm;</span><br><span class="line">         if ( $host ~* ^www.testpm.com$) &#123;</span><br><span class="line">                break;</span><br><span class="line">                &#125;</span><br><span class="line">         if ( $host ~* &quot;^(.*)\.testpm\.com$&quot; ) &#123;</span><br><span class="line">                set $user $1;</span><br><span class="line">                rewrite .* http://www.testpm.com/$user permanent;</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    location /jack &#123;</span><br><span class="line">         #/usr/share/nginx/html/jack/</span><br><span class="line">         root /usr/share/nginx/html;</span><br><span class="line">         index  index.html index.hml;</span><br><span class="line">        &#125;</span><br><span class="line">    location /alice &#123;</span><br><span class="line">         #/usr/share/nginx/html/alice/</span><br><span class="line">         root /usr/share/nginx/html;</span><br><span class="line">         index index.html index.hml;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-5、return-指令"><a href="#2-5、return-指令" class="headerlink" title="2.5、return 指令"></a>2.5、return 指令</h5><p>return 指令用于返回状态码给客户端</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">server,location,if</span><br></pre></td></tr></table></figure>
+
+<p>应用示例:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">例9：如果访问的.sh结尾的文件则返回403操作拒绝错误</span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  www.testpm.cn;</span><br><span class="line">    #access_log  /var/log/nginx/http_access.log  main;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        root   /usr/share/nginx/html;</span><br><span class="line">        index  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    location ~* \.sh$ &#123;</span><br><span class="line">        return 403;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">例10：80 ======&gt; 443 ：80转443端口</span><br><span class="line">server &#123;</span><br><span class="line">    listen       80; </span><br><span class="line">    server_name  www.chaosaigc.com;</span><br><span class="line">    access_log  /var/log/nginx/http_access.log  main;</span><br><span class="line">    return 301 https://www.chaosaigc.com$request_uri;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    #SSL 默认访问端口号为 443</span><br><span class="line">    listen 443 ssl;</span><br><span class="line">    #绑定证书的域名</span><br><span class="line">    server_name www.chaosaigc.com;</span><br><span class="line">    access_log  /var/log/nginx/https_access.log  main;</span><br><span class="line">    #ssl on;</span><br><span class="line">    #证书文件的相对路径或绝对路径</span><br><span class="line">    ssl_certificate   /etc/nginx/cert/www.chaosaigc.com_bundle.pem;</span><br><span class="line">    #私钥文件的相对路径或绝对路径</span><br><span class="line">    ssl_certificate_key  /etc/nginx/cert/www.chaosaigc.com.key;</span><br><span class="line">    #指定客户端可以重用会话参数的时间</span><br><span class="line">    ssl_session_timeout 5m;</span><br><span class="line">    #ssl所使用的TLS的协议配置</span><br><span class="line">    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">    #套件配置，配置加密套件，写法遵循 openssl 标准。</span><br><span class="line">    ssl_ciphers  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;</span><br><span class="line">    #如果不指定默认为off，当为on时，在使用SSLv3和TLS协议时，服务器加密算法将优于客户端加密算法。</span><br><span class="line">    ssl_prefer_server_ciphers on;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        root  /usr/share/nginx/html;</span><br><span class="line">        index index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[root@nginx-server ~]# curl -I http://www.testpm.cn</span><br><span class="line">HTTP/1.1 301 Moved Permanently</span><br><span class="line">Server: nginx/1.16.0</span><br><span class="line">Date: Wed, 03 Jul 2019 13:52:30 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 169</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Location: https://www.testpm.cn/</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、last,break详解</strong></p>
+<p><img src="https://img.beyourself.org.cn/d17a4709c5bfc4e1cc4c8fa2d6ee005a2435d49f.jpg#id=g9lSN&originHeight=755&originWidth=787&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost test]# cat /etc/nginx/conf.d/last_break.conf </span><br><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  localhost;</span><br><span class="line">    access_log  /var/log/nginx/last.access.log  main;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        #127.0.0.1</span><br><span class="line">        #/usr/share/nginx/html</span><br><span class="line">        root   /usr/share/nginx/html;</span><br><span class="line">        index  index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    location /break/ &#123;</span><br><span class="line">        #127.0.0.1/break/</span><br><span class="line">        #127.0.0.1/test/break.html</span><br><span class="line">        #127.0.0.1/test/test.html</span><br><span class="line">        #/usr/share/nginx/html/test/break.html</span><br><span class="line">        root /usr/share/nginx/html;</span><br><span class="line">        rewrite .* /test/break.html break;</span><br><span class="line">    &#125;</span><br><span class="line">    location /last/ &#123;</span><br><span class="line">        #127.0.0.1/last/index.html</span><br><span class="line">        root /usr/share/nginx/html;</span><br><span class="line">        </span><br><span class="line">        #127.0.0.1/test/last.html</span><br><span class="line">        rewrite .* /test/last.html break;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    location /test/ &#123;</span><br><span class="line">        #/usr/share/nginx/html/test/test.html </span><br><span class="line">        root /usr/share/nginx/html;</span><br><span class="line">        #127.0.0.1/test/test.html</span><br><span class="line">        rewrite .* /test/test.html break;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">[root@localhost conf.d]# cd /usr/share/nginx/html/</span><br><span class="line">[root@localhost html]# mkdir test</span><br><span class="line">[root@localhost html]# echo &quot;last&quot; &gt; test/last.html</span><br><span class="line">[root@localhost html]# echo &quot;break&quot; &gt; test/break.html</span><br><span class="line">[root@localhost html]# echo &quot;test&quot; &gt; test/test.html</span><br><span class="line"></span><br><span class="line">http://10.0.105.196/break/break.html</span><br><span class="line">http://10.0.105.196/last/last.html</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong></p>
+<ul>
+<li>last 标记在本条 rewrite 规则执行完后，会对其所在的 server { … } 标签重新发起请求; </li>
+<li>break 标记则在本条规则匹配完成后，停止匹配，不再做后续的匹配； </li>
+<li>使用 alias 指令时，必须使用 last； </li>
+<li>使用 proxy_pass 指令时,则必须使用break。<br><strong>4、Nginx 的 https  ( rewrite )</strong>(晚自习练习) <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  *.chaosaigc.com chaosaigc.com;</span><br><span class="line"></span><br><span class="line">        if ($host ~* &quot;^www.chaosaigc.com$|^chaosaigc.com$&quot; ) &#123;</span><br><span class="line">                return 301 https://www.chaosaigc.com$request_uri;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if ($host ~* &quot;^(.*).chaosaigc.com$&quot; ) &#123;</span><br><span class="line">                set $user $1;</span><br><span class="line">                return 301 https://www.chaosaigc.com/$user;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # Settings for a TLS enabled server.</span><br><span class="line">    server &#123;</span><br><span class="line">        listen       443 ssl;</span><br><span class="line">        server_name  www.chaosaigc.com;</span><br><span class="line"></span><br><span class="line">        location / &#123;</span><br><span class="line">                root      /usr/share/nginx/html;</span><br><span class="line">                index     index.php index.html;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        #pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000</span><br><span class="line">        location ~ \.php$ &#123;</span><br><span class="line">            root           /usr/share/nginx/html;</span><br><span class="line">            fastcgi_pass   127.0.0.1:9000;</span><br><span class="line">            fastcgi_index  index.php;</span><br><span class="line">            fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;</span><br><span class="line">            include        fastcgi_params;</span><br><span class="line">        &#125;</span><br><span class="line">        ssl on;</span><br><span class="line">        ssl_certificate cert/214025315060640.pem;</span><br><span class="line">        ssl_certificate_key cert/214025315060640.key;</span><br><span class="line">        ssl_session_cache shared:SSL:1m;</span><br><span class="line">        ssl_session_timeout  10m;</span><br><span class="line">        ssl_ciphers HIGH:!aNULL:!MD5;</span><br><span class="line">        ssl_prefer_server_ciphers on;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="5、Apache-的-https-rewrite-（拓展）"><a href="#5、Apache-的-https-rewrite-（拓展）" class="headerlink" title="5、Apache 的 https ( rewrite )（拓展）"></a>5、Apache 的 https ( rewrite )（拓展）</h5><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# yum -y install httpd mod_ssl</span><br><span class="line">[root@localhost ~]# vim /etc/httpd/conf.d/vip9999.conf</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.beyourself.org.cn/9ad7ed8242e94600823d9073655b1d43bec01db4.jpg#id=FHjaV&originHeight=566&originWidth=1014&originalType=binary&ratio=1&rotation=0&showTitle=false&status=done&style=none&title="> </p>
+<h3 id="13、nginx的localtion指令详解"><a href="#13、nginx的localtion指令详解" class="headerlink" title="13、nginx的localtion指令详解"></a>13、nginx的localtion指令详解</h3><p>Nginx 的 HTTP 配置主要包括三个区块，结构如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">http &#123; 						# 这个是协议级别</span><br><span class="line">　　include mime.types;</span><br><span class="line">　　default_type application/octet-stream;</span><br><span class="line">　　keepalive_timeout 65;</span><br><span class="line">　　gzip on;</span><br><span class="line">　　　　server &#123;			 # 这个是服务器级别</span><br><span class="line">　　　　　　listen 80;</span><br><span class="line">　　　　　　server_name localhost;</span><br><span class="line">　　　　　　　　location / &#123;  # 这个是请求级别</span><br><span class="line">　　　　　　　　　　root html;</span><br><span class="line">　　　　　　　　　　index index.html index.htm;</span><br><span class="line">　　　　　　　　&#125;</span><br><span class="line">　　　　　　&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="1、location-区段"><a href="#1、location-区段" class="headerlink" title="1、location 区段"></a>1、location 区段</h4><ul>
+<li>location 是在 server 块中配置，根据不同的 URI 使用不同的配置，来处理不同的请求。 </li>
+<li>location 是有顺序的，会被第一个匹配的location 处理。 </li>
+<li>基本语法如下： <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">location [=|~|~*|^~|@] pattern&#123;……&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2、location-前缀含义"><a href="#2、location-前缀含义" class="headerlink" title="2、location 前缀含义"></a>2、<strong>location 前缀含义</strong></h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">=    表示精确匹配，优先级也是最高的 </span><br><span class="line">^~   表示uri以某个常规字符串开头,理解为匹配url路径即可 </span><br><span class="line">~    表示区分大小写的正则匹配  </span><br><span class="line">~*   表示不区分大小写的正则匹配</span><br><span class="line">/    通用匹配，任何请求都会匹配到</span><br><span class="line">@    内部服务跳转</span><br></pre></td></tr></table></figure>
+
+<h4 id="3、location-配置示例"><a href="#3、location-配置示例" class="headerlink" title="3、location 配置示例"></a>3、location 配置示例</h4><p>本地解析域名host</p>
+<p>1、没有修饰符 表示：必须以指定模式开始</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  qf.com;</span><br><span class="line"></span><br><span class="line">    location  /abc &#123;</span><br><span class="line">        root    /home/www/nginx;</span><br><span class="line">        index   2.html;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">那么，如下是对的：</span><br><span class="line">http://qf.com/abc</span><br><span class="line">http://qf.com/abc?p1</span><br><span class="line">http://qf.com/abc/</span><br><span class="line">http://qf.com/abcde</span><br></pre></td></tr></table></figure>
+
+<p>2、&#x3D;表示：必须与指定的模式精确匹配</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  www.testpm.cn;</span><br><span class="line">    access_log  /var/log/nginx/http_access.log  main;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        root /usr/share/nginx/html;</span><br><span class="line">        index index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">    location = /abc &#123;</span><br><span class="line">        root /usr/share/nginx/html;</span><br><span class="line">        index index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">那么，如下是对的：</span><br><span class="line">http://qf.com/abc</span><br><span class="line">http://qf.com/abc?p1</span><br><span class="line">http://qf.com/abc/</span><br><span class="line">如下是错的</span><br><span class="line">http://qf.com/abcde</span><br></pre></td></tr></table></figure>
+
+<p>3、~ 表示：指定的正则表达式要区分大小写</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">server_name qf.com;</span><br><span class="line">　　location ~ ^/abc$ &#123;</span><br><span class="line">　　　　……</span><br><span class="line">　　&#125;</span><br><span class="line">&#125;</span><br><span class="line">那么，如下是对的：</span><br><span class="line">http://qf.com/abc</span><br><span class="line">http://qf.com/abc?p1=11&amp;p2=22</span><br><span class="line">如下是错的</span><br><span class="line">http://qf.com/ABC</span><br><span class="line">http://qf.com/abc/</span><br><span class="line">http://qf.com/abcde</span><br></pre></td></tr></table></figure>
+
+<p>4、~* 表示：指定的正则表达式不区分大小写</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">server_name qf.com;</span><br><span class="line">location ~* ^/abc$ &#123;</span><br><span class="line">　　　　……</span><br><span class="line">　　&#125;</span><br><span class="line">&#125;</span><br><span class="line">那么，如下是对的：</span><br><span class="line">http://qf.com/abc</span><br><span class="line">http://qf.com/ABC</span><br><span class="line">http://qf.com/abc?p1=11&amp;p2=22</span><br><span class="line">如下是错的：</span><br><span class="line">http://qf.com/abc/</span><br><span class="line">http://qf.com/abcde</span><br></pre></td></tr></table></figure>
+
+<p>5、^~ ：类似于无修饰符的行为，也是以指定模式开始，不同的是，如果模式匹配，那么就停止搜索其他模式了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name localhost;</span><br><span class="line"></span><br><span class="line">    location  ^~ /abc &#123;</span><br><span class="line">        root /var/www/nginx;</span><br><span class="line">        index index.html;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>6、@ ：定义命名 location 区段，这些区段客户段不能访问，只可以由内部产生的请求来访问，如try_files或error_page等</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name localhost;</span><br><span class="line">    location / &#123;</span><br><span class="line">        root /usr/share/nginx/html;</span><br><span class="line">        index index.html;</span><br><span class="line">        try_files /index.htm /a.html /b.html @error;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location @error &#123;</span><br><span class="line">        return 409;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name 127.0.0.1;</span><br><span class="line"></span><br><span class="line">    location /abc &#123;</span><br><span class="line">        return 302 https://www.baidu.com;</span><br><span class="line">    &#125;</span><br><span class="line">    location ~ /abc &#123;</span><br><span class="line">        return 302 https://www.taobao.com;</span><br><span class="line">    &#125;</span><br><span class="line">    location ^~ /abc/ &#123;</span><br><span class="line">        return 302 https://www.jd.com;</span><br><span class="line">    &#125;</span><br><span class="line">    location ~* /ABC &#123;</span><br><span class="line">        return 302 https://www.pingduoduo.com;</span><br><span class="line">    &#125;</span><br><span class="line">    location = /abc &#123;</span><br><span class="line">        return 302 https://www.vip.com;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>查找顺序和优先级</strong></p>
+<p><strong>1：带有“&#x3D;“的精确匹配优先</strong></p>
+<p><strong>2：没有修饰符的精确匹配</strong></p>
+<p><strong>3：正则表达式按照他们在配置文件中定义的顺序</strong></p>
+<p><strong>4：带有“^~”修饰符的，开头匹配</strong></p>
+<p>*<em>5：带有“<del>” 或“</del><em>” 修饰符的，如果正则表达式与URI匹配</em></em></p>
+<p><strong>6：没有修饰符的，如果指定字符串与URI开头匹配</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">= 大于 ^~  大于 ~|~*|!~|!~* 大于 /</span><br><span class="line">多个location配置的情况下匹配顺序为：首先匹配 =，其次匹配^~, 其次是按正则匹配，最后是交给 / 通用匹配。当有匹配成功时候，停止匹配，按当前匹配规则处理请求。</span><br><span class="line">================================================</span><br><span class="line">(1) =:表示完全匹配;</span><br><span class="line">(2) ^~:匹配URI的前缀，并且后面的正则表达式不再匹配，如果一个URI同时满足两个规则的话，匹配最长的规则;</span><br><span class="line">(3) ~:匹配正则表达式，大小写敏感；</span><br><span class="line">(4) ~*:匹配正则表达式，大小写不敏感；</span><br><span class="line">优先级：（1）&gt; (2) &gt; (3) = (4)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">location 区段匹配示例</span><br><span class="line"></span><br><span class="line">location = / &#123;</span><br><span class="line"><span class="meta prompt_">　　# </span><span class="language-bash">只匹配 / 的查询.</span></span><br><span class="line">　　[ configuration A ]</span><br><span class="line">&#125;</span><br><span class="line">location / &#123;</span><br><span class="line"><span class="meta prompt_">　　# </span><span class="language-bash">匹配任何以 / 开始的查询，但是正则表达式与一些较长的字符串将被首先匹配。</span></span><br><span class="line">　　[ configuration B ]</span><br><span class="line">&#125;</span><br><span class="line">location ^~ /images/ &#123;  www.abc.</span><br><span class="line"><span class="meta prompt_">　　# </span><span class="language-bash">匹配任何以 /images/ 开始的查询并且停止搜索，不检查正则表达式。</span></span><br><span class="line">　　[ configuration C ]</span><br><span class="line">&#125;</span><br><span class="line">location ~* \.(gif|jpg|jpeg)$ &#123;</span><br><span class="line"><span class="meta prompt_">　　# </span><span class="language-bash">匹配任何以gif, jpg, or jpeg结尾的文件，但是所有 /images/ 目录的请求将在Configuration C中处理。</span></span><br><span class="line">　　[ configuration D ]</span><br><span class="line">&#125; </span><br><span class="line">各请求的处理如下例：</span><br><span class="line">	/ → configuration A</span><br><span class="line">	/documents/document.html → configuration B</span><br><span class="line">	/images/1.gif → configuration C</span><br><span class="line">	/documents/1.jpg → configuration D</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、root 、alias 指令区别</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">location /img/ &#123;</span><br><span class="line">    alias /var/www/image/;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">若按照上述配置的话，则访问/img/目录里面的文件时，ningx会自动去/var/www/image/目录找文件</span></span><br><span class="line">location /img/ &#123;</span><br><span class="line">    root /var/www/image;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">若按照这种配置的话，则访问/img/目录下的文件时，nginx会去/var/www/image/img/目录下找文件。]</span></span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name localhost;</span><br><span class="line"></span><br><span class="line">    location /cloud &#123;</span><br><span class="line">        #http://localhost/cloud</span><br><span class="line">        #/usr/share/nginx/html/cloud</span><br><span class="line">        root /usr/share/nginx/html;</span><br><span class="line">        index index.html;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location /cloud &#123;</span><br><span class="line">        #http://localhost/cloud</span><br><span class="line">        #/usr/share/nginx/html</span><br><span class="line">        alias /usr/share/nginx/html/;</span><br><span class="line">        index index.html;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>alias 是一个目录别名的定义，</li>
+<li>root 则是最上层目录的定义。</li>
+<li>还有一个重要的区别是alias后面必须要用“&#x2F;”结束，否则会找不到文件的,而root则可有可无</li>
+</ul>
+<hr>
+<h3 id="14、nginx-日志配置"><a href="#14、nginx-日志配置" class="headerlink" title="14、nginx 日志配置"></a>14、nginx 日志配置</h3><h4 id="1、nginx-日志介绍"><a href="#1、nginx-日志介绍" class="headerlink" title="1、nginx 日志介绍"></a>1、nginx 日志介绍</h4><p><code>nginx</code> 有一个非常灵活的日志记录模式,每个级别的配置可以有各自独立的访问日志, 所需日志模块 <code>ngx_http_log_module</code> 的支持，日志格式通过 <code>log_format</code> 命令来定义，日志对于统计和排错是非常有利的，下面总结了 <code>nginx</code> 日志相关的配置 包括 <code>access_log</code>、<code>log_format</code>、<code>open_log_file_cache</code>、<code>log_not_found</code>、<code>log_subrequest</code>、<code>rewrite_log</code>、<code>error_log</code>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置访问日志</span></span><br><span class="line">access_log path [format [buffer=size] [gzip[=level]] [flush=time] [if=condition]];</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">关闭访问日志</span></span><br><span class="line">access_log off;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>path</strong> 指定日志的存放位置。</li>
+<li><strong>format</strong> 指定日志的格式。默认使用预定义的<code>combined</code>。</li>
+<li><strong>buffer</strong> 用来指定日志写入时的缓存大小。默认是64k。</li>
+<li><strong>gzip</strong> 日志写入前先进行压缩。压缩率可以指定，从1到9数值越大压缩比越高，同时压缩的速度也越慢。默认是1。</li>
+<li><strong>flush</strong> 设置缓存的有效时间。如果超过flush指定的时间，缓存中的内容将被清空。</li>
+<li><strong>if</strong> 条件判断。如果指定的条件计算为0或空字符串，那么该请求不会写入日志。</li>
+</ul>
+<p><strong>作用域：</strong></p>
+<p>可以应用<code>access_log</code>指令的作用域分别有<code>http</code>，<code>server</code>，<code>location</code>，<code>limit_except</code>。也就是说，在这几个作用域外使用该指令，Nginx会报错。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">access_log /var/logs/nginx-access.log</span><br></pre></td></tr></table></figure>
+
+<p>该例子指定日志的写入路径为<code>/var/logs/nginx-access.log</code>，日志格式使用默认的<code>combined</code>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">access_log /var/logs/nginx-access.log buffer=32k gzip flush=1m</span><br></pre></td></tr></table></figure>
+
+<p>该例子指定日志的写入路径为<code>/var/logs/nginx-access.log</code>，日志格式使用默认的<code>combined</code>，指定日志的缓存大小为 32k，日志写入前启用 gzip 进行压缩，压缩比使用默认值 1，缓存数据有效时间为1分钟。</p>
+<h4 id="2、log-format-指令"><a href="#2、log-format-指令" class="headerlink" title="2、log_format 指令"></a>2、log_format 指令</h4><p>Nginx 预定义了名为 <code>combined</code> 日志格式，如果没有明确指定日志格式默认使用该格式：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format combined &#x27;$remote_addr - $remote_user [$time_local] &#x27;</span><br><span class="line">                    &#x27;&quot;$request&quot; $status $body_bytes_sent &#x27;</span><br><span class="line">                    &#x27;&quot;$http_referer&quot; &quot;$http_user_agent&quot;&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>如果不想使用Nginx预定义的格式，可以通过<code>log_format</code>指令来自定义。</p>
+<p>语法</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">log_format name [escape=default|json] string ...;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>name</strong> 格式名称。在 access_log 指令中引用。</li>
+<li><strong>escape</strong> 设置变量中的字符编码方式是<code>json</code>还是<code>default</code>，默认是<code>default</code>。</li>
+<li><strong>string</strong> 要定义的日志格式内容。该参数可以有多个。参数中可以使用Nginx变量。</li>
+</ul>
+<p><code>log_format</code> 指令中常用的一些变量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">remote_addr, <span class="variable">$http_x_forwarded_for</span>   <span class="comment">#记录客户端IP地址</span></span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">remote_user                    <span class="comment">#记录客户端用户名称</span></span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">request                   <span class="comment">#记录请求的URL和HTTP协议</span></span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">status                     <span class="comment">#记录请求状态</span></span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">body_bytes_sent      <span class="comment">#发送给客户端的字节数，不包括响应头的大小</span></span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">bytes_sent               <span class="comment">#发送给客户端的总字节数</span></span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">http_referer            <span class="comment">#记录从哪个页面链接访问过来的,可以根据该参数进行防盗链设置</span></span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">http_user_agent      <span class="comment">#记录客户端浏览器相关信息</span></span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">time_local               <span class="comment">#通用日志格式下的本地时间。</span></span></span><br></pre></td></tr></table></figure>
+
+<p>自定义日志格式的使用：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">access_log /var/logs/nginx-access.log main</span><br><span class="line"></span><br><span class="line">log_format  main  &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span><br><span class="line">                  &#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span><br><span class="line">                  &#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>log_format</code>指令定义了一个<code>main</code>的格式，并在<code>access_log</code>指令中引用了它。假如客户端有发起请求：<code>https://qf.com/</code>，我们看一下我截取的一个请求的日志记录:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10.0.105.207 - - [01/Jul/2019:10:44:36 +0800] &quot;GET / HTTP/1.1&quot; 304 0 &quot;-&quot; &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36&quot; &quot;-&quot;</span><br></pre></td></tr></table></figure>
+
+<p>我们看到最终的日志记录中<code>$remote_user</code>、<code>$http_referer</code>、<code>$http_x_forwarded_for</code>都对应了一个<code>-</code>，这是因为这几个变量为空。</p>
+<p><strong>面试时：注意日志里面的ip地址一定要在第一列。</strong></p>
+<h4 id="3、error-log-指令"><a href="#3、error-log-指令" class="headerlink" title="3、error_log 指令"></a>3、error_log 指令</h4><p>错误日志在Nginx中是通过<code>error_log</code>指令实现的。该指令记录服务器和请求处理过程中的错误信息。</p>
+<p><strong>语法</strong></p>
+<p>配置错误日志文件的路径和日志级别。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">error_log file [level];</span><br><span class="line">Default:	</span><br><span class="line">error_log logs/error.log error;</span><br></pre></td></tr></table></figure>
+
+<p><code>file</code> 参数指定日志的写入位置。</p>
+<p><code>level</code> 参数指定日志的级别。level可以是<code>debug</code>, <code>info</code>, <code>notice</code>, <code>warn</code>, <code>error</code>, <code>crit</code>, <code>alert</code>,<code>emerg</code>中的任意值。可以看到其取值范围是按紧急程度从低到高排列的。只有日志的错误级别等于或高于level指定的值才会写入错误日志中。默认值是<code>error</code>。</p>
+<p><strong>基本用法</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">error_log /var/logs/nginx/nginx-error.log</span><br></pre></td></tr></table></figure>
+
+<p>配置段：<code>main</code>， <code>http</code>,  <code>mail</code>,  <code>stream</code>,  <code>server</code>, <code>location</code>作用域。</p>
+<p>例子中指定了错误日志的路径为：<code>/var/logs/nginx/nginx-error.log</code>，日志级别使用默认的 <code>error</code>。</p>
+<h4 id="4、open-log-file-cache-指令"><a href="#4、open-log-file-cache-指令" class="headerlink" title="4、open_log_file_cache 指令"></a>4、open_log_file_cache 指令</h4><p>每一条日志记录的写入都是先打开文件再写入记录，然后关闭日志文件。如果你的日志文件路径中使用了变量，如  <code>access_log /var/logs/$host/nginx-access.log</code>，为提高性能，可以使用<code>open_log_file_cache</code>指令设置日志文件描述符的缓存。</p>
+<p><strong>语法</strong>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">open_log_file_cache max=N [inactive=time] [min_uses=N] [valid=time];</span><br><span class="line"></span><br><span class="line">默认值: </span><br><span class="line">open_log_file_cache off;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>max</strong> 设置缓存中最多容纳的文件描述符数量，如果被占满，采用LRU算法将描述符关闭。 </li>
+<li><strong>inactive</strong> 设置缓存存活时间，默认是10s。 </li>
+<li><strong>min_uses</strong> 在<strong>inactive</strong>时间段内，日志文件最少使用几次，该日志文件描述符记入缓存，默认是1次。 </li>
+<li><strong>valid</strong>：设置多久对日志文件名进行检查，看是否发生变化，默认是60s。 </li>
+<li><strong>off</strong>：不使用缓存。默认为off。<br><strong>基本用法</strong> <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open_log_file_cache max=1000 inactive=20s valid=1m min_uses=2;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>配置段:<code>http</code>、<code>server</code>、<code>location</code>作用域中。<br>例子中，设置缓存最多缓存1000个日志文件描述符，20s内如果缓存中的日志文件描述符至少被被访问2次，才不会被缓存关闭。每隔1分钟检查缓存中的文件描述符的文件名是否还存在。 </p>
+<h4 id="5、log-not-found-指令"><a href="#5、log-not-found-指令" class="headerlink" title="5、log_not_found 指令"></a>5、log_not_found 指令</h4><p>是否在<code>error_log</code>中记录不存在的错误（404）。默认是</p>
+<p><strong>基本语法:</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_not_found on | off;</span><br><span class="line">默认值: </span><br><span class="line">log_not_found on;</span><br></pre></td></tr></table></figure>
+
+<p>配置段: <code>http</code>, <code>server</code>, <code>location</code>作用域。</p>
+<h4 id="6、log-subrequest-指令"><a href="#6、log-subrequest-指令" class="headerlink" title="6、log_subrequest 指令"></a>6、log_subrequest 指令</h4><p>是否在<code>access_log</code>中记录子请求的访问日志。默认不记录</p>
+<p><strong>基本语法</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">log_subrequest on | off;</span><br><span class="line"></span><br><span class="line">默认值: </span><br><span class="line">log_subrequest off;</span><br></pre></td></tr></table></figure>
+
+<p>配置段:  <code>http</code>, <code>server</code>, <code>location</code>作用域。</p>
+<h4 id="7、rewrite-log-指令"><a href="#7、rewrite-log-指令" class="headerlink" title="7、rewrite_log 指令"></a>7、rewrite_log 指令</h4><p>由<code>ngx_http_rewrite_module</code>模块提供的。用来记录重写日志的。对于调试重写规则建议开启，启用时将在<code>error log</code>中记录<code>notice</code>级别的重写日志。<br><strong>基本语法:</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rewrite_log on | off;</span><br><span class="line"></span><br><span class="line">默认值: </span><br><span class="line">rewrite_log off;</span><br></pre></td></tr></table></figure>
+
+<p>配置段:  <code>http</code>,  <code>server</code>, <code>location</code>,  <code>if</code>作用域。</p>
+<h4 id="8、nginx-日志配置总结"><a href="#8、nginx-日志配置总结" class="headerlink" title="8、nginx 日志配置总结"></a>8、nginx 日志配置总结</h4><p>Nginx中通过<code>access_log</code>和<code>error_log</code>指令配置访问日志和错误日志，通过<code>log_format</code>我们可以自定义日志格式。如果日志文件路径中使用了变量，我们可以通过<code>open_log_file_cache</code> 指令来设置缓存，提升性能。其他的根据自己的使用场景定义。</p>
+<p>详细的日志配置信息可以参考<a href="https://link.juejin.im/?target=http://nginx.org/en/docs/varindex.html">Nginx官方文档</a></p>
+<h3 id="15、nginx-的平滑升级-了解"><a href="#15、nginx-的平滑升级-了解" class="headerlink" title="15、nginx 的平滑升级(了解)"></a>15、nginx 的平滑升级(了解)</h3><h4 id="1、为什么要对-nginx-平滑升级"><a href="#1、为什么要对-nginx-平滑升级" class="headerlink" title="1、为什么要对 nginx 平滑升级"></a>1、为什么要对 nginx 平滑升级</h4><p>随着 <code>nginx</code> 越来越流行，并且 <code>nginx</code> 的优势也越来越明显，<code>nginx</code> 的版本迭代也来时加速模式，1.9.0版本的nginx更新了许多新功能，例如 <code>stream</code> 四层代理功能，伴随着 <code>nginx</code> 的广泛应用，版本升级必然越来越快，线上业务不能停，此时 <code>nginx</code> 的升级就是运维的工作了</p>
+<p>nginx 方便地帮助我们实现了平滑升级。其原理简单概括，就是：<br>（1）在不停掉老进程的情况下，启动新进程。<br>（2）老进程负责处理仍然没有处理完的请求，但不再接受处理请求。<br>（3）新进程接受新请求。<br>（4）老进程处理完所有请求，关闭所有连接后，停止。<br>这样就很方便地实现了平滑升级。一般有两种情况下需要升级 nginx，一种是确实要升级 nginx 的版本，另一种是要为 nginx 添加新的模块。</p>
+<h4 id="2、nginx-平滑升级原理"><a href="#2、nginx-平滑升级原理" class="headerlink" title="2、nginx 平滑升级原理"></a>2、nginx 平滑升级原理</h4><p><strong>多进程模式下的请求分配方式</strong></p>
+<p>nginx 默认工作在多进程模式下，即主进程（master process）启动后完成配置加载和端口绑定等动作，<code>fork</code>出指定数量的工作进程（worker process），这些子进程会持有监听端口的文件描述符（fd），并通过在该描述符上添加监听事件来接受连接（accept）。</p>
+<p><strong>信号的接收和处理</strong></p>
+<p>nginx 主进程在启动完成后会进入等待状态，负责响应各类系统消息，如SIGCHLD、SIGHUP、SIGUSR2等。</p>
+<p><strong>Nginx信号简介</strong></p>
+<p><strong>主进程支持的信号</strong></p>
+<ul>
+<li><code>TERM</code>, <code>INT</code>: 立刻退出</li>
+<li><code>QUIT</code>: 等待工作进程结束后再退出</li>
+<li><code>KILL</code>: 强制终止进程</li>
+<li><code>HUP</code>: 重新加载配置文件，使用新的配置启动工作进程，并逐步关闭旧进程。</li>
+<li><code>USR1</code>: 重新打开日志文件</li>
+<li><code>USR2</code>: 启动新的主进程，实现热升级</li>
+<li><code>WINCH</code>: 逐步关闭工作进程</li>
+</ul>
+<p><strong>工作进程支持的信号</strong></p>
+<ul>
+<li><code>TERM</code>, <code>INT</code>: 立刻退出</li>
+<li><code>QUIT</code>: 等待请求处理结束后再退出</li>
+<li><code>USR1</code>: 重新打开日志文件</li>
+</ul>
+<h4 id="3、nginx-平滑升级实战"><a href="#3、nginx-平滑升级实战" class="headerlink" title="3、nginx 平滑升级实战"></a>3、nginx 平滑升级实战</h4><p>1、查看现有的 nginx 编译参数</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@nginx-server ~]# /usr/local/nginx/sbin/nginx -V</span><br></pre></td></tr></table></figure>
+
+<p>2、编译</p>
+<p>按照原来的编译参数安装 nginx 的方法进行安装，<strong>只需要到 make，千万不要 make install</strong> 。如果make install 会将原来的配置文件覆盖</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@nginx-server ~]# cd /usr/local/nginx-1.16.0/</span><br><span class="line">[root@nginx-server nginx-1.16.0]# ./configure --prefix=/usr/local/nginx --group=nginx --user=nginx --sbin-path=/usr/local/nginx/sbin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --http-client-body-temp-path=/tmp/nginx/client_body --http-proxy-temp-path=/tmp/nginx/proxy --http-fastcgi-temp-path=/tmp/nginx/fastcgi --pid-path=/var/run/nginx.pid --lock-path=/var/lock/nginx --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-pcre --with-http_realip_module --with-stream --with-http_image_filter_module</span><br><span class="line">[root@nginx-server nginx-1.16.0]# make</span><br></pre></td></tr></table></figure>
+
+<p>3、备份原 nginx 二进制文件</p>
+<p>备份二进制文件和 nginx 的配置文件（期间nginx不会停止服务）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@nginx-server nginx-1.16.0]# mv /usr/local/nginx/sbin/nginx /usr/local/nginx/sbin/nginx_$(date +%F)</span><br></pre></td></tr></table></figure>
+
+<p>4、复制新的nginx二进制文件，进入新的nginx源码包</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@nginx-server nginx-1.16.0]# cp /usr/local/nginx-1.16.0/objs/nginx /usr/local/nginx/sbin/</span><br></pre></td></tr></table></figure>
+
+<p>5、测试新版本的nginx是否正常</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@nginx-server nginx-1.16.0]# /usr/local/nginx/sbin/nginx -t</span><br></pre></td></tr></table></figure>
+
+<p>6、给nginx发送平滑迁移信号（若不清楚pid路径，请查看nginx配置文件）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@nginx-server ~]# kill -USR2 `cat /var/run/nginx.pid`</span><br></pre></td></tr></table></figure>
+
+<p>7、查看nginx pid，会出现一个nginx.pid.oldbin</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@nginx-server ~]# ll /var/run/nginx.pid*</span><br><span class="line">-rw-r--r-- 1 root root 5 Jul  1 11:29 /var/run/nginx.pid</span><br><span class="line">-rw-r--r-- 1 root root 5 Jul  1 09:54 /var/run/nginx.pid.oldbin</span><br></pre></td></tr></table></figure>
+
+<p>8、从容关闭旧的Nginx进程</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@nginx-server ~]# kill -WINCH `cat /var/run/nginx.pid.oldbin`</span><br></pre></td></tr></table></figure>
+
+<p>9、此时不重载配置启动旧的工作进程</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@nginx-server ~]# kill -HUP `cat /var/run/nginx.pid.oldbin`</span><br></pre></td></tr></table></figure>
+
+<p>10、结束工作进程，完成此次升级</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@nginx-server ~]# kill -QUIT `cat /var/run/nginx.pid.oldbin`</span><br></pre></td></tr></table></figure>
+
+<p>11、验证Nginx是否升级成功</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@nginx-server ~]# /usr/local/nginx/sbin/nginx -V</span><br></pre></td></tr></table></figure>
+
+<h4 id="4、升级实验"><a href="#4、升级实验" class="headerlink" title="4、升级实验"></a>4、升级实验</h4><p><strong>1、安装配置1.6版本的 nginx</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# yum install -y gcc gcc-c++ pcre-devel openssl-devel zlib-devel</span><br><span class="line">[root@localhost ~]# tar xzf nginx-1.6.3.tar.gz -C /usr/local/</span><br><span class="line">[root@localhost ~]# cd /usr/local/nginx-1.6.3</span><br><span class="line">[root@localhost nginx-1.6.3]# ./configure --prefix=/usr/local/nginx --user=nginx --group=nginx --with-http_stub_status_module</span><br><span class="line">[root@localhost nginx-1.6.3]# make &amp;&amp; make install</span><br><span class="line">[root@localhost nginx-1.6.3]# useradd -M -s /sbin/nologin nginx</span><br><span class="line">[root@localhost nginx-1.6.3]# /usr/local/nginx/sbin/nginx -t </span><br><span class="line">nginx: the configuration file /usr/local/nginx/conf/nginx.conf syntax is ok</span><br><span class="line">nginx: configuration file /usr/local/nginx/conf/nginx.conf test is successful</span><br><span class="line">[root@localhost nginx-1.6.3]# /usr/local/nginx/sbin/nginx </span><br><span class="line">[root@localhost nginx-1.6.3]# netstat -lntp</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    </span><br><span class="line">tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      13989/nginx: master</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、查看版本和模块</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost nginx-1.6.3]# /usr/local/nginx/sbin/nginx -V </span><br><span class="line">nginx version: nginx/1.6.3</span><br><span class="line">built by gcc 4.8.5 20150623 (Red Hat 4.8.5-36) (GCC) </span><br><span class="line">configure arguments: --prefix=/usr/local/nginx --user=nginx --group=nginx --with-http_stub_status_module</span><br><span class="line">[root@localhost nginx-1.6.3]# echo &quot;nginx1.6&quot; &gt; /usr/local/nginx/html/index.html</span><br><span class="line">[root@localhost nginx-1.6.3]# yum install -y elinks</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、访问验证</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost nginx-1.6.3]# elinks 10.0.105.189</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、升级nginx</strong></p>
+<p>将 nginx 版本进行升级 并在不影响业务的情况下添加 SSL 和 pcre 模块</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# tar xzf nginx-1.12.2.tar.gz -C /usr/local/</span><br><span class="line">[root@localhost ~]# cd /usr/local/nginx-1.12.2/</span><br><span class="line">[root@localhost nginx-1.12.2]# ./configure --prefix=/usr/local/nginx --user=nginx --group=ngiinx --with-http_stub_status_module --with-http_ssl_module --with-pcre</span><br><span class="line">[root@localhost nginx-1.12.2]# make</span><br><span class="line">[root@localhost nginx-1.12.2]# cd</span><br><span class="line">[root@localhost ~]# mv /usr/local/nginx/sbin/nginx /usr/local/nginx/sbin/nginx_lod</span><br><span class="line">[root@localhost ~]# cp /usr/local/nginx-1.12.2/objs/nginx /usr/local/nginx/sbin/</span><br><span class="line">[root@localhost ~]# mv /usr/local/nginx/conf/nginx.conf /usr/local/nginx/conf/nginx.conf.bak</span><br><span class="line">[root@localhost ~]# kill -USR2 `cat /usr/local/nginx/logs/nginx.pid`</span><br><span class="line">[root@localhost ~]# ls /usr/local/nginx/logs/</span><br><span class="line">access.log  error.log  nginx.pid</span><br><span class="line">[root@localhost ~]# ps aux | grep nginx </span><br><span class="line">root      13989  0.0  0.0  24860   952 ?        Ss   13:55   0:00 nginx: master process /usr/local/nginx/sbin/nginx</span><br><span class="line">nginx     13990  0.0  0.1  25284  1720 ?        S    13:55   0:00 nginx: worker process</span><br><span class="line">root      16525  0.0  0.0 112708   976 pts/2    S+   14:09   0:00 grep --color=auto nginx</span><br></pre></td></tr></table></figure>
+
+    </article>
+    
+    <div class="read-nums">
+      <!-- id 将作为查询条件 -->
+      <span id="2023/12/22/nginx3/" class="leancloud_visitors" data-flag-title="Your Article Title">
+        <em class="post-meta-item-text">浏览量</em>
+        <i class="leancloud-visitors-count"></i>
+      </span>
+    </div>
+    <div class="comments-intro">
+      <h2>评论区</h2>
+      <p>欢迎你留下宝贵的意见，昵称输入QQ号会显示QQ头像哦~</p>
+    </div>
+    <div id="vcomments" class="vcomments"></div>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#12%E3%80%81nginx-%E5%9C%B0%E5%9D%80%E9%87%8D%E5%86%99-rewrite"><span class="toc-number">1.</span> <span class="toc-text">12、nginx 地址重写 rewrite</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AFRewrite"><span class="toc-number">1.1.</span> <span class="toc-text">1、什么是Rewrite</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81Rewrite-%E7%9B%B8%E5%85%B3%E6%8C%87%E4%BB%A4"><span class="toc-number">1.2.</span> <span class="toc-text">2、Rewrite 相关指令</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-1%E3%80%81if-%E8%AF%AD%E5%8F%A5"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1、if 语句</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2%E3%80%81Rewrite-flag"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2、Rewrite flag</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-3%E3%80%81Rewrite%E5%8C%B9%E9%85%8D%E5%8F%82%E8%80%83%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.3、Rewrite匹配参考示例</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-4%E3%80%81set-%E6%8C%87%E4%BB%A4"><span class="toc-number">1.2.4.</span> <span class="toc-text">2.4、set 指令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-5%E3%80%81return-%E6%8C%87%E4%BB%A4"><span class="toc-number">1.2.5.</span> <span class="toc-text">2.5、return 指令</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5%E3%80%81Apache-%E7%9A%84-https-rewrite-%EF%BC%88%E6%8B%93%E5%B1%95%EF%BC%89"><span class="toc-number">1.2.6.</span> <span class="toc-text">5、Apache 的 https ( rewrite )（拓展）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13%E3%80%81nginx%E7%9A%84localtion%E6%8C%87%E4%BB%A4%E8%AF%A6%E8%A7%A3"><span class="toc-number">2.</span> <span class="toc-text">13、nginx的localtion指令详解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81location-%E5%8C%BA%E6%AE%B5"><span class="toc-number">2.1.</span> <span class="toc-text">1、location 区段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81location-%E5%89%8D%E7%BC%80%E5%90%AB%E4%B9%89"><span class="toc-number">2.2.</span> <span class="toc-text">2、location 前缀含义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81location-%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.3.</span> <span class="toc-text">3、location 配置示例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14%E3%80%81nginx-%E6%97%A5%E5%BF%97%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">14、nginx 日志配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81nginx-%E6%97%A5%E5%BF%97%E4%BB%8B%E7%BB%8D"><span class="toc-number">3.1.</span> <span class="toc-text">1、nginx 日志介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81log-format-%E6%8C%87%E4%BB%A4"><span class="toc-number">3.2.</span> <span class="toc-text">2、log_format 指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81error-log-%E6%8C%87%E4%BB%A4"><span class="toc-number">3.3.</span> <span class="toc-text">3、error_log 指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81open-log-file-cache-%E6%8C%87%E4%BB%A4"><span class="toc-number">3.4.</span> <span class="toc-text">4、open_log_file_cache 指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81log-not-found-%E6%8C%87%E4%BB%A4"><span class="toc-number">3.5.</span> <span class="toc-text">5、log_not_found 指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6%E3%80%81log-subrequest-%E6%8C%87%E4%BB%A4"><span class="toc-number">3.6.</span> <span class="toc-text">6、log_subrequest 指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7%E3%80%81rewrite-log-%E6%8C%87%E4%BB%A4"><span class="toc-number">3.7.</span> <span class="toc-text">7、rewrite_log 指令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8%E3%80%81nginx-%E6%97%A5%E5%BF%97%E9%85%8D%E7%BD%AE%E6%80%BB%E7%BB%93"><span class="toc-number">3.8.</span> <span class="toc-text">8、nginx 日志配置总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15%E3%80%81nginx-%E7%9A%84%E5%B9%B3%E6%BB%91%E5%8D%87%E7%BA%A7-%E4%BA%86%E8%A7%A3"><span class="toc-number">4.</span> <span class="toc-text">15、nginx 的平滑升级(了解)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%AF%B9-nginx-%E5%B9%B3%E6%BB%91%E5%8D%87%E7%BA%A7"><span class="toc-number">4.1.</span> <span class="toc-text">1、为什么要对 nginx 平滑升级</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81nginx-%E5%B9%B3%E6%BB%91%E5%8D%87%E7%BA%A7%E5%8E%9F%E7%90%86"><span class="toc-number">4.2.</span> <span class="toc-text">2、nginx 平滑升级原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81nginx-%E5%B9%B3%E6%BB%91%E5%8D%87%E7%BA%A7%E5%AE%9E%E6%88%98"><span class="toc-number">4.3.</span> <span class="toc-text">3、nginx 平滑升级实战</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81%E5%8D%87%E7%BA%A7%E5%AE%9E%E9%AA%8C"><span class="toc-number">4.4.</span> <span class="toc-text">4、升级实验</span></a></li></ol></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+          
+            <p>
+              <span>上一篇：</span>
+              <a href="/2023/12/30/nginx4/">nginx4</a>
+            </p>
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2023/12/19/nginx2/">nginx2</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // var定义，避免pjax重新进来造成的重复声明错误
+  var config = JSON.parse('{"enable":true,"appId":"Pf8zCXGEH1qsprnWfikVVujL-gzGzoHsz","appKey":"qOqoiUHhH1TGtLRUYURkLRQX","placeholder":"请留下你宝贵的意见吧~","meta":["nick"],"recordIP":true,"visitor":true,"enableQQ":true}')
+  new Valine({
+    el: '#vcomments',
+    appId: config.appId,
+    appKey: config.appKey,
+    placeholder: config.placeholder,
+    meta: config.meta,
+    recordIP: config.recordIP,
+    visitor: config.visitor,
+    enableQQ: config.enableQQ,
+    path: '2023/12/22/nginx3/'
+  })
+</script>
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const links = tocs ? tocs.querySelectorAll('a') : []
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        const href = decodeURIComponent(e.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      Hello~大噶好。唔系小曹宅，欢迎你们来到我的博客小站，希望能在这里收获到有用的东西哦！ 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+    <div class="operate-item turn-comment hidden">
+      <i class="iconfont icon-pinglun"></i>
+      <span>查看评论</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn/#/Integrated/index">2262690094</a> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const operateDom = document.querySelector('.main-right .operate-items')
+    const commentDom = document.querySelector('.turn-comment')
+    const cateloguDom = document.querySelector('.article-catelogue > .article-catelogue--wrapper');
+
+    if (commentDom) {
+      if (reg.test(path) || path.match(/\/log\/.+/)) {
+        commentDom.classList.remove('hidden')
+        const newDom = operateDom.cloneNode(true);
+        const _backtopDom = newDom.querySelector('.backtop');
+        const _commentDom = newDom.querySelector('.turn-comment');
+        _backtopDom.addEventListener('click', () => backTopEvent());
+        _commentDom.addEventListener('click', () => commentDomEvent());
+        cateloguDom.appendChild(newDom);
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"不找了","artist":"隔壁老樊","url":"music/隔壁老樊 - 不找了.mp3","cover":"https://img2.baidu.com/it/u=1260056724,1076343118&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"于是天气刚好","artist":"泪桥","url":"music/于是天气刚好 - 泪桥.mp3","cover":"https://img2.baidu.com/it/u=705831265,2862720033&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"},{"name":"安和桥","artist":"林芬宇","url":"music/林芬宇 - 安和桥.mp3","cover":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQo0SWQx6YrNA8lElaG4OOKLkNkNzLO1PflKg&usqp=CAU"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    backTopEvent();
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    commentDomEvent();
+  })
+
+  function backTopEvent() {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
+
+  function commentDomEvent() {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  }
+</script></div>
+    </section>
+  </div>
+  <div id="progress" class="progress"></div>
+  <div id="gray" class="gray"></div>
+
+  <script>
+    function initScroll () {
+      document.addEventListener('scroll', () => {
+        const doc = document.documentElement
+        const scrollTop = doc.scrollTop
+        const pageHeight = doc.offsetHeight
+        const clientHeight = doc.clientHeight
+        const ratio = scrollTop / (pageHeight - clientHeight)
+        const progress = document.querySelector('#progress')
+        const avatarImg = document.querySelector('.main-left--avatar')
+        progress.style.width = (100 * ratio) + '%'
+        avatarImg.style.transform = `rotate(${360 * ratio}deg)`
+      })
+    }
+
+    const rootPath = "/"
+
+    const checkAndSetArticlePageLayout = () => {
+      const path = location.pathname.replace(rootPath, '');
+      if (
+        /^\/?\d{4}\/\d{2}\/\d{2}\/.*/.test(path) ||
+        /^log\/.+/.test(path)
+      ) {
+        $('.main-container, .main-right, .main-right-wrapper').addClass('is-article')
+      } else {
+        $('.main-container, .main-right, .main-right-wrapper').removeClass('is-article')
+      }
+    }
+
+    const gray = "none"
+    const setGrayStyle = () => {
+      if (gray === 'none') {
+        return
+      } else if (gray === 'index') {
+        location.pathname === '/' ? $('#gray').show() : $('#gray').hide()
+      } else if (gray === 'all') {
+        $('#gray').show()
+      }
+    }
+    setGrayStyle()
+
+
+    window.onload = function () {
+      checkAndSetArticlePageLayout()
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll();
+        }, 500)
+      }, 500)
+    }
+    
+    let status = 0
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {
+      container: '#main-container',
+      fragment: '#main-container',
+      timeout: 8000
+    })
+
+    $(document).on('pjax:start', function() {
+    })
+    $(document).on('pjax:complete', function() {
+      status = 0
+      $('.main-container').addClass('to-up').on('animationend', function() {
+        $(this).removeClass('to-up')
+      })
+      setGrayStyle()
+      checkAndSetArticlePageLayout()
+    })
+    $(document).on('pjax:popstate', function() {
+      status = -1
+      checkAndSetArticlePageLayout()
+    });
+  </script>
+</body>
+</html>
